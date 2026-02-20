@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Offers from './pages/Offers';
 import Analytics from './pages/Analytics';
+import { Plantillas } from './pages/Plantillas';
 
 
 export default function App() {
@@ -15,7 +16,7 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="offers" element={<Offers />} />
-          <Route path="analytics" element={<Analytics />} />
+          <Route path="plantillas" element={<Plantillas />} />
         </Route>
       </Routes>
     </HashRouter>

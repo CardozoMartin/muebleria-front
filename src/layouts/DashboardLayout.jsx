@@ -36,8 +36,8 @@ const navItems = [
     ),
   },
   {
-    to: "/settings",
-    label: "Configuraciones",
+    to: "/plantillas",
+    label: "Plantillas",
     icon: (
       <svg width="18" height="18" viewBox="0 0 20 18" fill="none">
         <path d="M10 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
