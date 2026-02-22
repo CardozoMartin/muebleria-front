@@ -1,5 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom";
 import Logo from "./../assets/logo.png"
+import useAuthStore from "../store/useAuthStore";
 
 const navItems = [
   {
@@ -48,6 +49,8 @@ const navItems = [
 ];
 
 export default function DashboardLayout() {
+  const { user } = useAuthStore();
+  console.log("Usuario autenticado:", user)
   return (
     <div className="flex h-screen bg-[#f5f5f3] font-sans overflow-hidden">
       {/* Sidebar */}
@@ -148,7 +151,9 @@ export default function DashboardLayout() {
               className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 placeholder-gray-400 transition"
             />
           </div>
+
           <div className="flex items-center gap-3">
+            <h3 className="text-sm font-medium text-gray-700">Welcome back, Admin!</h3>
             <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
