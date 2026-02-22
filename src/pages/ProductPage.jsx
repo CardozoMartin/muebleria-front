@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import LoginProductos from '../components/Productos/FormProductos';
-import { Table } from 'lucide-react';
+
 import TableProducts from '../components/Productos/TableProducts';
 
 export default function Products() {

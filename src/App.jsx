@@ -1,10 +1,10 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
-import Products from './pages/Products';
+import Products from './pages/ProductPage';
 import Offers from './pages/Offers';
 import Analytics from './pages/Analytics';
-import { Plantillas } from './pages/Plantillas';
+import { Plantillas } from './pages/PlantillasPage';
 import LoginPage from './pages/LoginPage';
 
 
@@ -21,7 +21,7 @@ export default function App() {
           <Route path="products" element={<Products />} />
           <Route path="offers" element={<Offers />} />
           <Route path="plantillas" element={<Plantillas />} />
-        
+
         </Route>
       </Routes>
     </HashRouter>
