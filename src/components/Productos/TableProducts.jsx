@@ -4,6 +4,7 @@ import RowProducts from './RowProducts';
 
 const TableProducts = () => {
   const { data, isLoading, isError } = useGetProducts();
+  console.log(data);
 
   return (
     <div className="bg-white rounded-md border border-gray-500/30 overflow-hidden">
@@ -24,6 +25,9 @@ const TableProducts = () => {
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 P. Anterior
+              </th>
+              <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
+                P.Descuento
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 Estado
@@ -75,7 +79,7 @@ const TableProducts = () => {
               !isError &&
               data &&
               data.map((product, index) => (
-               <RowProducts key={product._id} product={product} index={index} />
+                <RowProducts key={product._id} product={product} index={index} />
               ))}
           </tbody>
         </table>

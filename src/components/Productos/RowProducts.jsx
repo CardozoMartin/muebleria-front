@@ -32,18 +32,22 @@ const RowProducts = ({ product, index }) => {
 
       {/* Precio actual */}
       <td className="px-5 py-3.5 text-sm font-medium text-gray-800/80">
-        ${Number(product.precioActual).toLocaleString('es-AR')}
+        ${Number(product.precioLista).toLocaleString('es-AR')}
       </td>
 
       {/* Precio anterior */}
       <td className="px-5 py-3.5">
         {product.precioAnterior ? (
           <span className="text-sm text-gray-500/70 line-through">
-            ${Number(product.precioAnterior).toLocaleString('es-AR')}
+            ${Number(product.precioOferta).toLocaleString('es-AR')}
           </span>
         ) : (
           <span className="text-xs text-gray-400/50">—</span>
         )}
+      </td>
+
+      <td className="px-5 py-3.5 text-sm font-medium text-gray-800/80">
+        ${Number(product.porcentajeDescuento).toLocaleString('es-AR')}
       </td>
 
       {/* Estado */}

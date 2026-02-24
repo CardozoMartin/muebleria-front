@@ -58,6 +58,7 @@ const FormProductos = ({ setShowForm }) => {
     CrearProductos(formDataToSend, {
       onSuccess: () => {
         setShowSuccess(true);
+        setShowForm(false);
         reset();
         setPreview(null);
         setTimeout(() => setShowSuccess(false), 3000);
