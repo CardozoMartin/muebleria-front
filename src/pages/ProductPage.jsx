@@ -11,9 +11,11 @@ export default function Products() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Products</h1>
+          <h1 className="text-xl font-bold text-gray-900">Productos</h1>
           <p className="text-sm text-gray-400 mt-0.5">Inventario de producto</p>
         </div>
+        {!showForm && 
+        
         <button
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition shadow-sm"
           onClick={() => setShowForm(true)}
@@ -23,11 +25,12 @@ export default function Products() {
           </svg>
           Agregar Producto
         </button>
+        }
       </div>
       {showForm && <FormProductos setShowForm={setShowForm} />}
 
       {!showForm && (
-        <TableProducts />
+        <TableProducts setShowForm={setShowForm} />
 
       )}
     </div>
