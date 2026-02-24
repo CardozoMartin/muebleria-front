@@ -13,38 +13,52 @@ import redondo from './../../assets/redonda.png';
 const PRODUCTOS = [
   {
     id: 1,
-    nombre: "Juego de",
-    nombreDestacado: "Comedor",
-    subtitulo: "Mesa + 6 Sillas · Madera Sólida",
-    descripcion: ["Mesa extensible con 6 sillas tapizadas en tela premium.", "Estructura de roble macizo, acabado laqueado mate.", "Diseño moderno apto para ambientes de 12 m² o más."],
-    precioViejo: "$ 299.999",
-    precioNuevo: "$ 199.999",
-    descuento: "33% OFF",
-    cuotas: "12 cuotas sin interés",
-    imagen: comedor,
+    nombre: 'Juego de',
+    nombreDestacado: 'Comedor',
+    subtitulo: 'Mesa + 6 Sillas · Madera Sólida',
+    descripcion: [
+      'Mesa extensible con 6 sillas tapizadas en tela premium.',
+      'Estructura de roble macizo, acabado laqueado mate.',
+      'Diseño moderno apto para ambientes de 12 m² o más.',
+    ],
+    precioViejo: '$ 299.999',
+    precioNuevo: '$ 199.999',
+    descuento: '33% OFF',
+    cuotas: '12 cuotas sin interés',
+    imagen:
+      'https://res.cloudinary.com/dcwgnl9ud/image/upload/v1771902544/muebleria/productos/ngh3qb4awv8vwdmb4qpn.png',
   },
   {
     id: 2,
-    nombre: "juego de ",
-    nombreDestacado: "Comedor",
-    subtitulo: "Mesa + 4 Sillas · Madera Sólida",
-    descripcion: ["Mesa extensible con 6 sillas tapizadas en tela premium.", "Estructura de roble macizo, acabado laqueado mate.", "Diseño moderno apto para ambientes de 12 m² o más."],
-    precioViejo: "$ 189.999",
-    precioNuevo: "$ 129.999",
-    descuento: "31% OFF",
-    cuotas: "6 cuotas sin interés",
-    imagen: juego4,
+    nombre: 'juego de ',
+    nombreDestacado: 'Comedor',
+    subtitulo: 'Mesa + 4 Sillas · Madera Sólida',
+    descripcion: [
+      'Mesa extensible con 6 sillas tapizadas en tela premium.',
+      'Estructura de roble macizo, acabado laqueado mate.',
+      'Diseño moderno apto para ambientes de 12 m² o más.',
+    ],
+    precioViejo: '$ 189.999',
+    precioNuevo: '$ 129.999',
+    descuento: '31% OFF',
+    cuotas: '6 cuotas sin interés',
+    imagen:
+      'https://res.cloudinary.com/dcwgnl9ud/image/upload/v1771902739/muebleria/productos/ciwty78qprpy8shd2447.png',
   },
   {
     id: 3,
-    nombre: "juego de",
-    nombreDestacado: "Comedor",
-    subtitulo: "Mesa redonda + 4 Sillas · Madera Sólida",
-    descripcion: ["Set completo de dormitorio en madera laqueada.", "Cama doble con cajones inferiores incluidos.", "Terminación Premium, colores a elección."],
-    precioViejo: "$ 450.000",
-    precioNuevo: "$ 299.999",
-    descuento: "33% OFF",
-    cuotas: "18 cuotas sin interés",
+    nombre: 'juego de',
+    nombreDestacado: 'Comedor',
+    subtitulo: 'Mesa redonda + 4 Sillas · Madera Sólida',
+    descripcion: [
+      'Set completo de dormitorio en madera laqueada.',
+      'Cama doble con cajones inferiores incluidos.',
+      'Terminación Premium, colores a elección.',
+    ],
+    precioViejo: '$ 450.000',
+    precioNuevo: '$ 299.999',
+    descuento: '33% OFF',
+    cuotas: '18 cuotas sin interés',
     imagen: redondo,
   },
 ];
@@ -225,7 +239,7 @@ export default function MegaSale() {
           position: absolute; right: 4vw; top: 50%;
           transform: translateY(-50%) scale(1);
           z-index: 3;
-          opacity: 0; 
+          opacity: 0;
           transition: opacity 1s ease .9s, transform 1s cubic-bezier(.34,1.56,.64,1) .9s;
         }
         .mw-img-wrap.on { opacity:1; transform:translateY(-50%) scale(1); }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import LoginProductos from '../components/Productos/FormProductos';
 
 import TableProducts from '../components/Productos/TableProducts';
+import FormProductos from '../components/Productos/FormProductos';
 
 export default function Products() {
   const [showForm, setShowForm] = useState(false);
@@ -23,7 +24,7 @@ export default function Products() {
           Agregar Producto
         </button>
       </div>
-      {showForm && <LoginProductos setShowForm={setShowForm} />}
+      {showForm && <FormProductos setShowForm={setShowForm} />}
 
       {!showForm && (
         <TableProducts />
