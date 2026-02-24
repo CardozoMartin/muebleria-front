@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createProduct, getProducts } from "../services/Productos/productos.services"
+import { toast } from "sonner"
 
 
 export const useGetProducts = () => {
@@ -17,10 +18,10 @@ export const usePostProduct = () => {
     mutationFn: createProduct,
     onSuccess: () => {
       queryCliente.invalidateQueries({ queryKey: ['products'] });
-      alert('Producto creado exitosamente');
+      toast.success('Producto creado exitosamente');
     },
     onError: () => {
-      alert('Error al crear el producto');
+      toast.error('Error al crear el producto');
     },
-  })
+  });
 }
