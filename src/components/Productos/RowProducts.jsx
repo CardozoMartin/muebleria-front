@@ -19,7 +19,7 @@ const RowProducts = ({ product, index }) => {
             <img
               src={product.imagenProducto}
               alt={product.titulo}
-              className="w-10 h-10 object-cover rounded-md border border-gray-500/20 shrink-0"
+              className="w-40 h-40 object-cover rounded-md border border-gray-500/20 shrink-0"
             />
           ) : (
             <div className="w-10 h-10 rounded-md border border-gray-500/20 bg-gray-500/10 flex items-center justify-center shrink-0">

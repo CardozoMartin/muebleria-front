@@ -14,8 +14,8 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { usePostProduct } from '../../hooks/useProducts';
 import { toast } from 'sonner';
+import { usePostProduct } from '../../hooks/useProducts';
 
 const FormProductos = ({ setShowForm }) => {
   const [preview, setPreview] = useState(null);
