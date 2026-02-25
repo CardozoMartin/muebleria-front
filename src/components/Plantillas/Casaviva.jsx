@@ -4,7 +4,8 @@ import comedor from './../../assets/comedor.png';
 import juego4 from './../../assets/comedor4.png';
 import redondo from './../../assets/redonda.png';
 
-const PRODUCTOS = [
+// default products list used when props.products is not passed
+const DEFAULT_PRODUCTOS = [
   {
     id: 1,
     nombre: 'Juego de',
@@ -57,7 +58,7 @@ const PRODUCTOS = [
 
 const DURACION = 5500;
 
-export default function CasaViva() {
+export default function CasaViva({ products }) {
   const [mounted, setMounted] = useState(false);
   const [indice, setIndice] = useState(0);
   const [fase, setFase] = useState('idle');
@@ -66,7 +67,8 @@ export default function CasaViva() {
   const intervaloRef = useRef(null);
   const progressRef = useRef(null);
 
-  const producto = PRODUCTOS[indice];
+  const PRODUCTOS_LIST = products && products.length ? products : DEFAULT_PRODUCTOS;
+  const producto = PRODUCTOS_LIST[indice];
   const color = producto.color;
   const rgb = producto.colorRgb;
 
