@@ -3,7 +3,7 @@ import { useGetProducts, useSearchProducts } from '../../hooks/useProducts';
 import { Loader2, AlertCircle, PackageOpen, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import RowProducts from './RowProducts';
 
-const TableProducts = ({ setShowForm, searchQuery = '' }) => {
+const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) => {
   const [currentPage, setCurrentPage] = useState(1);
   
   // Si hay búsqueda, usar el hook de búsqueda, sino usar el hook de productos paginados
@@ -13,9 +13,15 @@ const TableProducts = ({ setShowForm, searchQuery = '' }) => {
   const { data, isLoading, isError } = searchQuery ? searchData : regularData;
   
   // Si es búsqueda, los datos vienen como array directo; si es normal, vienen con estructura
-  const products = searchQuery 
+  let products = searchQuery 
     ? (Array.isArray(data) ? data : []) 
     : (data?.productos || []);
+
+  // Filtrar por categoría si está seleccionada
+  if (categoryFilter) {
+    products = products.filter(product => product.categoria === categoryFilter);
+  }
+
   const totalPages = data?.totalPages || 1;
   const totalProducts = searchQuery 
     ? (Array.isArray(data) ? data.length : 0)

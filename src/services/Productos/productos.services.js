@@ -103,4 +103,12 @@ export const getProductosAll = async () => {
   }
 }
 
-
+//Funcion para buscar productos por categoria
+export const searchProductsByCategory = async (category) => {
+  try {    const response = await api.get(`/productos/search/category?category=${encodeURIComponent(category)}`);
+    console.log('Resultados de búsqueda por categoría:', response.data);
+    return response.data;
+  } catch (error) {    console.error('Error searching products by category:', error);
+    throw error;
+  }   
+}
