@@ -541,10 +541,10 @@ export default function CasaViva({ products }) {
           position:absolute; width:20px; height:20px; z-index:3; pointer-events:none;
           transition: border-color 1s ease;
         }
-        .cv-corner-tl { top:8%; left:6%; border-top:2px solid; border-left:2px solid; border-radius:4px 0 0 0; }
-        .cv-corner-tr { top:8%; right:6%; border-top:2px solid; border-right:2px solid; border-radius:0 4px 0 0; }
-        .cv-corner-bl { bottom:18%; left:6%; border-bottom:2px solid; border-left:2px solid; border-radius:0 0 0 4px; }
-        .cv-corner-br { bottom:18%; right:6%; border-bottom:2px solid; border-right:2px solid; border-radius:0 0 4px 0; }
+        .cv-corner-tl { top:11%; left:6%; border-top:2px solid; border-left:2px solid; border-radius:4px 0 0 0; }
+        .cv-corner-tr { top:11%; right:6%; border-top:2px solid; border-right:2px solid; border-radius:0 4px 0 0; }
+        .cv-corner-bl { bottom:11%; left:6%; border-bottom:2px solid; border-left:2px solid; border-radius:0 0 0 4px; }
+        .cv-corner-br { bottom:11%; right:6%; border-bottom:2px solid; border-right:2px solid; border-radius:0 0 4px 0; }
 
         /* ── RECUADRO DESCRIPCION ── */
         .cv-desc-box {

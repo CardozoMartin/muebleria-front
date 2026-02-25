@@ -4,7 +4,7 @@ import comedor from './../../assets/comedor.png';
 import juego4 from './../../assets/comedor4.png';
 import redondo from './../../assets/redonda.png';
 
-const PRODUCTOS = [
+const DEFAULT_PRODUCTOS = [
   {
     id: 1,
     nombre: 'Juego de',
@@ -14,10 +14,15 @@ const PRODUCTOS = [
       'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
     precioViejo: '$ 299.999',
     precioNuevo: '$ 199.999',
-    descuento: '33% OFF',
-    cuotas: '12 cuotas sin interés',
+    descuento: '33',
+    cuotas: '12',
     imagen: comedor,
-    tag: 'Colección Roble',
+    ambiente: 'Comedor · Familiar',
+    color: '#0057FF',
+    colorElectric: '#00AAFF',
+    colorLight: '#e0eeff',
+    colorRgb: '0,87,255',
+    colorElectricRgb: '0,170,255',
   },
   {
     id: 2,
@@ -28,10 +33,15 @@ const PRODUCTOS = [
       'Mesa extensible con 4 sillas tapizadas en tela premium. Ideal para ambientes compactos y modernos.',
     precioViejo: '$ 189.999',
     precioNuevo: '$ 129.999',
-    descuento: '31% OFF',
-    cuotas: '6 cuotas sin interés',
+    descuento: '31',
+    cuotas: '6',
     imagen: juego4,
-    tag: 'Colección Nogal',
+    ambiente: 'Comedor · Compacto',
+    color: '#005CE6',
+    colorElectric: '#29B6FF',
+    colorLight: '#dceeff',
+    colorRgb: '0,92,230',
+    colorElectricRgb: '41,182,255',
   },
   {
     id: 3,
@@ -42,25 +52,35 @@ const PRODUCTOS = [
       'Set completo de comedor en madera laqueada. Mesa redonda extensible con sillas incluidas. Terminación Premium.',
     precioViejo: '$ 450.000',
     precioNuevo: '$ 299.999',
-    descuento: '33% OFF',
-    cuotas: '18 cuotas sin interés',
+    descuento: '33',
+    cuotas: '18',
     imagen: redondo,
-    tag: 'Colección Vintage',
+    ambiente: 'Comedor · Premium',
+    color: '#0033CC',
+    colorElectric: '#00C8FF',
+    colorLight: '#d6e8ff',
+    colorRgb: '0,51,204',
+    colorElectricRgb: '0,200,255',
   },
 ];
 
-const DURACION = 6000;
+const DURACION = 5500;
 
-export default function LuxeShow() {
+export default function CasaVivaAzul({ products }) {
   const [mounted, setMounted] = useState(false);
   const [indice, setIndice] = useState(0);
   const [fase, setFase] = useState('idle');
   const [progreso, setProgreso] = useState(0);
-  const [curtain, setCurtain] = useState(false);
   const intervaloRef = useRef(null);
   const progressRef = useRef(null);
 
-  const producto = PRODUCTOS[indice];
+  const PRODUCTOS_LIST = products && products.length ? products : DEFAULT_PRODUCTOS;
+  const producto = PRODUCTOS_LIST[indice];
+  const color = producto.color;
+  const electric = producto.colorElectric;
+  const colorLight = producto.colorLight || '#e0eeff';
+  const rgb = producto.colorRgb;
+  const rgbE = producto.colorElectricRgb;
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 200);
@@ -69,7 +89,6 @@ export default function LuxeShow() {
 
   useEffect(() => {
     if (!mounted) return;
-    setProgreso(0);
     const start = performance.now();
     const tick = (now) => {
       const pct = Math.min(((now - start) / DURACION) * 100, 100);
@@ -81,35 +100,29 @@ export default function LuxeShow() {
   }, [indice, mounted]);
 
   const runTransition = (getNext) => {
-    setCurtain(true);
+    setFase('saliendo');
     setTimeout(() => {
-      setFase('saliendo');
-      setTimeout(() => {
-        setIndice(getNext);
-        setFase('entrando');
-        setTimeout(() => {
-          setFase('idle');
-          setCurtain(false);
-        }, 800);
-      }, 350);
-    }, 280);
+      setIndice(getNext);
+      setFase('entrando');
+      setTimeout(() => setFase('idle'), 700);
+    }, 420);
   };
 
   useEffect(() => {
     if (!mounted) return;
     intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS.length),
+      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
       DURACION
     );
     return () => clearInterval(intervaloRef.current);
-  }, [mounted]);
+  }, [mounted, PRODUCTOS_LIST.length]);
 
   const ir = (i) => {
     if (i === indice) return;
     clearInterval(intervaloRef.current);
     runTransition(i);
     intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS.length),
+      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
       DURACION
     );
   };
@@ -117,202 +130,800 @@ export default function LuxeShow() {
   return (
     <>
       <link
-        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800;900&family=Space+Grotesk:wght@500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
         rel="stylesheet"
       />
       <style>{`
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        .ls { width:100vw; height:100vh; position:relative; overflow:hidden; font-family:'Jost',sans-serif; background:#f5f0e8; }
+        .az {
+          width:100vw; height:100vh;
+          position:relative; overflow:hidden;
+          font-family:'DM Sans',sans-serif;
+          background:#f0f6ff;
+        }
 
-        .ls-bg {
+        /* ── FONDO ── */
+        .az-bg {
           position:absolute; inset:0; z-index:0;
-          background:
-            radial-gradient(ellipse 120% 80% at 100% 100%, #e8dcc8 0%, transparent 55%),
-            radial-gradient(ellipse 80% 60% at 0% 0%, #efe8d8 0%, transparent 50%),
-            #f5f0e8;
+          background: #f4f8ff;
         }
-        .ls-wood {
-          position:absolute; inset:0; z-index:0; opacity:.4;
-          background-image: repeating-linear-gradient(168deg,
-            transparent 0px, transparent 18px,
-            rgba(180,140,90,.06) 18px, rgba(180,140,90,.06) 19px,
-            transparent 19px, transparent 38px,
-            rgba(160,120,70,.04) 38px, rgba(160,120,70,.04) 39px);
+
+        /* Noise grain overlay */
+        .az-grain {
+          position:absolute; inset:0; z-index:0; opacity:.025; pointer-events:none;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+          background-size: 200px 200px;
         }
-        .ls-panel { position:absolute; top:0; left:0; bottom:0; width:7px; background:linear-gradient(to bottom,#5c3d1e,#8b5e2f,#5c3d1e); z-index:2; }
-        .ls-band { position:absolute; top:-10%; right:44%; width:2px; height:130%; background:linear-gradient(to bottom,transparent,rgba(140,90,40,.15) 30%,rgba(140,90,40,.15) 70%,transparent); transform:rotate(12deg); z-index:1; }
-        .ls-band-2 { position:absolute; top:-10%; right:42%; width:1px; height:130%; background:linear-gradient(to bottom,transparent,rgba(140,90,40,.07) 30%,rgba(140,90,40,.07) 70%,transparent); transform:rotate(12deg); z-index:1; }
 
-        .ls-curtain { position:absolute; inset:0; z-index:30; pointer-events:none; }
-        .ls-curtain-fill { position:absolute; inset:0; background:#2a1a0a; transform:scaleY(0); transform-origin:top; transition:transform 0.32s cubic-bezier(.77,0,.18,1); }
-        .ls-curtain.active .ls-curtain-fill { transform:scaleY(1); }
+        /* Blob gigante derecha azul */
+        .az-blob-right {
+          position:absolute; right:-15vw; top:-20vh;
+          width:70vw; height:130vh;
+          border-radius:63% 37% 54% 46% / 55% 48% 52% 45%;
+          z-index:1; pointer-events:none;
+          transition: background 1.2s ease;
+          animation:azBlobMorph 20s ease-in-out infinite;
+        }
+        @keyframes azBlobMorph {
+          0%,100%{border-radius:63% 37% 54% 46% / 55% 48% 52% 45%;}
+          33%{border-radius:50% 50% 33% 67% / 47% 55% 45% 53%;}
+          66%{border-radius:73% 27% 62% 38% / 65% 38% 62% 35%;}
+        }
 
-        .ls-logo { position:absolute; top:5vh; left:6vw; z-index:10; opacity:0; transform:translateY(-12px); transition:opacity .8s ease .4s,transform .8s ease .4s; }
-        .ls-logo.on { opacity:1; transform:translateY(0); }
-        .ls-logo img { height:clamp(36px,4.5vh,68px); width:auto; }
+        /* Blob secundario izquierda */
+        .az-blob-left {
+          position:absolute; left:-20vw; bottom:-25vh;
+          width:60vw; height:80vh;
+          border-radius:40% 60% 55% 45% / 60% 44% 56% 40%;
+          z-index:1; pointer-events:none;
+          animation:azBlobLeft 18s ease-in-out infinite reverse;
+          transition: background 1.2s ease;
+        }
+        @keyframes azBlobLeft {
+          0%,100%{border-radius:40% 60% 55% 45% / 60% 44% 56% 40%; transform:rotate(0deg);}
+          50%{border-radius:60% 40% 40% 60% / 50% 60% 40% 50%; transform:rotate(8deg);}
+        }
 
-        .ls-num { position:absolute; top:50%; right:5vw; transform:translateY(-50%); z-index:2; font-family:'Libre Baskerville',serif; font-size:clamp(120px,18vw,260px); font-weight:700; color:transparent; -webkit-text-stroke:1.5px rgba(100,65,30,.09); line-height:1; pointer-events:none; letter-spacing:-8px; }
+        /* Orbe flotante top center */
+        .az-orb-top {
+          position:absolute; left:30vw; top:-12vh;
+          width:40vw; height:40vw;
+          border-radius:50%; z-index:1; pointer-events:none;
+          filter:blur(60px); opacity:.12;
+          transition: background 1.2s ease;
+          animation:azOrbFloat 13s ease-in-out infinite;
+        }
+        @keyframes azOrbFloat {
+          0%,100%{transform:translate(0,0) scale(1);}
+          50%{transform:translate(-30px,20px) scale(1.1);}
+        }
 
-        .ls-layout { position:absolute; inset:0; z-index:5; display:grid; grid-template-columns:52% 1fr; }
+        /* Líneas diagonales futuristas */
+        .az-diag-lines {
+          position:absolute; inset:0; z-index:1; opacity:.04; pointer-events:none;
+          background: repeating-linear-gradient(
+            -65deg,
+            #0057FF 0px, #0057FF 1px,
+            transparent 1px, transparent 80px
+          );
+        }
 
-        .ls-left { display:flex; flex-direction:column; justify-content:center; padding:8vh 4vw 8vh 7vw; gap:2.2vh; }
+        /* Puntos grid finos */
+        .az-dots {
+          position:absolute; inset:0; z-index:1; opacity:.07; pointer-events:none;
+          background-image: radial-gradient(circle, #0057FF 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
 
-        .ls-tag { display:inline-flex; align-items:center; gap:10px; width:fit-content; opacity:0; transform:translateX(-16px); transition:opacity .6s ease,transform .6s ease; }
-        .ls-tag.on { opacity:1; transform:translateX(0); }
-        .ls-tag-dash { width:28px; height:1.5px; background:#8b5e2f; }
-        .ls-tag-txt { font-size:clamp(10px,.85vw,14px); font-weight:500; letter-spacing:4px; text-transform:uppercase; color:#8b5e2f; }
+        /* Arco decorativo grande */
+        .az-arc {
+          position:absolute; left:-5vw; top:50%; transform:translateY(-50%);
+          width:55vw; height:90vh;
+          border-radius:50%;
+          z-index:1; pointer-events:none;
+          border: 1px solid rgba(0,87,255,.08);
+          transition: border-color 1s ease;
+        }
+        .az-arc2 {
+          position:absolute; left:-15vw; top:50%; transform:translateY(-50%);
+          width:70vw; height:110vh;
+          border-radius:50%;
+          z-index:1; pointer-events:none;
+          border: 1px solid rgba(0,87,255,.05);
+        }
 
-        .ls-titulo { font-family:'Libre Baskerville',serif; font-size:clamp(36px,5.2vw,86px); line-height:.92; letter-spacing:-1px; color:#1a0f05; }
-        .ls-titulo-dest { display:block; font-style:italic; color:#6b3d10; }
+        /* Chispa / sparkle decorativo */
+        .az-spark {
+          position:absolute; z-index:3; pointer-events:none;
+          font-size:clamp(18px,2vw,32px);
+          opacity:0; 
+          animation:azSparkPop 3s ease-in-out infinite;
+          transition: color 1s ease;
+        }
+        .az-spark-1 { top:18vh; right:28vw; animation-delay:0s; }
+        .az-spark-2 { top:72vh; right:18vw; animation-delay:1.2s; }
+        .az-spark-3 { top:45vh; right:8vw; animation-delay:2.1s; }
+        .az-spark-4 { top:25vh; left:12vw; animation-delay:.7s; }
+        @keyframes azSparkPop {
+          0%,100%{opacity:0; transform:scale(.5) rotate(0deg);}
+          40%,60%{opacity:.7; transform:scale(1.2) rotate(20deg);}
+        }
 
-        .ls-sub { display:flex; align-items:center; gap:14px; }
-        .ls-sub::before { content:''; display:block; width:36px; height:1px; background:rgba(100,60,20,.3); flex-shrink:0; }
-        .ls-sub-txt { font-size:clamp(11px,.95vw,16px); font-weight:400; letter-spacing:2px; text-transform:uppercase; color:rgba(60,35,10,.45); }
+        /* ── LOGO ── */
+        .az-logo {
+          position:absolute; top:3vh; right:3.5vw; z-index:10;
+          opacity:0; transform:translateY(-24px) scale(.8);
+          transition:opacity 1s ease .3s, transform 1s cubic-bezier(.34,1.56,.64,1) .3s;
+        }
+        .az-logo.on { opacity:1; transform:translateY(0) scale(1); }
+        .az-logo img { height:clamp(90px,10.5vh,140px); width:auto; }
 
-        .ls-desc { font-size:clamp(13px,1.15vw,19px); color:rgba(30,18,5,.55); line-height:1.75; font-weight:300; max-width:460px; }
+        /* ── BADGE AMBIENTE ── */
+        .az-badge-env {
+          position:absolute; top:5vh; left:5.5vw; z-index:10;
+          display:flex; align-items:center; gap:10px;
+          padding:9px 20px; border-radius:100px;
+          background:rgba(255,255,255,.9);
+          backdrop-filter:blur(12px);
+          border: 1.5px solid rgba(0,87,255,.15);
+          box-shadow: 0 4px 24px rgba(0,87,255,.1);
+          opacity:0; transform:translateX(-30px) scale(.9);
+          transition:opacity .8s ease .9s, transform .8s cubic-bezier(.34,1.3,.64,1) .9s;
+        }
+        .az-badge-env.on { opacity:1; transform:translateX(0) scale(1); }
+        .az-env-dot { width:8px; height:8px; border-radius:50%; transition:background .8s ease; }
+        .az-env-txt {
+          font-size:clamp(10px,.8vw,13px); letter-spacing:3.5px;
+          text-transform:uppercase; font-weight:600; color:#1a3a7a;
+        }
 
-        .ls-orn { display:flex; align-items:center; gap:12px; }
-        .ls-orn-line { flex:1; max-width:80px; height:1px; background:rgba(100,60,20,.25); }
-        .ls-orn-leaf { font-size:14px; opacity:.4; color:#5c3d1e; }
+        /* ── LAYOUT ── */
+        .az-layout {
+          position:absolute; inset:0; z-index:5;
+          display:grid;
+          grid-template-columns:52% 1fr;
+        }
 
-        .ls-price-area { display:flex; align-items:flex-end; gap:2vw; }
-        .ls-price-old { font-size:clamp(13px,1.1vw,19px); color:rgba(30,18,5,.3); text-decoration:line-through; font-weight:500; letter-spacing:1px; margin-bottom:2px; }
-        .ls-price-new { font-family:'Libre Baskerville',serif; font-size:clamp(46px,6.5vw,100px); font-weight:700; color:#2a1a0a; line-height:1; letter-spacing:-2px; }
-        .ls-price-cuotas { font-size:clamp(12px,.95vw,16px); color:rgba(30,18,5,.45); font-weight:400; margin-top:6px; letter-spacing:.5px; }
-        .ls-price-cuotas strong { color:#5c3d1e; font-weight:600; }
+        /* ── IZQUIERDA (imagen) ── */
+        .az-left {
+          position:relative; display:flex;
+          align-items:center; justify-content:center;
+          z-index:2; padding:4vh 2vw 4vh 3vw;
+        }
 
-        .ls-off { display:flex; flex-direction:column; align-items:center; justify-content:center; background:#2a1a0a; color:#f5e8c8; padding:12px 18px; margin-bottom:12px; min-width:80px; gap:2px; }
-        .ls-off-pct { font-family:'Libre Baskerville',serif; font-size:clamp(24px,2.8vw,42px); font-weight:700; line-height:1; color:#e8c870; }
-        .ls-off-label { font-size:clamp(9px,.7vw,12px); letter-spacing:4px; font-weight:500; text-transform:uppercase; color:rgba(245,232,200,.5); }
+        /* Glow imagen */
+        .az-img-glow {
+          position:absolute; width:70%; height:55%;
+          border-radius:50%;
+          filter:blur(70px); opacity:.25;
+          transition:background 1.2s ease;
+          animation:azGlowPulse 6s ease-in-out infinite;
+        }
+        @keyframes azGlowPulse {
+          0%,100%{transform:scale(1); opacity:.25;}
+          50%{transform:scale(1.15); opacity:.35;}
+        }
 
-        .ls-chips { display:flex; gap:10px; flex-wrap:wrap; }
-        .ls-chip { font-size:clamp(10px,.8vw,13px); font-weight:500; letter-spacing:1.5px; text-transform:uppercase; padding:7px 16px; border:1px solid rgba(100,60,20,.25); color:rgba(30,18,5,.5); background:rgba(255,255,255,.4); }
+        /* Sombra suelo */
+        .az-floor {
+          position:absolute; bottom:8%; left:50%; transform:translateX(-50%);
+          width:70%; height:3.5%;
+          border-radius:50%; pointer-events:none; z-index:2;
+          transition: background 1s ease;
+        }
 
-        .ls-right { position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-        .ls-circle-bg { position:absolute; width:75%; height:75%; border-radius:50%; background:radial-gradient(ellipse,rgba(220,180,110,.18) 0%,transparent 70%); pointer-events:none; }
-        .ls-corner { position:absolute; z-index:2; pointer-events:none; width:36px; height:36px; border-color:rgba(100,60,20,.3); border-style:solid; }
-        .ls-corner.tl { top:6vh; left:2vw; border-width:2px 0 0 2px; }
-        .ls-corner.tr { top:6vh; right:4vw; border-width:2px 2px 0 0; }
-        .ls-corner.bl { bottom:6vh; left:2vw; border-width:0 0 2px 2px; }
-        .ls-corner.br { bottom:6vh; right:4vw; border-width:0 2px 2px 0; }
-        .ls-shadow { position:absolute; bottom:14%; left:50%; transform:translateX(-50%); width:55%; height:4%; background:radial-gradient(ellipse,rgba(80,45,10,.2) 0%,transparent 70%); pointer-events:none; z-index:2; }
+        /* Anillo decorativo imagen */
+        .az-ring {
+          position:absolute; border-radius:50%; pointer-events:none; z-index:2;
+          border: 1.5px solid; opacity:.15;
+          transition: border-color 1s ease;
+          animation:azRingSpin 30s linear infinite;
+        }
+        .az-ring-1 { width:80%; height:80%; inset:10%; }
+        .az-ring-2 { width:96%; height:96%; inset:2%; animation-direction:reverse; animation-duration:20s; opacity:.07; }
+        @keyframes azRingSpin {
+          from{transform:rotate(0deg);} to{transform:rotate(360deg);}
+        }
 
-        .ls-img-wrap { position:relative; z-index:3; opacity:0; transform:translateY(24px) scale(.94); transition:opacity 1s ease .5s,transform 1s cubic-bezier(.34,1.4,.64,1) .5s; }
-        .ls-img-wrap.on { opacity:1; transform:translateY(0) scale(1); }
-        .ls-img-wrap.out { opacity:0!important; transform:translateY(20px) scale(.92)!important; transition:opacity .3s ease,transform .3s ease!important; }
-        .ls-img-wrap.in { opacity:0; transform:translateY(-20px) scale(.92)!important; transition:opacity .5s ease .1s,transform .7s cubic-bezier(.34,1.4,.64,1) .1s!important; }
-        .ls-img { max-height:62vh; max-width:36vw; object-fit:contain; filter:drop-shadow(0 24px 48px rgba(60,30,5,.25)); animation:lsFloat 7s ease-in-out infinite; }
-        @keyframes lsFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+        /* Imagen wrap */
+        .az-img-wrap {
+          position:relative; z-index:3;
+          width:100%; height:90%;
+          display:flex; align-items:center; justify-content:center;
+          opacity:0; transform:translateX(-60px) translateY(20px) scale(.7);
+          transition:opacity 1.2s ease .5s, transform 1.2s cubic-bezier(.34,1.56,.64,1) .5s;
+        }
+        .az-img-wrap.on { opacity:1; transform:translateX(0) translateY(0) scale(1); }
+        .az-img-wrap.out { opacity:0!important; transform:translateX(-70px) translateY(-15px) scale(.8) rotate(-5deg)!important; transition:opacity .38s ease, transform .38s cubic-bezier(.6,-.28,.74,.05)!important; }
+        .az-img-wrap.in { opacity:0; transform:translateX(70px) translateY(20px) scale(.75) rotate(5deg)!important; transition:opacity .6s ease .15s, transform .9s cubic-bezier(.34,1.56,.64,1) .15s!important; }
 
-        .ls-content { transition:opacity .3s ease,transform .3s ease; display:flex; flex-direction:column; gap:2.2vh; }
-        .ls-content.out { opacity:0; transform:translateX(-28px); }
-        .ls-content.in { opacity:0; transform:translateX(28px); transition:opacity .5s ease .12s,transform .6s cubic-bezier(.22,1,.36,1) .12s; }
-        .ls-content.idle { opacity:1; transform:translateX(0); }
+        .az-img {
+          width:100%; height:100%; max-height:none; max-width:none;
+          object-fit:contain;
+          animation:azFloat 8s ease-in-out infinite;
+        }
+        @keyframes azFloat { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-18px) rotate(.5deg);} }
 
-        .ls-static { opacity:0; transform:translateY(12px); transition:opacity .7s ease,transform .7s ease; }
-        .ls-static.on { opacity:1; transform:translateY(0); }
+        /* ── DERECHA (texto) ── */
+        .az-right {
+          display:flex; flex-direction:column; justify-content:center;
+          align-items:center;
+          padding:8vh 5vw 8vh 2vw; gap:2.2vh; z-index:2;
+          position:relative;
+        }
 
-        .ls-dots { position:absolute; bottom:5.5vh; left:50%; transform:translateX(-50%); z-index:10; display:flex; gap:12px; align-items:center; }
-        .ls-dot { width:8px; height:8px; border-radius:50%; border:1.5px solid rgba(100,60,20,.4); background:transparent; cursor:pointer; transition:background .3s,transform .3s,border-color .3s; }
-        .ls-dot.active { background:#5c3d1e; border-color:#5c3d1e; transform:scale(1.35); }
+        /* Tag oferta */
+        .az-tag {
+          display:inline-flex; align-items:center; gap:10px; align-self:center;
+          animation: azTagBounce 1.8s cubic-bezier(.34,.85,.64,1) .5s backwards, azTagPulse 2s ease-in-out 2.3s infinite;
+        }
+        @keyframes azTagBounce {
+          0% { opacity:0; transform:translateY(-120px) scale(.3); }
+          20% { opacity:1; transform:translateY(10px) scale(1.35); }
+          35% { transform:translateY(-25px) scale(1.1); }
+          50% { transform:translateY(5px) scale(1.28); }
+          65% { transform:translateY(-12px) scale(1.15); }
+          80% { transform:translateY(3px) scale(1.23); }
+          90% { transform:translateY(-5px) scale(1.18); }
+          100% { opacity:1; transform:translateY(0) scale(1.2); }
+        }
+        @keyframes azTagPulse {
+          0%, 100% { transform:translateY(0) scale(1.2); }
+          50% { transform:translateY(0) scale(1.28); }
+        }
+        .az-tag-inner {
+          display:flex; align-items:center; gap:12px;
+          padding:14px 28px; border-radius:100px;
+          position:relative; overflow:hidden;
+          box-shadow: 0 0 40px rgba(0,87,255,.4), 0 0 80px rgba(0,170,255,.3), 0 8px 32px rgba(0,87,255,.25);
+          transition: background 1s ease;
+        }
+        .az-tag-inner::before {
+          content:''; position:absolute; inset:0;
+          background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25) 0%, transparent 60%);
+          pointer-events:none;
+        }
+        .az-tag-dot { width:10px; height:10px; border-radius:50%; background:#fff; animation:azDotBlink 1.5s ease-in-out infinite; }
+        @keyframes azDotBlink { 0%,100%{opacity:1; transform:scale(1);} 50%{opacity:.4; transform:scale(.8);} }
+        .az-tag-txt {
+          font-family:'Rubik',sans-serif;
+          font-size:clamp(18px,1.6vw,26px); letter-spacing:4px;
+          text-transform:uppercase; font-weight:900;
+          color:#fff;
+          text-shadow: 0 2px 8px rgba(0,0,0,.3), 0 0 20px rgba(255,255,255,.2);
+        }
 
-        .ls-progress { position:absolute; bottom:0; left:0; right:0; z-index:6; height:3px; background:rgba(100,60,20,.1); }
-        .ls-progress-bar { height:100%; background:linear-gradient(to right,#5c3d1e,#c8943a); transition:none; }
+        /* Contenido dinámico */
+        .az-content {
+          display:flex; flex-direction:column; gap:2vh;
+          transition:opacity .35s ease, transform .35s ease;
+        }
+        .az-content.out { opacity:0; transform:translateX(28px); }
+        .az-content.in { opacity:0; transform:translateX(-28px); transition:opacity .5s ease .1s, transform .65s cubic-bezier(.22,1,.36,1) .1s; }
+        .az-content.idle { opacity:1; transform:translateX(0); }
+
+        /* Título */
+        .az-titulo {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(38px,5.2vw,86px);
+          line-height:.92; letter-spacing:-1px;
+          color:#08165a;
+          text-align:center;
+          opacity:0; transform:translateX(80px) scale(.85) rotate(3deg);
+          transition:opacity .8s ease .05s, transform .9s cubic-bezier(.34,1.8,.64,1) .05s;
+        }
+        .az-content.idle .az-titulo { opacity:1; transform:translateX(0) scale(1) rotate(0); }
+        .az-titulo-dest {
+          display:block;
+          transition:color 1.2s ease;
+          animation:azTituloSlide 1s cubic-bezier(.34,1.9,.64,1) .15s backwards;
+        }
+        .az-titulo-normal { color:#08165a; }
+        @keyframes azTituloSlide {
+          0%{opacity:0; transform:translateX(80px) skewX(-15deg);}
+          100%{opacity:1; transform:translateX(0) skewX(0);}
+        }
+
+        /* Subtitulo */
+        .az-subtitulo {
+          display:inline-flex; align-items:center; gap:12px;
+          align-self:center;
+          background:rgba(0,87,255,.06); border-radius:12px;
+          padding:10px 16px;
+          border: 1px solid rgba(0,87,255,.1);
+          opacity:0; transform:translateX(60px);
+          transition:opacity .7s ease .2s, transform .8s cubic-bezier(.34,1.6,.64,1) .2s;
+        }
+        .az-content.idle .az-subtitulo { opacity:1; transform:translateX(0); }
+        .az-sub-bar { width:3px; height:22px; border-radius:2px; flex-shrink:0; transition:background 1s ease; }
+        .az-sub-txt { font-size:clamp(13px,1vw,16px); letter-spacing:1.5px; text-transform:uppercase; font-weight:500; color:#3a5aaa; }
+
+        /* Descripción */
+        .az-desc-wrap {
+          position:relative;
+          opacity:0; transform:translateX(-60px) skewX(5deg);
+          transition:opacity .75s ease .3s, transform .85s cubic-bezier(.34,1.7,.64,1) .3s;
+        }
+        .az-content.idle .az-desc-wrap { opacity:1; transform:translateX(0) skewX(0); }
+        .az-desc-accent {
+          position:absolute; left:-14px; top:0; bottom:0; width:4px; border-radius:4px;
+          transition:background 1s ease;
+        }
+        .az-desc {
+          font-size:clamp(14px,1.2vw,19px); line-height:1.75;
+          color:#4a5e8a; font-weight:300;
+          padding-left:4px;
+          text-align:center;
+        }
+
+        /* Precio */
+        .az-price-wrap {
+          display:flex; flex-direction:column; align-items:center; gap:20px;
+          opacity:0; transform:translateY(60px) scale(.85);
+          transition:opacity .8s ease .4s, transform .9s cubic-bezier(.34,1.9,.64,1) .4s;
+        }
+        .az-content.idle .az-price-wrap { opacity:1; transform:translateY(0) scale(1); }
+
+        .az-price-main {
+          display:flex; flex-direction:column; gap:4px;
+          align-items:center;
+        }
+        .az-price-old-wrap {
+          display:flex; align-items:center; gap:8px;
+          justify-content:center;
+        }
+        .az-price-old-label {
+          font-size:clamp(11px,.9vw,14px); color:#8aabdd;
+          text-transform:uppercase; letter-spacing:2px; font-weight:600;
+        }
+        .az-price-old {
+          font-size:clamp(14px,1.1vw,18px); color:#a0b0cc;
+          text-decoration:line-through; font-weight:400;
+        }
+        .az-price-new {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(42px,5.5vw,78px);
+          line-height:1; letter-spacing:-1px;
+          color:#08165a;
+        }
+        .az-cuotas {
+          font-size:clamp(13px,1vw,16px); color:#6a80aa; font-weight:400;
+        }
+        .az-cuotas strong { font-weight:700; transition:color 1s ease; }
+
+        /* OFF badge */
+        .az-off {
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
+          padding:14px 18px; border-radius:20px;
+          position:relative; overflow:hidden;
+          transition:background 1.2s ease, box-shadow 1.2s ease;
+          flex-shrink:0;
+          box-shadow: 0 0 40px rgba(0,87,255,.4), 0 0 80px rgba(0,170,255,.3), 0 8px 32px rgba(0,87,255,.25);
+        }
+        .az-off::before {
+          content:''; position:absolute; inset:0;
+          background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25) 0%, transparent 60%);
+          pointer-events:none;
+        }
+        /* Contenedor badges flotantes */
+        .az-badges-wrapper {
+          position:absolute; right:8%; top:6%;
+          display:flex; flex-direction:column; gap:8px;
+          z-index:5;
+        }
+        /* Badge flotante DESCUENTO IMPERDIBLE */
+        .az-badge-promo {
+          display:flex; flex-direction:row; align-items:center; justify-content:center;
+          gap:6px;
+          padding:10px 20px; border-radius:0;
+          background:#fff;
+          box-shadow: 0 8px 32px rgba(0,87,255,.2), 0 0 60px rgba(0,170,255,.15);
+          opacity:0; transform:translateX(40px) rotate(8deg) scale(.8);
+          transition:opacity .9s ease 1.2s, transform .9s cubic-bezier(.34,1.56,.64,1) 1.2s;
+          position:relative;
+          z-index:2;
+        }
+        .az-badge-promo.on { opacity:1; transform:translateX(0) rotate(0deg) scale(1); }
+        .az-badge-promo-txt1 {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(12px,1.1vw,17px); line-height:1; font-weight:700;
+          color:#08165a;
+          text-transform:uppercase; letter-spacing:1.5px;
+        }
+        .az-badge-promo-txt2 {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(12px,1.1vw,17px); line-height:1; font-weight:700;
+          color:#00AAFF;
+          text-transform:uppercase; letter-spacing:1.5px;
+        }
+        /* OFF badge flotante en imagen */
+        .az-off-floating {
+          display:flex; flex-direction:row; align-items:center; justify-content:center;
+          gap:8px;
+          padding:12px 22px; border-radius:100px;
+          overflow:hidden;
+          transition:background 1.2s ease, box-shadow 1.2s ease, opacity .9s ease 1.4s, transform .9s cubic-bezier(.34,1.56,.64,1) 1.4s;
+          opacity:0; transform:translateX(40px) rotate(8deg) scale(.8);
+          box-shadow: 0 0 50px rgba(0,87,255,.5), 0 0 100px rgba(0,170,255,.4), 0 12px 40px rgba(0,87,255,.3);
+          animation: azOffZoom 2s ease-in-out 2.3s infinite;
+        }
+        .az-off-floating.on { opacity:1; transform:translateX(0) rotate(0deg) scale(1); }
+        @keyframes azOffZoom {
+          0%, 100% { transform:translateX(0) rotate(0deg) scale(1); }
+          50% { transform:translateX(0) rotate(0deg) scale(1.1); }
+        }
+        .az-off-floating::before {
+          content:''; position:absolute; inset:0;
+          background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.3) 0%, transparent 60%);
+          pointer-events:none;
+        }
+        .az-off-pct {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(24px,2.8vw,44px); line-height:1; color:#fff; font-weight:700;
+        }
+        .az-off-lbl {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(24px,2.8vw,44px); line-height:1; font-weight:700;
+          text-transform:uppercase; color:#fff;
+        }
+
+        /* Divisor con chispa */
+        .az-divider {
+          display:flex; align-items:center; gap:12px;
+          opacity:0; transform:scaleX(0);
+          transform-origin:center;
+          transition:opacity .6s ease .5s, transform .7s cubic-bezier(.34,1.4,.64,1) .5s;
+        }
+        .az-content.idle .az-divider { opacity:1; transform:scaleX(1); }
+        .az-div-line { flex:1; height:1px; transition:background 1s ease; }
+        .az-div-gem { font-size:14px; }
+
+        /* Chips features */
+        .az-chips {
+          display:flex; gap:8px; flex-wrap:wrap;
+          justify-content:center;
+          opacity:0; transform:translateY(30px);
+          transition:opacity 1s ease 1.6s, transform 1s cubic-bezier(.34,1.8,.64,1) 1.6s;
+        }
+        .az-chips.on { opacity:1; transform:translateY(0); }
+        .az-chip {
+          font-size:clamp(10px,.78vw,13px); font-weight:600; letter-spacing:1px;
+          text-transform:uppercase; padding:8px 16px; border-radius:100px;
+          background:rgba(255,255,255,.85);
+          border: 1.5px solid rgba(0,87,255,.15);
+          color:#0057FF;
+          box-shadow: 0 2px 12px rgba(0,87,255,.08);
+          transition: border-color 1s ease, color 1s ease;
+          backdrop-filter:blur(4px);
+        }
+
+        /* WhatsApp */
+        .az-wa {
+          display:inline-flex; align-items:center; gap:14px;
+          padding:16px 30px; border-radius:100px;
+          background:#25D366;
+          color:#fff;
+          font-size:clamp(16px,1.4vw,22px);
+          font-weight:700; letter-spacing:.5px;
+          box-shadow: 0 8px 28px rgba(37,211,102,.4);
+          align-self:center;
+          opacity:0; transform:translateY(30px);
+          transition:opacity 1s ease 1.9s, transform 1s cubic-bezier(.34,1.8,.64,1) 1.9s;
+        }
+        .az-wa.on { opacity:1; transform:translateY(0); }
+        .az-wa-icon { width:clamp(24px,1.8vw,32px); height:clamp(24px,1.8vw,32px); fill:#fff; }
+
+        /* ── BARRA PROGRESO ── */
+        .az-progress-wrap {
+          position:absolute; bottom:0; left:0; right:0; z-index:10;
+          height:5px; background:rgba(0,87,255,.08);
+        }
+        .az-progress {
+          height:100%; transition:width .1s linear, background 1s ease;
+          border-radius:0 4px 4px 0;
+        }
+
+        /* ── DOTS NAVEGACION ── */
+        .az-nav-dots {
+          position:absolute; bottom:4.5vh; left:52%; transform:translateX(-50%); z-index:10;
+          display:flex; gap:10px; align-items:center;
+        }
+        .az-nav-dot {
+          cursor:pointer; border-radius:100px;
+          background:rgba(0,87,255,.2); border:none; outline:none;
+          transition:background .3s, width .4s cubic-bezier(.34,1.8,.64,1), transform .3s;
+          height:9px; width:9px;
+        }
+        .az-nav-dot.active {
+          width:32px; background:#0057FF;
+        }
+
+        /* ── FRANJA INFERIOR ── */
+        .az-bottom {
+          position:absolute; bottom:28px; right:3vw; z-index:6;
+          display:flex; gap:8px; pointer-events:none;
+        }
+        .az-bottom-pill {
+          display:flex; align-items:center; gap:8px;
+          padding:9px 18px; border-radius:100px;
+          background:rgba(255,255,255,.85);
+          backdrop-filter:blur(8px);
+          border: 1px solid rgba(0,87,255,.1);
+          box-shadow: 0 4px 16px rgba(0,87,255,.06);
+        }
+        .az-bottom-icon { font-size:15px; }
+        .az-bottom-txt { font-size:clamp(10px,.78vw,13px); font-weight:600; color:#2a4a8a; letter-spacing:.5px; }
+        /* OFF badge en franja inferior */
+        .az-bottom-off {
+          display:flex; flex-direction:row; align-items:center; justify-content:center;
+          gap:8px;
+          padding:10px 20px; border-radius:100px;
+          overflow:hidden;
+          position:relative;
+          box-shadow: 0 0 40px rgba(0,87,255,.4), 0 0 80px rgba(0,170,255,.3), 0 8px 32px rgba(0,87,255,.25);
+        }
+        .az-bottom-off::before {
+          content:''; position:absolute; inset:0;
+          background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.3) 0%, transparent 60%);
+          pointer-events:none;
+        }
+        .az-bottom-off-pct {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(20px,2.2vw,36px); line-height:1; color:#fff; font-weight:700;
+        }
+        .az-bottom-off-lbl {
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(20px,2.2vw,36px); line-height:1; font-weight:700;
+          text-transform:uppercase; color:#fff;
+        }
+
+        /* Línea vertical separadora */
+        .az-vline {
+          position:absolute; top:12vh; bottom:12vh; left:52%;
+          width:1px; z-index:2; pointer-events:none;
+          background:linear-gradient(to bottom, transparent, rgba(0,87,255,.1) 20%, rgba(0,87,255,.1) 80%, transparent);
+        }
+
+        /* Número grande fondo */
+        .az-big-num {
+          position:absolute; right:-2vw; bottom:-4vh;
+          font-family:'Space Grotesk',sans-serif;
+          font-size:clamp(120px,16vw,240px);
+          font-weight:700; letter-spacing:-4px;
+          pointer-events:none; z-index:2;
+          transition: color 1.2s ease;
+          line-height:1;
+          user-select:none;
+        }
+
+        /* Texto decorativo rotado */
+        .az-rotated-txt {
+          position:absolute; left:-1vw; bottom:22vh;
+          z-index:3; pointer-events:none;
+          writing-mode:vertical-rl; text-orientation:mixed;
+          font-size:clamp(9px,.7vw,11px); letter-spacing:4px; text-transform:uppercase;
+          font-weight:600; color:rgba(0,87,255,.25);
+          transform:rotate(180deg);
+        }
       `}</style>
 
-      <div className="ls">
-        <div className="ls-bg" />
-        <div className="ls-wood" />
-        <div className="ls-panel" />
-        <div className="ls-band" />
-        <div className="ls-band-2" />
-        <div className="ls-num">0{indice + 1}</div>
+      <div className="az">
+        {/* FONDO */}
+        <div className="az-bg" />
+        <div className="az-grain" />
+        <div className="az-diag-lines" />
+        <div className="az-dots" />
 
-        <div className={`ls-curtain ${curtain ? 'active' : ''}`}>
-          <div className="ls-curtain-fill" />
+        {/* Blobs */}
+        <div
+          className="az-blob-right"
+          style={{ background: `linear-gradient(160deg, ${colorLight} 0%, rgba(${rgbE},.08) 60%, transparent 100%)` }}
+        />
+        <div
+          className="az-blob-left"
+          style={{ background: `radial-gradient(ellipse, rgba(${rgb},.07) 0%, transparent 70%)` }}
+        />
+        <div
+          className="az-orb-top"
+          style={{ background: `radial-gradient(circle, rgba(${rgbE},1) 0%, rgba(${rgb},.3) 60%, transparent 100%)` }}
+        />
+
+        {/* Arcos */}
+        <div className="az-arc" style={{ borderColor: `rgba(${rgb},.08)` }} />
+        <div className="az-arc2" />
+
+        {/* Línea vertical */}
+        <div className="az-vline" />
+
+        {/* Número grande decorativo */}
+        <div
+          className="az-big-num"
+          style={{ color: `rgba(${rgb},.04)` }}
+        >
+          {String(indice + 1).padStart(2, '0')}
         </div>
 
-        <div className={`ls-logo ${mounted ? 'on' : ''}`}>
+        {/* Chispas */}
+        <div className="az-spark az-spark-1" style={{ color: electric }}>✦</div>
+        <div className="az-spark az-spark-2" style={{ color: color }}>◆</div>
+        <div className="az-spark az-spark-3" style={{ color: electric }}>✦</div>
+        <div className="az-spark az-spark-4" style={{ color: color }}>◆</div>
+
+        {/* Texto rotado */}
+        <div className="az-rotated-txt">Casa Viva · Muebles · Ofertas Especiales</div>
+
+        {/* LOGO */}
+        <div className={`az-logo ${mounted ? 'on' : ''}`}>
           <img src={logo} alt="Logo" />
         </div>
 
-        <div className="ls-layout">
-          <div className="ls-left">
-            <div
-              className={`ls-tag ls-static ${mounted ? 'on' : ''}`}
-              style={{ transitionDelay: '.3s' }}
-            >
-              <div className="ls-tag-dash" />
-              <span className="ls-tag-txt">Oferta Especial</span>
-            </div>
+        {/* BADGE AMBIENTE */}
+        <div className={`az-badge-env ${mounted ? 'on' : ''}`}>
+          <div className="az-env-dot" style={{ background: electric }} />
+          <span className="az-env-txt">{producto.ambiente}</span>
+        </div>
+
+        {/* LAYOUT */}
+        <div className="az-layout">
+
+          {/* IZQUIERDA: imagen */}
+          <div className="az-left">
+            <div className="az-ring az-ring-1" style={{ borderColor: color }} />
+            <div className="az-ring az-ring-2" style={{ borderColor: electric }} />
 
             <div
-              className={`ls-content ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in' : 'idle'}`}
-            >
-              <div className="ls-titulo">
-                {producto.nombre}
-                <span className="ls-titulo-dest">{producto.nombreDestacado}</span>
-              </div>
-              <div className="ls-sub">
-                <span className="ls-sub-txt">{producto.subtitulo}</span>
-              </div>
-              <p className="ls-desc">{producto.descripcion}</p>
-              <div className="ls-orn">
-                <div className="ls-orn-line" />
-                <span className="ls-orn-leaf">✦</span>
-                <div className="ls-orn-line" style={{ maxWidth: '40px' }} />
-              </div>
-              <div className="ls-price-area">
-                <div>
-                  <div className="ls-price-old">{producto.precioViejo}</div>
-                  <div className="ls-price-new">{producto.precioNuevo}</div>
-                  <div className="ls-price-cuotas">
-                    Hasta <strong>{producto.cuotas}</strong>
-                  </div>
-                </div>
-                <div className="ls-off">
-                  <span className="ls-off-pct">{producto.descuento.replace(' OFF', '')}</span>
-                  <span className="ls-off-label">OFF</span>
-                </div>
-              </div>
-            </div>
+              className="az-img-glow"
+              style={{ background: `radial-gradient(ellipse, rgba(${rgbE},.8) 0%, rgba(${rgb},.4) 50%, transparent 70%)` }}
+            />
+            <div
+              className="az-floor"
+              style={{ background: `radial-gradient(ellipse, rgba(${rgb},.18) 0%, transparent 70%)` }}
+            />
 
             <div
-              className={`ls-chips ls-static ${mounted ? 'on' : ''}`}
-              style={{ transitionDelay: '1.4s' }}
+              className={`az-img-wrap ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in on' : mounted ? 'on' : ''}`}
             >
-              <span className="ls-chip">✓ Envío gratis</span>
-              <span className="ls-chip">⏳ Oferta limitada</span>
-              <span className="ls-chip">★ {producto.tag}</span>
+              <img
+                className="az-img"
+                src={producto.imagen}
+                alt={producto.nombreDestacado}
+                style={{
+                  filter: `drop-shadow(0 28px 56px rgba(${rgb},.25)) drop-shadow(0 0 60px rgba(${rgbE},.15))`,
+                }}
+              />
+            </div>
+
+            {/* Badges flotantes */}
+            <div className="az-badges-wrapper">
+              {/* Badge DESCUENTO IMPERDIBLE */}
+              <div
+                className={`az-badge-promo ${mounted ? 'on' : ''}`}
+              >
+                <span className="az-badge-promo-txt1">DESCUENTO</span>
+                <span className="az-badge-promo-txt2">IMPERDIBLE</span>
+              </div>
+
+              {/* Badge descuento flotante */}
+              <div
+                className={`az-off-floating ${mounted ? 'on' : ''}`}
+                style={{ background: `linear-gradient(135deg, ${color} 0%, ${electric} 100%)` }}
+              >
+                <span className="az-off-pct">{producto.descuento}%</span>
+                <span className="az-off-lbl">OFF</span>
+              </div>
             </div>
           </div>
 
-          <div className="ls-right">
-            {['tl', 'tr', 'bl', 'br'].map((pos) => (
-              <div key={pos} className={`ls-corner ${pos}`} />
-            ))}
-            <div className="ls-circle-bg" />
-            <div className="ls-shadow" />
-            <div
-              className={`ls-img-wrap ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in on' : mounted ? 'on' : ''}`}
-            >
-              <img className="ls-img" src={producto.imagen} alt={producto.nombreDestacado} />
+          {/* DERECHA: texto */}
+          <div className="az-right">
+            {/* Tag oferta */}
+            <div className="az-tag">
+              <div
+                className="az-tag-inner"
+                style={{ background: `linear-gradient(135deg, ${color} 0%, ${electric} 100%)` }}
+              >
+                <div className="az-tag-dot" />
+                <span className="az-tag-txt">SUPER SALE !</span>
+              </div>
+            </div>
+
+            {/* Contenido dinámico */}
+            <div className={`az-content ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in' : 'idle'}`}>
+
+              {/* Título */}
+              <div className="az-titulo">
+                <span className="az-titulo-normal">{producto.nombre}</span>
+                <span className="az-titulo-dest" style={{ color }}>
+                  {producto.nombreDestacado}
+                </span>
+              </div>
+
+              {/* Subtítulo */}
+              <div className="az-subtitulo" style={{ background: `rgba(${rgb},.05)`, borderColor: `rgba(${rgb},.12)` }}>
+                <div className="az-sub-bar" style={{ background: electric }} />
+                <span className="az-sub-txt">{producto.subtitulo}</span>
+              </div>
+
+              {/* Descripción */}
+              <div className="az-desc-wrap">
+                <div className="az-desc-accent" style={{ background: `linear-gradient(to bottom, ${electric}, ${color})` }} />
+                <p className="az-desc">{producto.descripcion}</p>
+              </div>
+
+              {/* Divisor */}
+              <div className="az-divider">
+                <div className="az-div-line" style={{ background: `linear-gradient(to right, rgba(${rgb},.25), transparent)` }} />
+                <span className="az-div-gem" style={{ color: electric }}>◆</span>
+                <div className="az-div-line" style={{ background: `linear-gradient(to left, rgba(${rgb},.15), transparent)` }} />
+              </div>
+
+              {/* Precio */}
+              <div className="az-price-wrap">
+                <div className="az-price-main">
+                  <div className="az-price-old-wrap">
+                    <span className="az-price-old-label">Precio anterior</span>
+                    <div className="az-price-old">{producto.precioViejo}</div>
+                  </div>
+                  <div className="az-price-new" style={{ color: '#08165a' }}>{producto.precioNuevo}</div>
+                  <div className="az-cuotas">
+                    Hasta <strong style={{ color }}>{producto.cuotas} cuotas sin interés</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Chips */}
+            <div className={`az-chips ${mounted ? 'on' : ''}`}>
+              <span className="az-chip" style={{ borderColor: `rgba(${rgb},.2)`, color }}>✓ Envío gratis</span>
+              <span className="az-chip" style={{ borderColor: `rgba(${rgb},.2)`, color }}>★ Alta calidad</span>
+              <span className="az-chip" style={{ borderColor: `rgba(${rgb},.2)`, color }}>⏳ Stock limitado</span>
+            </div>
+
+            {/* WhatsApp */}
+            <div className={`az-wa ${mounted ? 'on' : ''}`}>
+              <svg className="az-wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
+              <span>381 2108473</span>
             </div>
           </div>
         </div>
 
-        <div className="ls-dots">
-          {PRODUCTOS.map((_, i) => (
-            <div
+        {/* FRANJA INFERIOR */}
+        <div className="az-bottom">
+          <div className="az-bottom-pill" style={{ borderColor: `rgba(${rgb},.12)` }}>
+            <span className="az-bottom-icon">🚚</span>
+            <span className="az-bottom-txt">Envío gratis</span>
+          </div>
+          <div className="az-bottom-pill" style={{ borderColor: `rgba(${rgb},.12)` }}>
+            <span className="az-bottom-icon">🛡️</span>
+            <span className="az-bottom-txt">Garantía 1 año</span>
+          </div>
+          <div className="az-bottom-pill" style={{ borderColor: `rgba(${rgb},.12)` }}>
+            <span className="az-bottom-icon">💳</span>
+            <span className="az-bottom-txt">Sin interés</span>
+          </div>
+        </div>
+
+        {/* BARRA PROGRESO */}
+        <div className="az-progress-wrap">
+          <div
+            className="az-progress"
+            style={{ width: `${progreso}%`, background: `linear-gradient(to right, ${color}, ${electric})` }}
+          />
+        </div>
+
+        {/* DOTS */}
+        <div className="az-nav-dots">
+          {PRODUCTOS_LIST.map((_, i) => (
+            <button
               key={i}
-              className={`ls-dot ${i === indice ? 'active' : ''}`}
+              className={`az-nav-dot ${i === indice ? 'active' : ''}`}
+              style={i === indice ? { background: color } : { background: `rgba(${rgb},.2)` }}
               onClick={() => ir(i)}
             />
           ))}
-        </div>
-        <div className="ls-progress">
-          <div className="ls-progress-bar" style={{ width: `${progreso}%` }} />
         </div>
       </div>
     </>
