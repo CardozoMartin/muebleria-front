@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import MegaSale from '../components/Plantillas/MegaSale';
-import LuxeShow from '../components/Plantillas/LuxeShow';
-import CasaViva from '../components/Plantillas/Casaviva';
+import ModeloMegaSale from '../components/ModelosPlantillas/ModeloMegaSale';
+import ModeloLuxeShow from '../components/ModelosPlantillas/ModeloLuxeShow';
+import ModeloCasaViva from '../components/ModelosPlantillas/ModeloCasaViva';
+
 
 
 const PLANTILLAS = [
@@ -9,21 +10,21 @@ const PLANTILLAS = [
     id: 'megasale',
     nombre: 'Mega Sale',
     descripcion: 'Energético · Naranja · Impacto',
-    component: MegaSale,
+    component: ModeloMegaSale,
     dot: 'bg-orange-500',
   },
   {
     id: 'luxeshow',
     nombre: 'Luxe Show',
     descripcion: 'Clásico · Madera clara · Sereno',
-    component: LuxeShow,
+    component: ModeloLuxeShow,
     dot: 'bg-amber-700',
   },
   {
     id: 'casaviva',
     nombre: 'Casa Viva',
     descripcion: 'Cinematográfico · Oscuro · Cálido',
-    component: CasaViva,
+    component: ModeloCasaViva,
     dot: 'bg-orange-300',
   },
 ];
@@ -33,7 +34,7 @@ export const Plantillas = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [plantillaActiva, setPlantillaActiva] = useState('megasale');
 
-  const Activa = PLANTILLAS.find((p) => p.id === plantillaActiva)?.component ?? MegaSale;
+  const Activa = PLANTILLAS.find((p) => p.id === plantillaActiva)?.component ?? ModeloMegaSale;
 
   const handleFullscreen = async () => {
     if (!previewRef.current) return;

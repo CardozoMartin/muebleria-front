@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import fondo from "./../../assets/fondo1.jpeg";
 import logo from "./../../assets/logo.png";
 
+// Computed once at module load — stable across all renders
+const PARTICLE_STYLES = [...Array(14)].map(() => ({
+  width:             `${8  + Math.random() * 18}px`,
+  height:            `${8  + Math.random() * 18}px`,
+  left:              `${2  + Math.random() * 24}%`,
+  bottom:            `-${10 + Math.random() * 15}%`,
+  animationDuration: `${7  + Math.random() * 8}s`,
+  animationDelay:    `${Math.random() * 6}s`,
+}));
+
 /**
  * MegaSale — plantilla publicitaria
  * Recibe un único producto por props. El loop lo maneja SlideShowPlayer.
@@ -71,6 +81,20 @@ export default function MegaSale({
         }
         @keyframes flashAnim { from { opacity:.7; } to { opacity:0; } }
 
+        /* ── PARTÍCULAS ── */
+        .particles { position:absolute; inset:0; z-index:1; pointer-events:none; }
+        .particle {
+          position: absolute; border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,150,0,0.5), transparent);
+          animation: floatUp linear infinite; opacity: 0;
+        }
+        @keyframes floatUp {
+          0%   { transform:translateY(0) scale(1); opacity:0; }
+          10%  { opacity:.5; }
+          90%  { opacity:.12; }
+          100% { transform:translateY(-110vh) scale(.3); opacity:0; }
+        }
+
         /* ── LAYOUT ── */
         .mw-layout {
           position: absolute; inset: 0; z-index: 2;
@@ -80,8 +104,8 @@ export default function MegaSale({
         }
         .mw-right {
           display: flex; flex-direction: column;
-          justify-content: flex-start;
-          padding: 16vh 6vw 3vh 4vw;
+          justify-content: center;
+          padding: 5vh 6vw 3vh 4vw;
           gap: 1.8vh;
         }
 
@@ -192,7 +216,7 @@ export default function MegaSale({
         /* ── NOMBRE ── */
         .mw-nombre {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(36px,5vw,86px);
+          font-size: clamp(50px,7vw,120px);
           color: #1a1a1a;
           line-height: 0.92; letter-spacing: 1px;
           opacity: 0; transform: translateX(-120vw) rotate(-8deg) skewX(-12deg);
@@ -271,7 +295,7 @@ export default function MegaSale({
         }
         .mw-price-new {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(48px,6.5vw,105px);
+          font-size: clamp(66px,9vw,140px);
           line-height: 1;
           background: linear-gradient(135deg, #e63500 0%, #ff6600 40%, #ffaa00 100%);
           -webkit-background-clip: text;
@@ -349,6 +373,13 @@ export default function MegaSale({
         {/* FONDO */}
         <img className={`mw-bg ${mounted ? "on" : ""}`} src={fondo} alt="" aria-hidden="true" />
 
+        {/* PARTÍCULAS */}
+        <div className="particles">
+          {PARTICLE_STYLES.map((style, i) => (
+            <div key={i} className="particle" style={style} />
+          ))}
+        </div>
+
         {/* LOGO */}
         <div className={`mw-logo ${mounted ? "on" : ""}`}>
           <div className="mw-logo-circle">
@@ -383,7 +414,7 @@ export default function MegaSale({
                 <span className="mw-deco-txt">{categoria}</span>
               </div>
 
-              <div className="mw-nombre" style={{ marginTop: "1.5vh" }}>
+              <div className="mw-nombre" style={{ marginTop: "1vh" }}>
                 <span className="mw-nombre-dest">{titulo}</span>
               </div>
 

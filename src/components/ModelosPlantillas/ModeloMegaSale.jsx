@@ -1,40 +1,95 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import fondo from "./../../assets/fondo1.jpeg";
 import logo from "./../../assets/logo.png";
+import comedor from "./../../assets/comedor.png";
+import juego4 from "./../../assets/comedor4.png";
+import redondo from "./../../assets/redonda.png";
+
+// ── DATOS DE PRODUCTOS (misma estructura que ModeloLuxeShow) ──────────────
+const DEFAULT_PRODUCTOS = [
+  {
+    id: 1,
+    nombre: 'Juego de',
+    nombreDestacado: 'Comedor',
+    subtitulo: 'Mesa + 6 Sillas · Madera Sólida',
+    descripcion:
+      'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
+    precioViejo: '$ 299.999',
+    precioNuevo: '$ 199.999',
+    descuento: '33',
+    cuotas: '12',
+    imagen: comedor,
+    ambiente: 'Comedor · Familiar',
+  },
+  {
+    id: 2,
+    nombre: 'Juego de',
+    nombreDestacado: 'Comedor',
+    subtitulo: 'Mesa + 4 Sillas · Madera Sólida',
+    descripcion:
+      'Mesa extensible con 4 sillas tapizadas en tela premium. Ideal para ambientes compactos y modernos.',
+    precioViejo: '$ 189.999',
+    precioNuevo: '$ 129.999',
+    descuento: '31',
+    cuotas: '6',
+    imagen: juego4,
+    ambiente: 'Comedor · Compacto',
+  },
+  {
+    id: 3,
+    nombre: 'Juego de',
+    nombreDestacado: 'Comedor',
+    subtitulo: 'Mesa Redonda + 4 Sillas · Madera Sólida',
+    descripcion:
+      'Set completo de comedor en madera laqueada. Mesa redonda extensible con sillas incluidas. Terminación Premium.',
+    precioViejo: '$ 450.000',
+    precioNuevo: '$ 299.999',
+    descuento: '33',
+    cuotas: '18',
+    imagen: redondo,
+    ambiente: 'Comedor · Premium',
+  },
+];
+
+const DURACION = 5500;
 
 /**
  * MegaSale — plantilla publicitaria
- * Recibe un único producto por props. El loop lo maneja SlideShowPlayer.
- *
- * Props:
- *  - titulo          string
- *  - descripcion     string   (texto libre)
- *  - imagenProducto  string   (URL)
- *  - precioLista     number   (precio tachado)
- *  - precioOferta    number   (precio destacado)
- *  - porcentajeDescuento number
- *  - categoria       string
+ * Acepta un array `products` con la misma estructura que ModeloLuxeShow.
+ * Si no se pasa, usa DEFAULT_PRODUCTOS.
  */
-export default function MegaSale({
-  titulo = "Producto",
-  descripcion = "",
-  imagenProducto = "",
-  precioLista = 0,
-  precioOferta = 0,
-  porcentajeDescuento = 0,
-  categoria = "",
-}) {
+export default function MegaSale({ products }) {
   const [mounted, setMounted] = useState(false);
+  const [indice, setIndice] = useState(0);
+  const intervaloRef = useRef(null);
 
-  // Animación de entrada cada vez que cambia el producto
+  const PRODUCTOS_LIST = products && products.length ? products : DEFAULT_PRODUCTOS;
+  const producto = PRODUCTOS_LIST[indice];
+
+  // Primera entrada
   useEffect(() => {
-    const t1 = setTimeout(() => setMounted(false), 0);
-    const t2 = setTimeout(() => setMounted(true), 80);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [titulo, imagenProducto]);
+    const t = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(t);
+  }, []);
 
-  const formatPrecio = (n) =>
-    n ? `$ ${Number(n).toLocaleString("es-AR")}` : null;
+  // Transición de salida → cambio de producto → entrada
+  const runTransition = (getNext) => {
+    setMounted(false);
+    setTimeout(() => {
+      setIndice(getNext);
+      setTimeout(() => setMounted(true), 80);
+    }, 420);
+  };
+
+  // Ciclo automático
+  useEffect(() => {
+    if (!mounted) return;
+    intervaloRef.current = setInterval(
+      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
+      DURACION
+    );
+    return () => clearInterval(intervaloRef.current);
+  }, [mounted, PRODUCTOS_LIST.length]);
 
   return (
     <>
@@ -366,8 +421,8 @@ export default function MegaSale({
 
         {/* IMAGEN DEL PRODUCTO */}
         <div className={`mw-img-wrap ${mounted ? "on" : ""}`}>
-          {imagenProducto && (
-            <img className="mw-img" src={imagenProducto} alt={titulo} />
+          {producto.imagen && (
+            <img className="mw-img" src={producto.imagen} alt={producto.nombreDestacado} />
           )}
         </div>
 
@@ -380,33 +435,33 @@ export default function MegaSale({
             <div className={`mw-content ${mounted ? "on" : ""}`}>
 
               <div className="mw-deco">
-                <span className="mw-deco-txt">{categoria}</span>
+                <span className="mw-deco-txt">{producto.ambiente}</span>
               </div>
 
               <div className="mw-nombre" style={{ marginTop: "1.5vh" }}>
-                <span className="mw-nombre-dest">{titulo}</span>
+                <span className="mw-nombre-dest">{producto.nombre} {producto.nombreDestacado}</span>
               </div>
 
-              {descripcion && (
+              {producto.descripcion && (
                 <p className="mw-desc" style={{ marginTop: "1vh" }}>
-                  {descripcion}
+                  {producto.descripcion}
                 </p>
               )}
 
               <div className="mw-price-block" style={{ marginTop: "6vh" }}>
-                {precioLista > 0 && (
+                {producto.precioViejo && (
                   <div style={{ display:"flex", alignItems:"center", gap:"20px", marginBottom:"6px" }}>
                     <div>
                       <div className="mw-price-label">Precio anterior</div>
-                      <div className="mw-price-old">{formatPrecio(precioLista)}</div>
+                      <div className="mw-price-old">{producto.precioViejo}</div>
                     </div>
-                    {porcentajeDescuento > 0 && (
-                      <div className="mw-descuento">{porcentajeDescuento}% OFF</div>
+                    {producto.descuento && (
+                      <div className="mw-descuento">{producto.descuento}% OFF</div>
                     )}
                   </div>
                 )}
                 <div className="mw-price-new-wrap">
-                  <div className="mw-price-new">{formatPrecio(precioOferta)}</div>
+                  <div className="mw-price-new">{producto.precioNuevo}</div>
                 </div>
               </div>
 
