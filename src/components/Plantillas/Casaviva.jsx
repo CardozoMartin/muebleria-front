@@ -288,9 +288,9 @@ export default function CasaViva({
         .cv-price-row { display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; }
         .cv-price-new {
           font-family:'Playfair Display',serif;
-          font-size:clamp(40px,5.2vw,72px);
+          font-size:clamp(28px,3.8vw,58px);
           line-height:1; letter-spacing:-1px;
-          color:#1c2b20;
+          color:#1c2b20; white-space:nowrap;
         }
 
         /* Badge OFF */
