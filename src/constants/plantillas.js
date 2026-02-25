@@ -1,9 +1,7 @@
 import MegaSale from '../components/Plantillas/MegaSale';
 import LuxeShow from '../components/Plantillas/LuxeShow';
-import CasaViva from '../components/Plantillas/Casaviva';
-import CuotasBanner from '../components/Plantillas/CustomBanner';
-import LiquidacionBanner from '../components/Plantillas/LiquidacionBanner';
 import HotSale from '../components/Plantillas/HotSale';
+import CasaViva from '../components/Plantillas/CasaViva';
 
 // central list of available templates; used in PlantillasPage and product form
 export const PLANTILLAS = [
