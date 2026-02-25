@@ -1,6 +1,7 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import Logo from "./../assets/logo.png"
 import useAuthStore from "../store/useAuthStore";
+import { toast } from "sonner";
 
 const navItems = [
   {
@@ -49,7 +50,15 @@ const navItems = [
 ];
 
 export default function DashboardLayout() {
-  const { user } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    clearAuth();
+    toast.success('Sesión cerrada');
+    navigate('/login');
+  };
+
   console.log("Usuario autenticado:", user)
   return (
     <div className="flex h-screen bg-[#f5f5f3] font-sans overflow-hidden">
@@ -93,7 +102,9 @@ export default function DashboardLayout() {
 
 
           </div>
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all duration-150">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all duration-150">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path
                 d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"
