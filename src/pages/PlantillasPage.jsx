@@ -3,6 +3,7 @@ import LuxeShow from '../components/Plantillas/LuxeShow';
 import MegaSale from '../components/Plantillas/MegaSale';
 import CasaViva from '../components/Plantillas/CasaViva';
 import HotSale from '../components/Plantillas/HotSale';
+import CyberMonday from '../components/Plantillas/CyberMonday';
 
 const PLANTILLAS = [
   {
@@ -33,6 +34,14 @@ const PLANTILLAS = [
     component: HotSale,
     dot: 'bg-red-600',
   },
+  {
+    id: 'cybermonday',
+    nombre: 'Cyber Monday',
+    descripcion: 'Dinámico · con tonos morados, lilas y azules · Moderno ',
+    component: CyberMonday,
+    dot: 'bg-purple-600',
+  },
+
 ];
 
 // Dimensiones de referencia del template

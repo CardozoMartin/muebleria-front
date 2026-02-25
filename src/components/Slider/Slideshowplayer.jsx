@@ -4,13 +4,15 @@ import MegaSale from "../Plantillas/MegaSale";
 import LuxeShow from "../Plantillas/LuxeShow";
 import CasaViva from "../Plantillas/CasaViva";
 import HotSale from "../Plantillas/HotSale";
+import CyberMonday from "../Plantillas/CyberMonday";
 // import CasaViva from "./Plantillas/CasaViva";
 
 const PLANTILLAS_MAP = {
   megasale: MegaSale,
   luxeshow: LuxeShow,
   casaviva: CasaViva,
-  hotsale: HotSale
+  hotsale: HotSale,
+  cybermonday: CyberMonday,
 };
 
 

@@ -2,6 +2,7 @@ import MegaSale from '../components/Plantillas/MegaSale';
 import LuxeShow from '../components/Plantillas/LuxeShow';
 import HotSale from '../components/Plantillas/HotSale';
 import CasaViva from '../components/Plantillas/CasaViva';
+import CyberMonday from '../components/Plantillas/CyberMonday';
 
 // central list of available templates; used in PlantillasPage and product form
 export const PLANTILLAS = [
@@ -38,6 +39,13 @@ export const PLANTILLAS = [
     nombre: 'Hot Sale',
     descripcion: 'Dinámico · Rojo · Fuego',
     component: HotSale,
+    dot: 'bg-red-500',
+  },
+    {
+    id: 'cybermonday',
+    nombre: 'Cyber Monday',
+    descripcion: 'Dinámico · Rojo · Fuego',
+    component: CyberMonday,
     dot: 'bg-red-500',
   },
 ];
