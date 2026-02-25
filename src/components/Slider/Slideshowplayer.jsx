@@ -13,18 +13,7 @@ const PLANTILLAS_MAP = {
   hotsale: HotSale
 };
 
-// Placeholder visual hasta que conectes tus plantillas reales
-function PlaceholderPlantilla({ nombre, titulo, imagenProducto, precioLista, precioActual }) {
-  return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">
-      <div className="text-center">
-        <div className="text-xs uppercase tracking-widest text-gray-400 mb-2">{nombre}</div>
-        <div className="text-4xl font-bold mb-2">{titulo}</div>
-        <div className="text-2xl text-green-400">${precioActual?.toLocaleString()}</div>
-      </div>
-    </div>
-  );
-}
+
 
 /**
  * SlideShowPlayer
@@ -38,7 +27,7 @@ export default function SlideShowPlayer({ productos = [], duracionSegundos = 8, 
   const [pausado, setPausado] = useState(false);
   const timeoutRef = useRef(null);
   const intervalRef = useRef(null);
-  const pausadoRef = useRef(false);
+
 
   const productoActual = productos[indiceActual];
   const PlantillaComponente = productoActual
