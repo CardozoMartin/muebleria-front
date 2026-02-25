@@ -71,7 +71,7 @@ function MiniCard({ plantilla, onClick }) {
       {/* Nombre arriba */}
       <div className="flex items-center gap-2 px-1">
         <span className={`w-2 h-2 rounded-full flex-shrink-0 ${plantilla.dot}`} />
-        <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">
+        <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors whitespace-nowrap">
           {plantilla.nombre}
         </span>
         <span className="text-xs text-gray-400 truncate">· {plantilla.descripcion}</span>
