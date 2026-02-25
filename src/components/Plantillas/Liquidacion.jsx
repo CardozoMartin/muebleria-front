@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from './../../assets/logo.png';
 import comedor from './../../assets/comedor.png';
+import fondoliquidacion from './../../assets/fondoliquidacion.png';
 
 
 export default function Liquidacion({
@@ -83,6 +84,11 @@ export default function Liquidacion({
             rgba(255,200,50,.07) 90px
           );
           animation: lqRaysShift 8s ease-in-out infinite alternate;
+        }
+        .lq-bg-img {
+          position: absolute; inset: 0; z-index: 0;
+          width: 100%; height: 100%; object-fit: cover; pointer-events: none;
+          opacity: 0.18; filter: brightness(0.95) saturate(0.95);
         }
         @keyframes lqRaysShift {
           from { background-position: 0 0; }
@@ -373,6 +379,7 @@ export default function Liquidacion({
         <div className="lq-sun-ring" />
         <div className="lq-sun-ring2" />
         <div className="lq-rays" />
+        <img className="lq-bg-img" src={fondoliquidacion} alt="" aria-hidden="true" />
 
         {/* Onda inferior */}
         <div className="lq-wave">
