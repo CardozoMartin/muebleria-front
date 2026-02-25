@@ -685,18 +685,6 @@ export default function CasaVivaAzul({ products }) {
           background:linear-gradient(to bottom, transparent, rgba(0,87,255,.1) 20%, rgba(0,87,255,.1) 80%, transparent);
         }
 
-        /* Número grande fondo */
-        .az-big-num {
-          position:absolute; right:-2vw; bottom:-4vh;
-          font-family:'Space Grotesk',sans-serif;
-          font-size:clamp(120px,16vw,240px);
-          font-weight:700; letter-spacing:-4px;
-          pointer-events:none; z-index:2;
-          transition: color 1.2s ease;
-          line-height:1;
-          user-select:none;
-        }
-
         /* Texto decorativo rotado */
         .az-rotated-txt {
           position:absolute; left:-1vw; bottom:22vh;
@@ -735,14 +723,6 @@ export default function CasaVivaAzul({ products }) {
 
         {/* Línea vertical */}
         <div className="az-vline" />
-
-        {/* Número grande decorativo */}
-        <div
-          className="az-big-num"
-          style={{ color: `rgba(${rgb},.04)` }}
-        >
-          {String(indice + 1).padStart(2, '0')}
-        </div>
 
         {/* Chispas */}
         <div className="az-spark az-spark-1" style={{ color: electric }}>✦</div>
