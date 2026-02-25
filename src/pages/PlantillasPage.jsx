@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ModeloMegaSale from '../components/ModelosPlantillas/ModeloMegaSale';
 import ModeloLuxeShow from '../components/ModelosPlantillas/ModeloLuxeShow';
 import ModeloCasaViva from '../components/ModelosPlantillas/ModeloCasaViva';
-
-
+import ModeloHotSale from '../components/ModelosPlantillas/ModeloHotSale';
 
 const PLANTILLAS = [
   {
@@ -27,35 +26,132 @@ const PLANTILLAS = [
     component: ModeloCasaViva,
     dot: 'bg-orange-300',
   },
+  {
+    id: 'hotsale',
+    nombre: 'Hot Sale',
+    descripcion: 'Dinámico · Rojo y negro · Urgente',
+    component: ModeloHotSale,
+    dot: 'bg-red-600',
+  },
 ];
 
-export const Plantillas = () => {
-  const previewRef = useRef(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [plantillaActiva, setPlantillaActiva] = useState('megasale');
+// Dimensiones de referencia del template
+const TMPL_W = 1280;
+const TMPL_H = 720;
 
-  const Activa = PLANTILLAS.find((p) => p.id === plantillaActiva)?.component ?? ModeloMegaSale;
-
-  const handleFullscreen = async () => {
-    if (!previewRef.current) return;
-    try {
-      if (!document.fullscreenElement) {
-        await previewRef.current.requestFullscreen();
-        setIsFullscreen(true);
-      } else {
-        await document.exitFullscreen();
-        setIsFullscreen(false);
-      }
-    } catch (error) {
-      console.error('Error al activar pantalla completa:', error);
-    }
-  };
+function MiniCard({ plantilla, onClick }) {
+  const wrapRef = useRef(null);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    const handleFullscreenChange = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    const update = () => {
+      if (wrapRef.current) {
+        setScale(wrapRef.current.offsetWidth / TMPL_W);
+      }
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    if (wrapRef.current) ro.observe(wrapRef.current);
+    return () => ro.disconnect();
   }, []);
+
+  const Comp = plantilla.component;
+
+  return (
+    <div className="flex flex-col gap-2 cursor-pointer group" onClick={onClick}>
+      {/* Nombre arriba */}
+      <div className="flex items-center gap-2 px-1">
+        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${plantilla.dot}`} />
+        <span className="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">
+          {plantilla.nombre}
+        </span>
+        <span className="text-xs text-gray-400 truncate">· {plantilla.descripcion}</span>
+      </div>
+
+      {/* Mini preview */}
+      <div
+        ref={wrapRef}
+        className="relative w-full overflow-hidden rounded-xl border-2 border-gray-200 group-hover:border-gray-400 group-hover:shadow-xl transition-all duration-200"
+        style={{ aspectRatio: `${TMPL_W}/${TMPL_H}` }}
+      >
+        {/* Overlay clicable encima para capturar el click sin interferir con el componente */}
+        <div className="absolute inset-0 z-10" />
+
+        {/* Template escalado */}
+        <div
+          style={{
+            width: TMPL_W,
+            height: TMPL_H,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+            pointerEvents: 'none',
+          }}
+        >
+          <Comp key={plantilla.id} />
+        </div>
+
+        {/* Hover hint */}
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all duration-200 rounded-xl">
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/70 text-white text-sm font-semibold px-4 py-2 rounded-lg backdrop-blur">
+            Ver en pantalla completa
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenModal({ plantilla, onClose }) {
+  const containerRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; });
+  const Comp = plantilla.component;
+
+  // Intentar fullscreen real del navegador
+  useEffect(() => {
+    const el = containerRef.current;
+    if (el && el.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    }
+    const onFsChange = () => {
+      if (!document.fullscreenElement) onCloseRef.current();
+    };
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFsChange);
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    };
+  }, []);
+
+  // Cerrar con ESC si el fullscreen del nav no funciona
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onCloseRef.current(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-50 bg-black"
+      style={{ width: '100vw', height: '100vh' }}
+    >
+      <Comp key={plantilla.id} />
+      <button
+        onClick={onClose}
+        className="absolute top-5 right-5 z-[60] px-4 py-2 bg-black/60 hover:bg-black/90 text-white text-sm font-semibold rounded-lg backdrop-blur flex items-center gap-2 transition-all"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Salir
+      </button>
+    </div>
+  );
+}
+
+export const Plantillas = () => {
+  const [abierta, setAbierta] = useState(null);
 
   return (
     <div className="w-full min-h-screen bg-gray-100 p-8">
@@ -64,131 +160,22 @@ export const Plantillas = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-1">Plantillas Publicitarias</h1>
           <p className="text-gray-500 text-sm">
-            Diseños para pantallas de showroom · Optimizados para 32" o más
+            Hacé click en una plantilla para verla en pantalla completa · Optimizadas para 32" o más
           </p>
         </div>
 
-        {/* Selector */}
-        <div className="mb-5 flex flex-wrap gap-3">
+        {/* Grid 3 por fila */}
+        <div className="grid grid-cols-3 gap-6">
           {PLANTILLAS.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => setPlantillaActiva(p.id)}
-              className={`flex items-center gap-3 px-5 py-3 rounded-xl border-2 transition-all duration-200 text-sm font-semibold ${
-                plantillaActiva === p.id
-                  ? 'bg-gray-800 border-gray-800 text-white shadow-lg scale-105'
-                  : 'bg-white border-gray-200 text-gray-700 hover:border-gray-400 hover:shadow-sm'
-              }`}
-            >
-              <span className={`w-2.5 h-2.5 rounded-full ${p.dot}`} />
-              {p.nombre}
-              <span
-                className={`font-normal ${plantillaActiva === p.id ? 'text-gray-400' : 'text-gray-400'}`}
-              >
-                · {p.descripcion}
-              </span>
-            </button>
+            <MiniCard key={p.id} plantilla={p} onClick={() => setAbierta(p)} />
           ))}
         </div>
-
-        {/* Controles */}
-        <div className="mb-5 flex gap-4 items-center">
-          <button
-            onClick={handleFullscreen}
-            className="px-5 py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-lg shadow transition-all duration-200 flex items-center gap-2 text-sm"
-          >
-            {isFullscreen ? (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                Salir de Pantalla Completa
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                  />
-                </svg>
-                Ver en Pantalla Completa
-              </>
-            )}
-          </button>
-          <span className="text-sm text-gray-400">
-            Presioná{' '}
-            <kbd className="px-2 py-0.5 bg-white border border-gray-300 rounded text-xs font-mono">
-              ESC
-            </kbd>{' '}
-            para salir
-          </span>
-        </div>
-
-        {/* Preview */}
-        <div
-          ref={previewRef}
-          className={`relative bg-black rounded-xl overflow-hidden shadow-2xl ${
-            isFullscreen ? '' : 'border-4 border-gray-200'
-          }`}
-          style={{
-            aspectRatio: isFullscreen ? 'auto' : '16/9',
-            height: isFullscreen ? '100vh' : 'auto',
-          }}
-        >
-          {isFullscreen && (
-            <button
-              onClick={handleFullscreen}
-              className="absolute top-6 right-6 z-50 px-4 py-2 bg-black/60 hover:bg-black/80 text-white text-sm font-semibold rounded-lg backdrop-blur transition-all duration-200 flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-              Salir
-            </button>
-          )}
-          <Activa key={plantillaActiva} />
-        </div>
-
-        {/* Info cards */}
-        {!isFullscreen && (
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            {PLANTILLAS.map((p) => (
-              <div
-                key={p.id}
-                onClick={() => setPlantillaActiva(p.id)}
-                className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 ${
-                  plantillaActiva === p.id
-                    ? 'border-gray-700 bg-gray-800 text-white'
-                    : 'border-transparent bg-white text-gray-800 hover:border-gray-300 hover:shadow-sm'
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`w-2.5 h-2.5 rounded-full ${p.dot}`} />
-                  <h3 className="font-semibold text-sm">{p.nombre}</h3>
-                </div>
-                <p
-                  className={`text-xs ${plantillaActiva === p.id ? 'text-gray-400' : 'text-gray-400'}`}
-                >
-                  {p.descripcion}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
+
+      {/* Modal fullscreen */}
+      {abierta && (
+        <FullscreenModal plantilla={abierta} onClose={() => setAbierta(null)} />
+      )}
     </div>
   );
 };

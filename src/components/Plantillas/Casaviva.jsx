@@ -60,7 +60,7 @@ const DEFAULT_PRODUCTOS = [
 
 const DURACION = 5500;
 
-export default function CasaViva({ products }) {
+export default function ModeloCasaViva({ products }) {
   const [mounted, setMounted] = useState(false);
   const [indice, setIndice] = useState(0);
   const [fase, setFase] = useState('idle');

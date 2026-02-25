@@ -7,8 +7,7 @@ import redondo from './../../assets/redonda.png';
 const DEFAULT_PRODUCTOS = [
   {
     id: 1,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
+    nombreDestacado: 'Juego de Comedor',
     subtitulo: 'Mesa + 6 Sillas · Madera Sólida',
     descripcion:
       'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
@@ -26,8 +25,7 @@ const DEFAULT_PRODUCTOS = [
   },
   {
     id: 2,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
+    nombreDestacado: 'Juego de Comedor',
     subtitulo: 'Mesa + 4 Sillas · Madera Sólida',
     descripcion:
       'Mesa extensible con 4 sillas tapizadas en tela premium. Ideal para ambientes compactos y modernos.',
@@ -45,8 +43,7 @@ const DEFAULT_PRODUCTOS = [
   },
   {
     id: 3,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
+    nombreDestacado: 'Juego de Comedor',
     subtitulo: 'Mesa Redonda + 4 Sillas · Madera Sólida',
     descripcion:
       'Set completo de comedor en madera laqueada. Mesa redonda extensible con sillas incluidas. Terminación Premium.',
@@ -66,7 +63,7 @@ const DEFAULT_PRODUCTOS = [
 
 const DURACION = 5500;
 
-export default function CasaVivaAzul({ products }) {
+export default function ModeloCasaVivaAzul({ products }) {
   const [mounted, setMounted] = useState(false);
   const [indice, setIndice] = useState(0);
   const [fase, setFase] = useState('idle');
@@ -137,7 +134,7 @@ export default function CasaVivaAzul({ products }) {
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
         .az {
-          width:100vw; height:100vh;
+          width:100%; height:100%;
           position:relative; overflow:hidden;
           font-family:'DM Sans',sans-serif;
           background:#f0f6ff;
@@ -406,7 +403,7 @@ export default function CasaVivaAzul({ products }) {
         /* Título */
         .az-titulo {
           font-family:'Space Grotesk',sans-serif;
-          font-size:clamp(38px,5.2vw,86px);
+          font-size:clamp(56px,8vw,130px);
           line-height:.92; letter-spacing:-1px;
           color:#08165a;
           text-align:center;
@@ -813,7 +810,6 @@ export default function CasaVivaAzul({ products }) {
 
               {/* Título */}
               <div className="az-titulo">
-                <span className="az-titulo-normal">{producto.nombre}</span>
                 <span className="az-titulo-dest" style={{ color }}>
                   {producto.nombreDestacado}
                 </span>

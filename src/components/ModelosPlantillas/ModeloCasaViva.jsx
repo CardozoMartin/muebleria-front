@@ -1,332 +1,431 @@
-import React, { useEffect, useState } from "react";
-import fondo from "./../../assets/fondo1.jpeg";
-import logo from "./../../assets/logo.png";
+import React, { useEffect, useState, useRef } from 'react';
+import logo from './../../assets/logo.png';
+import comedor from './../../assets/comedor.png';
+import juego4 from './../../assets/comedor4.png';
+import redondo from './../../assets/redonda.png';
 
-// Computed once at module load — stable across all renders
-const PARTICLE_STYLES = [...Array(14)].map(() => ({
-  width:             `${8  + Math.random() * 18}px`,
-  height:            `${8  + Math.random() * 18}px`,
-  left:              `${2  + Math.random() * 24}%`,
-  bottom:            `-${10 + Math.random() * 15}%`,
-  animationDuration: `${7  + Math.random() * 8}s`,
-  animationDelay:    `${Math.random() * 6}s`,
-}));
+const DEFAULT_PRODUCTOS = [
+  {
+    id: 1,
+    nombreDestacado: 'Juego de Comedor',
+    subtitulo: 'Mesa + 6 Sillas · Madera Sólida',
+    descripcion:
+      'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
+    precioViejo: '$ 299.999',
+    precioNuevo: '$ 199.999',
+    descuento: '33',
+    cuotas: '12',
+    imagen: comedor,
+    ambiente: 'Comedor · Familiar',
+    color: '#2d7a4f',
+    colorLight: '#e8f5ee',
+    colorRgb: '45,122,79',
+  },
+  {
+    id: 2,
+    nombreDestacado: 'Juego de Comedor',
+    subtitulo: 'Mesa + 4 Sillas · Madera Sólida',
+    descripcion:
+      'Mesa extensible con 4 sillas tapizadas en tela premium. Ideal para ambientes compactos y modernos.',
+    precioViejo: '$ 189.999',
+    precioNuevo: '$ 129.999',
+    descuento: '31',
+    cuotas: '6',
+    imagen: juego4,
+    ambiente: 'Comedor · Compacto',
+    color: '#3a9e68',
+    colorLight: '#eaf7f0',
+    colorRgb: '58,158,104',
+  },
+  {
+    id: 3,
+    nombreDestacado: 'Juego de Comedor',
+    subtitulo: 'Mesa Redonda + 4 Sillas · Madera Sólida',
+    descripcion:
+      'Set completo de comedor en madera laqueada. Mesa redonda extensible con sillas incluidas. Terminación Premium.',
+    precioViejo: '$ 450.000',
+    precioNuevo: '$ 299.999',
+    descuento: '33',
+    cuotas: '18',
+    imagen: redondo,
+    ambiente: 'Comedor · Premium',
+    color: '#1a5c3a',
+    colorLight: '#e4f2ea',
+    colorRgb: '26,92,58',
+  },
+];
 
-/**
- * MegaSale — plantilla publicitaria
- * Recibe un único producto por props. El loop lo maneja SlideShowPlayer.
- *
- * Props:
- *  - titulo          string
- *  - descripcion     string   (texto libre)
- *  - imagenProducto  string   (URL)
- *  - precioLista     number   (precio tachado)
- *  - precioOferta    number   (precio destacado)
- *  - porcentajeDescuento number
- *  - categoria       string
- */
-export default function MegaSale({
-  titulo = "Producto",
-  descripcion = "",
-  imagenProducto = "",
-  precioLista = 0,
-  precioOferta = 0,
-  porcentajeDescuento = 0,
-  categoria = "",
-}) {
+const DURACION = 5500;
+
+export default function CasaViva({ products }) {
   const [mounted, setMounted] = useState(false);
+  const [indice, setIndice] = useState(0);
+  const [fase, setFase] = useState('idle');
+  const [progreso, setProgreso] = useState(0);
+  const intervaloRef = useRef(null);
+  const progressRef = useRef(null);
 
-  // Animación de entrada cada vez que cambia el producto
+  const PRODUCTOS_LIST = products && products.length ? products : DEFAULT_PRODUCTOS;
+  const producto = PRODUCTOS_LIST[indice];
+  const color = producto.color;
+  const colorLight = producto.colorLight || '#e8f5ee';
+  const rgb = producto.colorRgb;
+
   useEffect(() => {
-    const t1 = setTimeout(() => setMounted(false), 0);
-    const t2 = setTimeout(() => setMounted(true), 80);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [titulo, imagenProducto]);
+    const t = setTimeout(() => {
+      setMounted(true);
+    }, 200);
+    return () => clearTimeout(t);
+  }, []);
 
-  const formatPrecio = (n) =>
-    n ? `$ ${Number(n).toLocaleString("es-AR")}` : null;
+  useEffect(() => {
+    if (!mounted) return;
+    const start = performance.now();
+    const tick = (now) => {
+      const pct = Math.min(((now - start) / DURACION) * 100, 100);
+      setProgreso(pct);
+      if (pct < 100) progressRef.current = requestAnimationFrame(tick);
+    };
+    progressRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(progressRef.current);
+  }, [indice, mounted]);
+
+  const runTransition = (getNext) => {
+    setFase('saliendo');
+    setTimeout(() => {
+      setIndice(getNext);
+      setFase('entrando');
+      setTimeout(() => {
+        setFase('idle');
+      }, 700);
+    }, 420);
+  };
+
+  useEffect(() => {
+    if (!mounted) return;
+    intervaloRef.current = setInterval(
+      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
+      DURACION
+    );
+    return () => clearInterval(intervaloRef.current);
+  }, [mounted, PRODUCTOS_LIST.length]);
+
+  const ir = (i) => {
+    if (i === indice) return;
+    clearInterval(intervaloRef.current);
+    runTransition(i);
+    intervaloRef.current = setInterval(
+      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
+      DURACION
+    );
+  };
 
   return (
     <>
       <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Montserrat:wght@400;600;700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet"
       />
       <style>{`
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        .mw {
-          width: 100%; height: 100%;
-          position: relative; overflow: hidden;
-          font-family: 'Montserrat', sans-serif;
-          background: #111;
+        .cv {
+          width:100%; height:100%;
+          position:relative; overflow:hidden;
+          font-family:'Outfit',sans-serif;
+          background:#f4f6f2;
         }
 
         /* ── FONDO ── */
-        .mw-bg {
-          position: absolute; inset: 0;
-          width: 100%; height: 100%;
-          object-fit: cover; object-position: left center;
-          z-index: 0;
-          opacity: 0; transform: scale(1.06);
-          transition: opacity 1.2s ease, transform 1.6s ease;
-        }
-        .mw-bg.on { opacity: 1; transform: scale(1); }
-
-        /* ── FLASH ── */
-        .flash {
-          position: absolute; inset: 0; z-index: 20;
-          background: white; pointer-events: none;
-          animation: flashAnim 0.6s ease forwards;
-        }
-        @keyframes flashAnim { from { opacity:.7; } to { opacity:0; } }
-
-        /* ── PARTÍCULAS ── */
-        .particles { position:absolute; inset:0; z-index:1; pointer-events:none; }
-        .particle {
-          position: absolute; border-radius: 50%;
-          background: radial-gradient(circle, rgba(255,150,0,0.5), transparent);
-          animation: floatUp linear infinite; opacity: 0;
-        }
-        @keyframes floatUp {
-          0%   { transform:translateY(0) scale(1); opacity:0; }
-          10%  { opacity:.5; }
-          90%  { opacity:.12; }
-          100% { transform:translateY(-110vh) scale(.3); opacity:0; }
+        .cv-bg {
+          position:absolute; inset:0; z-index:0;
+          background: linear-gradient(135deg, #f0f9f4 0%, #e8f5ee 30%, #f2f7f0 60%, #e3f1e9 100%);
         }
 
-        /* ── LAYOUT ── */
-        .mw-layout {
-          position: absolute; inset: 0; z-index: 2;
-          display: grid;
-          grid-template-columns: 28% 1fr;
-          height: 100%;
+        /* Patrón sutil puntitos */
+        .cv-pattern {
+          position:absolute; inset:0; z-index:0; opacity:.5;
+          background-image: radial-gradient(circle, #c8ddc0 1px, transparent 1px);
+          background-size: 28px 28px;
         }
-        .mw-right {
-          display: flex; flex-direction: column;
-          justify-content: center;
-          padding: 5vh 6vw 3vh 4vw;
-          gap: 1.8vh;
+
+        /* Forma decorativa grande derecha */
+        .cv-shape-main {
+          position:absolute; right:-8vw; top:-8vh;
+          width:58vw; height:116vh;
+          border-radius:40% 0 0 40%;
+          z-index:1; pointer-events:none;
+          transition: background 1.2s ease;
+        }
+
+        /* Forma orgánica izquierda */
+        .cv-shape-left {
+          position:absolute; left:-10vw; bottom:-10vh;
+          width:45vw; height:60vh;
+          border-radius:50% 50% 0 0;
+          z-index:1; pointer-events:none;
+          background:radial-gradient(ellipse at top, rgba(45,122,79,.14) 0%, transparent 70%);
+          transform:rotate(-15deg);
+          transition: background 1s ease;
+        }
+
+        /* Blob decorativo superior derecho */
+        .cv-blob-top {
+          position:absolute; right:5vw; top:10vh;
+          width:25vw; height:25vw;
+          border-radius:60% 40% 50% 45%;
+          background:radial-gradient(circle at 30% 40%, rgba(58,158,104,.2) 0%, transparent 70%);
+          z-index:1; pointer-events:none;
+          animation:cvBlobFloat 15s ease-in-out infinite;
+        }
+        @keyframes cvBlobFloat {
+          0%,100%{transform:translateY(0) rotate(0deg);}
+          33%{transform:translateY(-20px) rotate(5deg);}
+          66%{transform:translateY(10px) rotate(-5deg);}
+        }
+
+        /* Anillos concentricos decorativos */
+        .cv-rings {
+          position:absolute; right:15vw; bottom:15vh;
+          width:28vw; height:28vw;
+          z-index:1; pointer-events:none;
+          border-radius:50%;
+          background:
+            radial-gradient(circle at center, transparent 40%, rgba(45,122,79,.12) 40%, rgba(45,122,79,.12) 42%, transparent 42%),
+            radial-gradient(circle at center, transparent 55%, rgba(58,158,104,.1) 55%, rgba(58,158,104,.1) 57%, transparent 57%),
+            radial-gradient(circle at center, transparent 70%, rgba(26,92,58,.08) 70%, rgba(26,92,58,.08) 72%, transparent 72%);
+        }
+
+        /* Círculos flotantes pequeños */
+        .cv-circle-float {
+          position:absolute;
+          border-radius:50%;
+          z-index:1; pointer-events:none;
+        }
+        .cv-circle-float-1 {
+          right:25vw; top:25vh;
+          width:8vw; height:8vw;
+          background:radial-gradient(circle, rgba(45,122,79,.16) 0%, transparent 70%);
+          animation:cvFloatSlow 12s ease-in-out infinite;
+        }
+        .cv-circle-float-2 {
+          left:20vw; top:18vh;
+          width:12vw; height:12vw;
+          background:radial-gradient(circle, rgba(58,158,104,.14) 0%, transparent 70%);
+          animation:cvFloatSlow 14s ease-in-out infinite reverse;
+        }
+        .cv-circle-float-3 {
+          right:35vw; bottom:25vh;
+          width:6vw; height:6vw;
+          background:radial-gradient(circle, rgba(26,92,58,.18) 0%, transparent 70%);
+          animation:cvFloatSlow 10s ease-in-out infinite;
+        }
+        @keyframes cvFloatSlow {
+          0%,100%{transform:translateY(0) scale(1);}
+          50%{transform:translateY(-15px) scale(1.05);}
+        }
+
+        /* Gradiente radial inferior */
+        .cv-gradient-bottom {
+          position:absolute; bottom:0; left:0; right:0;
+          height:30vh; z-index:1; pointer-events:none;
+          background:radial-gradient(ellipse at bottom, rgba(45,122,79,.1) 0%, transparent 60%);
+        }
+
+        /* Círculo deco top left */
+        .cv-circle-deco {
+          position:absolute; left:-6vw; top:-6vw;
+          width:22vw; height:22vw; border-radius:50%;
+          z-index:1; pointer-events:none;
+          border: 1.5px solid rgba(45,122,79,.12);
+          transition: border-color 1s ease;
+        }
+        .cv-circle-deco2 {
+          position:absolute; left:-3.5vw; top:-3.5vw;
+          width:15vw; height:15vw; border-radius:50%;
+          z-index:1; pointer-events:none;
+          border: 1px solid rgba(45,122,79,.08);
+        }
+
+        /* Líneas deco diagonales fondo */
+        .cv-lines-deco {
+          position:absolute; inset:0; z-index:1; opacity:.04; pointer-events:none;
+          background: repeating-linear-gradient(
+            -45deg, 
+            #2d7a4f 0px, #2d7a4f 1px, 
+            transparent 1px, transparent 60px
+          );
         }
 
         /* ── LOGO ── */
-        .mw-logo {
-          position: absolute; top: 50%; left: 2.5vw; z-index: 5;
-          transform: translateY(-50%) translateX(-40px) scale(.7); opacity: 0;
-          transition: opacity .9s ease .3s, transform .9s cubic-bezier(.34,1.56,.64,1) .3s;
+        .cv-logo {
+          position:absolute; top:3vh; left:3vw; z-index:10;
+          opacity:0; transform:translateY(-20px) scale(.85);
+          transition:opacity .9s ease .2s,transform .9s cubic-bezier(.34,1.56,.64,1) .2s;
         }
-        .mw-logo.on { opacity:1; transform:translateY(-50%) translateX(0) scale(1); }
-        .mw-logo-circle {
-          width: clamp(230px,28vh,360px);
-          height: clamp(230px,28vh,360px);
-          border-radius: 50%;
-          background: linear-gradient(135deg, #e63500, #ff8800, #ffcc00);
-          padding: 5px;
-          box-shadow: 0 0 30px rgba(230,100,0,.5), 0 0 60px rgba(255,136,0,.25);
-          display: flex; align-items: center; justify-content: center;
-        }
-        .mw-logo-inner {
-          width: 100%; height: 100%;
-          border-radius: 50%;
-          background: #fff;
-          display: flex; align-items: center; justify-content: center;
-          overflow: hidden;
-        }
-        .mw-logo img {
-          width: 85%; height: 85%;
-          object-fit: contain;
+        .cv-logo.on { opacity:1; transform:translateY(0) scale(1); }
+        .cv-logo img {
+          height:clamp(120px,14.4vh,192px); width:auto;
+          opacity:.95;
         }
 
-        /* ── IMAGEN DEL PRODUCTO ── */
-        .mw-img-wrap {
-          position: absolute; right: 1vw; top: 50%;
-          transform: translateY(-52%) scale(0.5) translateX(120px) rotate(8deg);
-          z-index: 3;
-          opacity: 0;
-          transition: opacity .9s ease .2s, transform 1.1s cubic-bezier(.34,1.62,.64,1) .2s;
+        /* ── BADGE AMBIENTE ── */
+        .cv-ambiente {
+          position:absolute; top:5vh; right:5.5vw; z-index:10;
+          display:flex; align-items:center; gap:8px;
+          padding: 8px 18px;
+          border-radius: 100px;
+          background: rgba(255,255,255,.85);
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(45,122,79,.15);
+          box-shadow: 0 4px 20px rgba(45,122,79,.08);
+          opacity:0; transform:translateX(30px) scale(.9);
+          transition:opacity .8s ease .8s,transform .8s cubic-bezier(.34,1.3,.64,1) .8s, background 1s ease, border-color 1s ease;
         }
-        .mw-img-wrap.on {
-          opacity: 1;
-          transform: translateY(-52%) scale(1) translateX(0) rotate(0);
-        }
-        .mw-img {
-          width: clamp(302px, 38vw, 648px);
-          height: auto;
-          max-height: 105vh;
-          object-fit: contain;
-          filter: drop-shadow(0 30px 70px rgba(0,0,0,.5)) drop-shadow(0 0 50px rgba(230,53,0,.3));
-          animation: floatImg 4.5s ease-in-out infinite 1.5s;
-        }
-        @keyframes floatImg {
-          0%,100% { transform:translateY(0) rotate(0deg) scale(1); }
-          50%      { transform:translateY(-18px) rotate(1deg) scale(1.07); }
+        .cv-ambiente.on { opacity:1; transform:translateX(0) scale(1); }
+        .cv-amb-dot { width:7px; height:7px; border-radius:50%; transition:background .8s ease; }
+        .cv-amb-txt {
+          font-size:clamp(10px,.8vw,13px); letter-spacing:3px;
+          text-transform:uppercase; font-weight:600;
+          color:#4a5e4f;
         }
 
-        /* ── CONTENIDO — entra desde izquierda ── */
-        .mw-content {
-          display: flex; flex-direction: column; gap: 2vh;
+        /* ── LAYOUT ── */
+        .cv-layout {
+          position:absolute; inset:0; z-index:5;
+          display:grid;
+          grid-template-columns:50% 1fr;
         }
 
-        /* ── BADGE MEGA OFERTA (arriba centrado) ── */
-        .mw-badge-top {
-          position: absolute; top: 5vh; left: 65%; transform: translateX(-50%);
-          z-index: 10;
-          display: inline-flex; align-items: center; gap: 12px;
-          background: linear-gradient(135deg, #e63500, #ff8800);
-          color: #fff; font-weight: 900;
-          font-family: 'Rubik', sans-serif;
-          font-size: clamp(18px,1.6vw,28px);
-          letter-spacing: 4px; text-transform: uppercase;
-          padding: 16px 40px; border-radius: 60px;
-          box-shadow: 0 0 50px rgba(230,53,0,.7), 0 0 100px rgba(255,136,0,.5), 0 10px 40px rgba(230,53,0,.6);
-          overflow: hidden;
-          animation: mwBadgeBounce 1.8s cubic-bezier(.34,.85,.64,1) .5s backwards, mwBadgePulse 2s ease-in-out 2.3s infinite;
-        }
-        @keyframes mwBadgeBounce {
-          0% { opacity:0; transform:translateX(-50%) translateY(-120px) scale(.3); }
-          20% { opacity:1; transform:translateX(-50%) translateY(10px) scale(1.35); }
-          35% { transform:translateX(-50%) translateY(-25px) scale(1.1); }
-          50% { transform:translateX(-50%) translateY(5px) scale(1.3); }
-          65% { transform:translateX(-50%) translateY(-12px) scale(1.15); }
-          80% { transform:translateX(-50%) translateY(3px) scale(1.25); }
-          90% { transform:translateX(-50%) translateY(-5px) scale(1.18); }
-          100% { opacity:1; transform:translateX(-50%) translateY(0) scale(1.2); }
-        }
-        @keyframes mwBadgePulse {
-          0%, 100% { transform:translateX(-50%) scale(1.2); box-shadow: 0 0 50px rgba(230,53,0,.7), 0 0 100px rgba(255,136,0,.5); }
-          50% { transform:translateX(-50%) scale(1.28); box-shadow: 0 0 70px rgba(230,53,0,.9), 0 0 120px rgba(255,136,0,.6); }
-        }
-        .mw-badge-top::before {
-          content:''; position:absolute; inset:0;
-          background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25) 0%, transparent 60%);
-          pointer-events:none;
-        }
-        .mw-badge-top::after {
-          content:''; position:absolute; top:0; left:-100%; width:60%; height:100%;
-          background: linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
-          animation: shine 3.5s infinite 2.5s;
-        }
-        @keyframes shine { 0%{left:-100%;} 55%,100%{left:160%;} }
-        .mw-dot-blink {
-          width:12px; height:12px; background:#fff; border-radius:50%;
-          animation: blink 1.2s infinite;
-        }
-        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.1;} }
-
-        /* ── NOMBRE ── */
-        .mw-nombre {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(50px,7vw,120px);
-          color: #1a1a1a;
-          line-height: 0.92; letter-spacing: 1px;
-          opacity: 0; transform: translateX(-120vw) rotate(-8deg) skewX(-12deg);
-          transition: opacity .6s ease .9s, transform 1.1s cubic-bezier(.22,1.4,.36,1) .9s;
-        }
-        .mw-content.on .mw-nombre { opacity:1; transform:translateX(0) rotate(0) skewX(0); }
-        .mw-nombre-dest {
-          color: #e63500;
-          display: inline-block;
-          text-shadow: 0 4px 20px rgba(230,53,0,.3);
-          animation: nombreGlow 3s ease-in-out infinite 2.5s;
-        }
-        @keyframes nombreGlow {
-          0%,100% { text-shadow: 0 4px 20px rgba(230,53,0,.3); }
-          50%      { text-shadow: 0 0 50px rgba(230,53,0,.7), 0 0 90px rgba(255,120,0,.4), 0 4px 30px rgba(230,53,0,.5); }
+        /* ── IZQUIERDA ── */
+        .cv-left {
+          display:flex; flex-direction:column; justify-content:center;
+          align-items:center;
+          padding:8vh 2vw 8vh 4vw; gap:2vh;
+          position:relative; z-index:2;
         }
 
-        /* ── LÍNEA DECO ── */
-        .mw-deco { 
-          display:flex; align-items:center; gap:16px;
-          opacity: 0; transform: translateX(-110vw) skewX(-15deg);
-          transition: opacity .5s ease .5s, transform 1s cubic-bezier(.22,1.5,.36,1) .5s;
+        /* Tag oferta */
+        .cv-eyebrow {
+          display:inline-flex; align-items:center; gap:10px;
+          opacity:0; transform:translateX(-80px) scale(.8) rotate(-5deg);
+          transition:opacity .9s ease, transform 1s cubic-bezier(.34,1.7,.64,1) ease;
         }
-        .mw-content.on .mw-deco { opacity:1; transform:translateX(0) skewX(0); }
-        .mw-deco::before {
-          content:''; width:70px; height:4px;
-          background: linear-gradient(to right,#e63500,#ff9900);
-          border-radius:2px; flex-shrink:0;
-          box-shadow: 0 2px 12px rgba(230,53,0,.4);
+        .cv-eyebrow.on { opacity:1; transform:translateX(0) scale(1) rotate(0); }
+        .cv-ey-pill {
+          display:flex; align-items:center; gap:8px;
+          padding:6px 14px; border-radius:4px;
+          border-left: 3px solid;
+          background:rgba(255,255,255,.9);
+          box-shadow: 0 2px 12px rgba(0,0,0,.06);
+          transition: border-color 1s ease;
         }
-        .mw-deco-txt {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(12px,1.05vw,17px);
-          font-weight:700; letter-spacing:4px;
-          text-transform:uppercase; color:#666;
-        }
-
-        /* ── DESCRIPCIÓN ── */
-        .mw-desc {
-          font-size: clamp(15px,1.25vw,21px);
-          color: #111; line-height:1.75; font-weight:600; max-width:600px;
-          padding: 16px 20px;
-          background: rgba(0,0,0,.2);
-          border: 1.5px solid rgba(230,53,0,.2);
-          border-radius: 12px;
-          backdrop-filter: blur(4px);
-          opacity: 0; transform: translateX(110vw) skewX(8deg);
-          transition: opacity .6s ease 1.4s, transform 1s cubic-bezier(.22,1.4,.36,1) 1.4s;
-        }
-        .mw-content.on .mw-desc { opacity:1; transform:translateX(0) skewX(0); }
-
-        /* ── PRECIO ── */
-        .mw-price-block { 
-          display:flex; flex-direction:column; align-items:flex-start; gap:8px;
-          opacity: 0; transform: translateX(-110vw) skewX(-10deg);
-          transition: opacity .6s ease 1.9s, transform 1.1s cubic-bezier(.22,1.5,.36,1) 1.9s;
-        }
-        .mw-content.on .mw-price-block { opacity:1; transform:translateX(0) skewX(0); }
-        .mw-price-label {
-          font-size: clamp(14px,1.2vw,18px);
-          font-weight:700; color:#fff; text-transform:uppercase;
-          letter-spacing:1px; margin-bottom:4px;
-        }
-        .mw-price-old {
-          font-size: clamp(17px,1.7vw,28px);
-          font-weight:700; color:#000; text-decoration:line-through; margin-bottom:6px;
-        }
-        .mw-price-new-wrap {
-          display: inline-block;
-          padding: 10px 28px 6px;
-          border: 3px solid #fff;
-          border-radius: 16px;
-          background: rgba(0,0,0,.45);
-          backdrop-filter: blur(4px);
-          box-shadow: 0 0 24px rgba(255,255,255,.12), inset 0 0 12px rgba(255,255,255,.04);
-        }
-        .mw-price-new {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(66px,9vw,140px);
-          line-height: 1;
-          background: linear-gradient(135deg, #e63500 0%, #ff6600 40%, #ffaa00 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          filter: drop-shadow(0 6px 24px rgba(230,80,0,.5));
-          animation: pricePulse 3s ease-in-out infinite 2.5s;
-        }
-        @keyframes pricePulse {
-          0%,100% { filter: drop-shadow(0 6px 24px rgba(230,80,0,.5)); transform:scale(1); }
-          50%      { filter: drop-shadow(0 8px 50px rgba(230,80,0,.9)); transform:scale(1.03); }
-        }
-        .mw-price-right { display:flex; flex-direction:column; gap:8px; justify-content:flex-end; margin-bottom:10px; }
-        .mw-descuento {
-          display: inline-flex; align-items:center; justify-content:center;
-          background: linear-gradient(135deg, #e63500, #ff8800);
-          color: white;
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(26px,2.8vw,46px);
-          letter-spacing: 2px;
-          padding: 10px 24px; border-radius: 12px;
-          box-shadow: 0 0 40px rgba(230,53,0,.6), 0 0 80px rgba(255,136,0,.3), 0 8px 32px rgba(230,53,0,.5);
-          animation: descuentoPulse 2s ease-in-out infinite 2.8s;
-        }
-        @keyframes descuentoPulse {
-          0%,100% { transform:scale(1); box-shadow: 0 0 40px rgba(230,53,0,.6), 0 0 80px rgba(255,136,0,.3); }
-          50%      { transform:scale(1.1); box-shadow: 0 0 60px rgba(230,53,0,.9), 0 0 100px rgba(255,136,0,.5); }
+        .cv-ey-txt {
+          font-size:clamp(10px,.82vw,13px); letter-spacing:3px;
+          text-transform:uppercase; font-weight:700;
+          transition: color 1s ease;
         }
 
-        /* WhatsApp */
-        .mw-whatsapp {
+        /* Título */
+        .cv-titulo {
+          font-family:'Playfair Display',serif;
+          font-size:clamp(44px,6.2vw,100px);
+          line-height:.95; letter-spacing:-.5px;
+          color:#1c2b20;
+          text-align:center;
+        }
+        .cv-titulo-dest {
+          display:block; font-style:italic;
+          transition:color 1.2s ease;
+          animation: cvTituloDestAnim 1s cubic-bezier(.34,1.9,.64,1) .15s backwards;
+        }
+        @keyframes cvTituloDestAnim {
+          0% { opacity:0; transform:translateY(-50px) scale(.75); }
+          100% { opacity:1; transform:translateY(0) scale(1); }
+        }
+
+        /* Divider */
+        .cv-divider {
+          display:flex; align-items:center; gap:14px; margin-top:.2vh;
+        }
+        .cv-div-line {
+          height:2px; width:40px; border-radius:2px;
+          transition:background 1s ease;
+        }
+        .cv-div-txt {
+          font-size:clamp(12px,1vw,16px); letter-spacing:2px;
+          text-transform:uppercase; color:#7a9280; font-weight:500;
+        }
+
+        /* Descripción */
+        .cv-desc {
+          font-size:clamp(15px,1.3vw,20px); line-height:1.7; font-weight:400;
+          color:#6a7f70; max-width:500px;
+        }
+
+        /* Tarjeta de precio */
+        .cv-price-card {
+          background:rgba(255,255,255,.9);
+          border-radius:16px;
+          padding: 22px 26px;
+          box-shadow: 0 8px 32px rgba(45,122,79,.08), 0 2px 8px rgba(0,0,0,.04);
+          border: 1px solid rgba(45,122,79,.1);
+          display:flex; flex-direction:column; gap:10px;
+          max-width: 500px;
+          transition: border-color 1s ease, box-shadow 1s ease;
+        }
+        .cv-price-label {
+          font-size:clamp(10px,.82vw,14px); letter-spacing:3px; text-transform:uppercase;
+          color:#9aad9e; font-weight:600;
+        }
+        .cv-price-old {
+          font-size:clamp(15px,1.25vw,20px); color:#b0bdb3;
+          text-decoration:line-through; font-weight:500; letter-spacing:.5px;
+        }
+        .cv-price-row { display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; }
+        .cv-price-new {
+          font-family:'Playfair Display',serif;
+          font-size:clamp(40px,5.2vw,72px);
+          line-height:1; letter-spacing:-1px;
+          color:#1c2b20;
+        }
+
+        /* Badge OFF */
+        .cv-off-pill {
+          display:flex; flex-direction:column; align-items:center;
+          padding:10px 15px; margin-bottom:8px;
+          border-radius:10px; min-width:68px;
+          transition:background 1.2s ease;
+        }
+        .cv-off-pct {
+          font-family:'Playfair Display',serif;
+          font-size:clamp(24px,3vw,44px); line-height:1; color:#fff; font-weight:700;
+        }
+        .cv-off-lbl {
+          font-size:clamp(10px,.7vw,12px); letter-spacing:3px; font-weight:700;
+          text-transform:uppercase; color:rgba(255,255,255,.75);
+        }
+
+        /* Cuotas */
+        .cv-cuotas {
+          font-size:clamp(14px,1.1vw,18px); color:#8a9e90; font-weight:400;
+        }
+        .cv-cuotas strong { color:#2d7a4f; font-weight:700; transition: color 1s ease; }
+
+        /* Features chips */
+        .cv-features { display:flex; gap:8px; flex-wrap:wrap; }
+        .cv-feat {
+          font-size:clamp(10px,.78vw,13px); font-weight:600; letter-spacing:1px;
+          text-transform:uppercase; padding:8px 16px; border-radius:8px;
+          background:rgba(255,255,255,.85);
+          border: 1px solid rgba(45,122,79,.15);
+          color:#4a6e52;
+          box-shadow: 0 2px 8px rgba(45,122,79,.06);
+          transition: border-color 1s ease, color 1s ease;
+        }
+
+        /* WhatsApp badge */
+        .cv-whatsapp {
           display:inline-flex; align-items:center; gap:16px;
           padding:18px 32px; border-radius:16px;
           background:#25D366;
@@ -335,132 +434,370 @@ export default function MegaSale({
           font-weight:700;
           letter-spacing:.6px;
           box-shadow: 0 6px 24px rgba(37,211,102,.35), 0 2px 8px rgba(0,0,0,.1);
-          align-self:flex-start;
-          margin-top: 2vh;
-          opacity:0; transform:translateY(40px) scale(.85);
-          transition:opacity 1s ease 2.3s, transform 1s cubic-bezier(.34,1.8,.64,1) 2.3s;
+          margin-top:6px;
+          align-self:center;
         }
-        .mw-whatsapp.on { opacity:1; transform:translateY(0) scale(1); }
-        .mw-whatsapp-icon { width:clamp(30px,2.2vw,40px); height:clamp(30px,2.2vw,40px); fill:#fff; }
+        .cv-whatsapp-icon {
+          width:clamp(30px,2.2vw,40px);
+          height:clamp(30px,2.2vw,40px);
+          fill:#fff;
+        }
 
-        /* ── TAGS ── */
-        .mw-tags { display:flex; gap:12px; flex-wrap:wrap; }
-        .mw-tag {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(11px,.95vw,16px);
-          font-weight:700; letter-spacing:1.2px;
-          padding: 10px 20px; border-radius:8px; text-transform:uppercase;
-          opacity: 0; transform: translateY(30px) scale(.9);
-          transition: opacity .8s ease, transform .8s cubic-bezier(.34,1.8,.64,1);
+        /* ── DERECHA ── */
+        .cv-right {
+          position:relative; display:flex;
+          align-items:center; justify-content:center;
+          z-index:2;
+          padding:2vh 2vw;
         }
-        .mw-tags.on .mw-tag:nth-child(1) { animation: tagBounce .9s cubic-bezier(.34,1.8,.64,1) 2.5s both; }
-        .mw-tags.on .mw-tag:nth-child(2) { animation: tagBounce .9s cubic-bezier(.34,1.8,.64,1) 2.7s both; }
-        .mw-tags.on .mw-tag:nth-child(3) { animation: tagBounce .9s cubic-bezier(.34,1.8,.64,1) 2.9s both; }
-        @keyframes tagBounce {
-          0%   { opacity:0; transform:translateY(120px) scale(.6); }
-          65%  { transform:translateY(-10px) scale(1.08); }
-          100% { opacity:1; transform:translateY(0) scale(1); }
+
+        /* Glow imagen */
+        .cv-img-glow {
+          position:absolute; width:65%; height:55%;
+          border-radius:50%; pointer-events:none;
+          filter:blur(60px); opacity:.22;
+          transition:background 1.2s ease;
         }
-        .tag-dark  { background:rgba(20,20,40,.9); color:#00e5ff; border:2px solid #00e5ff66; backdrop-filter:blur(6px); box-shadow: 0 4px 16px rgba(0,229,255,.2); }
-        .tag-green { background:rgba(232,245,233,.95); color:#2e7d32; border:2px solid #a5d6a7; box-shadow: 0 4px 16px rgba(46,125,50,.15); }
-        .tag-orange{ background:rgba(255,243,224,.95); color:#e65100; border:2px solid #ffcc80; box-shadow: 0 4px 16px rgba(230,81,0,.15); }
+
+        /* Sombra suelo */
+        .cv-floor {
+          position:absolute; bottom:12%; left:50%; transform:translateX(-50%);
+          width:65%; height:4%;
+          background:radial-gradient(ellipse,rgba(45,122,79,.18) 0%,transparent 70%);
+          pointer-events:none; z-index:2;
+          transition: background 1s ease;
+        }
+
+        /* Imagen */
+        .cv-img-wrap {
+          position:relative; z-index:3;
+          width:95%; height:95%;
+          display:flex; align-items:center; justify-content:center;
+          opacity:0; transform:translateX(50px) translateY(20px) scale(.7);
+          transition:opacity 1.2s ease .6s,transform 1.2s cubic-bezier(.34,1.56,.64,1) .6s;
+        }
+        .cv-img-wrap.on { opacity:1; transform:translateX(0) translateY(0) scale(1); }
+        .cv-img-wrap.out { opacity:0!important; transform:translateX(60px) translateY(-15px) scale(.85) rotate(3deg)!important; transition:opacity .4s ease,transform .4s cubic-bezier(.6,-.28,.74,.05) !important; }
+        .cv-img-wrap.in { opacity:0; transform:translateX(-50px) translateY(20px) scale(.75) rotate(-3deg)!important; transition:opacity .6s ease .15s,transform .9s cubic-bezier(.34,1.56,.64,1) .15s!important; }
+
+        .cv-img {
+          width:100%; height:100%;
+          max-height:none; max-width:none;
+          object-fit:contain;
+          animation:cvFloat 7s ease-in-out infinite;
+        }
+        @keyframes cvFloat { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+
+        /* ── PANEL INFO BOTTOM (franja inferior izquierda) ── */
+        .cv-bottom-strip {
+          position:absolute; bottom:28px; left:0; right:0; z-index:6;
+          min-width:52px;
+          height:52px;
+          display:flex; align-items:center; gap:0;
+          pointer-events:none;
+        }
+        .cv-bstrip-block {
+          height:100%; display:flex; align-items:center;
+          padding:0 20px; gap:10px;
+          background:rgba(255,255,255,.75);
+          border: 1px solid rgba(45,122,79,.1);
+          border-radius:8px;
+          margin-right:8px;
+          backdrop-filter:blur(4px);
+        }
+        .cv-bstrip-icon { font-size:16px; }
+        .cv-bstrip-txt { font-size:clamp(10px,.8vw,13px); font-weight:600; color:#4a6e52; letter-spacing:.5px; }
+
+        /* ── RECUADRO SUBTITULO ── */
+        .cv-subtitle-box {
+          display:inline-flex; align-items:center; gap:10px;
+          background:rgba(255,255,255,.7);
+          border:1px solid rgba(45,122,79,.12);
+          border-radius:8px;
+          padding:8px 14px;
+          backdrop-filter:blur(4px);
+        }
+
+        /* ── FRAME DECORATIVO IMAGEN ── */
+        .cv-img-frame {
+          position:absolute; z-index:2;
+          border-radius:20px;
+          pointer-events:none;
+        }
+        .cv-img-frame-outer {
+          inset:10% 5% 10% 5%;
+          border: 1.5px solid rgba(45,122,79,.1);
+        }
+        .cv-img-frame-inner {
+          inset:18% 12% 18% 12%;
+          border: 1px dashed rgba(45,122,79,.08);
+        }
+
+        /* ── CORNER MARKS ── */
+        .cv-corner {
+          position:absolute; width:20px; height:20px; z-index:3; pointer-events:none;
+          transition: border-color 1s ease;
+        }
+        .cv-corner-tl { top:11%; left:6%; border-top:2px solid; border-left:2px solid; border-radius:4px 0 0 0; }
+        .cv-corner-tr { top:11%; right:6%; border-top:2px solid; border-right:2px solid; border-radius:0 4px 0 0; }
+        .cv-corner-bl { bottom:11%; left:6%; border-bottom:2px solid; border-left:2px solid; border-radius:0 0 0 4px; }
+        .cv-corner-br { bottom:11%; right:6%; border-bottom:2px solid; border-right:2px solid; border-radius:0 0 4px 0; }
+
+        /* ── RECUADRO DESCRIPCION ── */
+        .cv-desc-box {
+          background:rgba(255,255,255,.55);
+          border-left: 3px solid;
+          border-radius:0 8px 8px 0;
+          padding:12px 16px;
+          border-top: 1px solid rgba(45,122,79,.08);
+          border-right: 1px solid rgba(45,122,79,.08);
+          border-bottom: 1px solid rgba(45,122,79,.08);
+          transition: border-color 1s ease;
+        }
+        .cv-content { display:flex; flex-direction:column; gap:2vh; transition:opacity .35s ease,transform .35s ease; }
+        .cv-content.out { opacity:0; transform:translateX(-28px); }
+        .cv-content.in { opacity:0; transform:translateX(28px); transition:opacity .5s ease .1s,transform .65s cubic-bezier(.22,1,.36,1) .1s; }
+        .cv-content.idle { opacity:1; transform:translateX(0); }
+
+        /* Estáticos */
+        .cv-static { opacity:0; transform:translateY(40px) scale(.85); transition:opacity 1s ease, transform 1s cubic-bezier(.34,1.8,.64,1) ease; }
+        .cv-static.on { opacity:1; transform:translateY(0) scale(1); }
+
+        /* Animaciones individuales para elementos del contenido */
+        .cv-titulo { opacity:0; transform:translateX(-80px) scale(.85) rotate(-3deg); transition:opacity .8s ease .05s, transform .9s cubic-bezier(.34,1.8,.64,1) .05s; }
+        .cv-content.idle .cv-titulo { opacity:1; transform:translateX(0) scale(1) rotate(0); }
+        .cv-subtitle-box { opacity:0; transform:translateX(-60px) scale(.9); transition:opacity .7s ease .2s, transform .8s cubic-bezier(.34,1.6,.64,1) .2s; }
+        .cv-content.idle .cv-subtitle-box { opacity:1; transform:translateX(0) scale(1); }
+        .cv-desc-box { opacity:0; transform:translateX(70px) scale(.88) rotate(2deg); transition:opacity .75s ease .3s, transform .85s cubic-bezier(.34,1.7,.64,1) .3s; }
+        .cv-content.idle .cv-desc-box { opacity:1; transform:translateX(0) scale(1) rotate(0); }
+        .cv-price-card { opacity:0; transform:translateY(60px) scale(.85); transition:opacity .8s ease .4s, transform .9s cubic-bezier(.34,1.9,.64,1) .4s; }
+        .cv-content.idle .cv-price-card { opacity:1; transform:translateY(0) scale(1); }
+
+        /* ── BARRA PROGRESO INFERIOR ── */
+        .cv-progress-bar-wrap {
+          position:absolute; bottom:0; left:0; right:0; z-index:10;
+          height:4px; background:rgba(45,122,79,.1);
+        }
+        .cv-progress-bar {
+          height:100%; transition:width .1s linear, background 1s ease;
+        }
+
+        /* ── DOTS ── */
+        .cv-dots {
+          position:absolute; bottom:4.5vh; left:50%; transform:translateX(-50%); z-index:10;
+          display:flex; gap:12px; align-items:center;
+        }
+        .cv-dot {
+          width:10px; height:10px; border-radius:50%;
+          border:1.5px solid rgba(45,122,79,.35);
+          background:transparent;
+          cursor:pointer;
+          transition:background .3s,transform .3s,border-color .3s;
+        }
+        .cv-dot.active {
+          background:rgba(45,122,79,.85);
+          border-color:rgba(45,122,79,.85);
+          transform:scale(1.3);
+        }
+
+        /* Línea separadora vertical deco */
+        .cv-v-line {
+          position:absolute; top:15vh; bottom:15vh;
+          left:50%; width:1px; z-index:1; pointer-events:none;
+          background:linear-gradient(to bottom, transparent, rgba(45,122,79,.1) 20%, rgba(45,122,79,.1) 80%, transparent);
+        }
       `}</style>
 
-      <div className="mw">
-
-        {mounted && <div className="flash" />}
-
+      <div className="cv">
         {/* FONDO */}
-        <img className={`mw-bg ${mounted ? "on" : ""}`} src={fondo} alt="" aria-hidden="true" />
+        <div className="cv-bg" />
+        <div className="cv-pattern" />
+        <div className="cv-lines-deco" />
+        <div className="cv-gradient-bottom" />
 
-        {/* PARTÍCULAS */}
-        <div className="particles">
-          {PARTICLE_STYLES.map((style, i) => (
-            <div key={i} className="particle" style={style} />
-          ))}
-        </div>
+        {/* Formas decorativas */}
+        <div
+          className="cv-shape-main"
+          style={{ background: `linear-gradient(160deg, ${colorLight} 0%, rgba(255,255,255,0) 70%)` }}
+        />
+        <div className="cv-shape-left" style={{ background: `radial-gradient(ellipse at top, rgba(${rgb},.1) 0%, transparent 70%)` }} />
+        <div className="cv-blob-top" style={{ background: `radial-gradient(circle at 30% 40%, rgba(${rgb},.15) 0%, transparent 70%)` }} />
+        <div className="cv-rings" />
+        
+        {/* Círculos flotantes */}
+        <div className="cv-circle-float cv-circle-float-1" />
+        <div className="cv-circle-float cv-circle-float-2" />
+        <div className="cv-circle-float cv-circle-float-3" />
+
+        {/* Círculos deco top left */}
+        <div className="cv-circle-deco" style={{ borderColor: `rgba(${rgb},.14)` }} />
+        <div className="cv-circle-deco2" style={{ borderColor: `rgba(${rgb},.08)` }} />
+
+        {/* Línea vertical separadora */}
+        <div className="cv-v-line" />
 
         {/* LOGO */}
-        <div className={`mw-logo ${mounted ? "on" : ""}`}>
-          <div className="mw-logo-circle">
-            <div className="mw-logo-inner">
-              <img src={logo} alt="Logo" />
-            </div>
-          </div>
+        <div className={`cv-logo ${mounted ? 'on' : ''}`}>
+          <img src={logo} alt="Logo" />
         </div>
 
-        {/* BADGE MEGA OFERTA (arriba centrado) */}
-        <div className="mw-badge-top">
-          <span className="mw-dot-blink" />
-          ⚡ MEGA OFERTA
-        </div>
-
-        {/* IMAGEN DEL PRODUCTO */}
-        <div className={`mw-img-wrap ${mounted ? "on" : ""}`}>
-          {imagenProducto && (
-            <img className="mw-img" src={imagenProducto} alt={titulo} />
-          )}
+        {/* BADGE AMBIENTE */}
+        <div
+          className={`cv-ambiente ${mounted ? 'on' : ''}`}
+          style={{ borderColor: `rgba(${rgb},.15)` }}
+        >
+          <div className="cv-amb-dot" style={{ background: color }} />
+          <span className="cv-amb-txt">{producto.ambiente}</span>
         </div>
 
         {/* LAYOUT */}
-        <div className="mw-layout">
-          <div />
-          <div className="mw-right">
-
-            {/* CONTENIDO DINÁMICO */}
-            <div className={`mw-content ${mounted ? "on" : ""}`}>
-
-              <div className="mw-deco">
-                <span className="mw-deco-txt">{categoria}</span>
+        <div className="cv-layout">
+          {/* IZQUIERDA */}
+          <div className="cv-left">
+            {/* Eyebrow */}
+            <div
+              className={`cv-eyebrow cv-static ${mounted ? 'on' : ''}`}
+              style={{ transitionDelay: '.4s' }}
+            >
+              <div
+                className="cv-ey-pill"
+                style={{ borderLeftColor: color }}
+              >
+                <span className="cv-ey-txt" style={{ color }}>✦ Oferta Especial</span>
               </div>
-
-              <div className="mw-nombre" style={{ marginTop: "1vh" }}>
-                <span className="mw-nombre-dest">{titulo}</span>
-              </div>
-
-              {descripcion && (
-                <p className="mw-desc" style={{ marginTop: "1vh" }}>
-                  {descripcion}
-                </p>
-              )}
-
-              <div className="mw-price-block" style={{ marginTop: "6vh" }}>
-                {precioLista > 0 && (
-                  <div style={{ display:"flex", alignItems:"center", gap:"20px", marginBottom:"6px" }}>
-                    <div>
-                      <div className="mw-price-label">Precio anterior</div>
-                      <div className="mw-price-old">{formatPrecio(precioLista)}</div>
-                    </div>
-                    {porcentajeDescuento > 0 && (
-                      <div className="mw-descuento">{porcentajeDescuento}% OFF</div>
-                    )}
-                  </div>
-                )}
-                <div className="mw-price-new-wrap">
-                  <div className="mw-price-new">{formatPrecio(precioOferta)}</div>
-                </div>
-              </div>
-
             </div>
 
+            {/* Contenido dinámico */}
+            <div
+              className={`cv-content ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in' : 'idle'}`}
+            >
+              <div className="cv-titulo">
+                <span className="cv-titulo-dest" style={{ color }}>
+                  {producto.nombreDestacado}
+                </span>
+              </div>
+
+              {/* Subtítulo en recuadro */}
+              <div className="cv-subtitle-box" style={{ borderColor: `rgba(${rgb},.14)` }}>
+                <div className="cv-div-line" style={{ background: color, height:'2px', width:'28px', borderRadius:'2px', flexShrink:0 }} />
+                <span className="cv-div-txt">{producto.subtitulo}</span>
+              </div>
+
+              {/* Descripción en recuadro */}
+              <div className="cv-desc-box" style={{ borderLeftColor: color }}>
+                <p className="cv-desc" style={{ margin:0 }}>{producto.descripcion}</p>
+              </div>
+
+              {/* Tarjeta precio */}
+              <div className="cv-price-card" style={{ borderColor: `rgba(${rgb},.14)`, boxShadow: `0 8px 32px rgba(${rgb},.08)` }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
+                  <div style={{ display:'flex', flexDirection:'column', gap:'4px' }}>
+                    <span className="cv-price-label">Precio oferta</span>
+                    <div className="cv-price-old">{producto.precioViejo}</div>
+                    <div className="cv-price-row">
+                      <div className="cv-price-new">{producto.precioNuevo}</div>
+                    </div>
+                    <div className="cv-cuotas">
+                      Hasta <strong style={{ color }}>{producto.cuotas} cuotas sin interés</strong>
+                    </div>
+                  </div>
+                  <div
+                    className="cv-off-pill"
+                    style={{ background: color, marginLeft:'12px', flexShrink:0 }}
+                  >
+                    <span className="cv-off-pct">{producto.descuento}%</span>
+                    <span className="cv-off-lbl">OFF</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div
+              className={`cv-features cv-static ${mounted ? 'on' : ''}`}
+              style={{ transitionDelay: '1.8s' }}
+            >
+              <span className="cv-feat" style={{ borderColor: `rgba(${rgb},.18)`, color }}>✓ Envío gratis</span>
+              <span className="cv-feat" style={{ borderColor: `rgba(${rgb},.18)`, color }}>★ Alta calidad</span>
+              <span className="cv-feat" style={{ borderColor: `rgba(${rgb},.18)`, color }}>⏳ Stock limitado</span>
+            </div>
             {/* WhatsApp */}
-            <div className={`mw-whatsapp ${mounted ? 'on' : ''}`}>
-              <svg className="mw-whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <div
+              className={`cv-whatsapp cv-static ${mounted ? 'on' : ''}`}
+              style={{ transitionDelay: '2s' }}
+            >
+              <svg className="cv-whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
               </svg>
               <span>381 2108473</span>
-            </div>
+            </div>          </div>
 
-            {/* TAGS fijos */}
-            <div className={`mw-tags ${mounted ? "on" : ""}`} style={{ marginTop: "auto", paddingBottom: "3vh" }}>
-              <span className="mw-tag tag-dark">🛍 Mega Ofertas</span>
-              <span className="mw-tag tag-green">✓ Envío gratis</span>
-              <span className="mw-tag tag-orange">⏳ Últimas unidades</span>
-            </div>
+          {/* DERECHA */}
+          <div className="cv-right">
+            {/* Marcos decorativos */}
+            <div className="cv-img-frame cv-img-frame-outer" style={{ borderColor: `rgba(${rgb},.1)` }} />
+            <div className="cv-img-frame cv-img-frame-inner" style={{ borderColor: `rgba(${rgb},.07)` }} />
+            {/* Esquinas */}
+            <div className="cv-corner cv-corner-tl" style={{ borderColor: color }} />
+            <div className="cv-corner cv-corner-tr" style={{ borderColor: color }} />
+            <div className="cv-corner cv-corner-bl" style={{ borderColor: color }} />
+            <div className="cv-corner cv-corner-br" style={{ borderColor: color }} />
 
+            <div
+              className="cv-img-glow"
+              style={{ background: `radial-gradient(ellipse,rgba(${rgb},.6) 0%,transparent 70%)` }}
+            />
+            <div className="cv-floor" style={{ background: `radial-gradient(ellipse,rgba(${rgb},.15) 0%,transparent 70%)` }} />
+
+            <div
+              className={`cv-img-wrap ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in on' : mounted ? 'on' : ''}`}
+            >
+              <img
+                className="cv-img"
+                src={producto.imagen}
+                alt={producto.nombreDestacado}
+                style={{
+                  filter: `drop-shadow(0 24px 48px rgba(45,90,55,.22)) drop-shadow(0 0 50px rgba(${rgb},.1))`,
+                }}
+              />
+            </div>
           </div>
         </div>
 
+        {/* FRANJA INFERIOR CON BADGES */}
+        <div className="cv-bottom-strip" style={{ left:'6vw' }}>
+          <div className="cv-bstrip-block" style={{ borderColor: `rgba(${rgb},.12)` }}>
+            <span className="cv-bstrip-icon">🚚</span>
+            <span className="cv-bstrip-txt">Envío gratis</span>
+          </div>
+          <div className="cv-bstrip-block" style={{ borderColor: `rgba(${rgb},.12)` }}>
+            <span className="cv-bstrip-icon">🛡️</span>
+            <span className="cv-bstrip-txt">Garantía 1 año</span>
+          </div>
+          <div className="cv-bstrip-block" style={{ borderColor: `rgba(${rgb},.12)` }}>
+            <span className="cv-bstrip-icon">💳</span>
+            <span className="cv-bstrip-txt">Sin interés</span>
+          </div>
+        </div>
+
+        {/* BARRA PROGRESO INFERIOR */}
+        <div className="cv-progress-bar-wrap">
+          <div
+            className="cv-progress-bar"
+            style={{ width: `${progreso}%`, background: color }}
+          />
+        </div>
+
+        {/* DOTS */}
+        <div className="cv-dots">
+          {PRODUCTOS_LIST.map((_, i) => (
+            <div
+              key={i}
+              className={`cv-dot ${i === indice ? 'active' : ''}`}
+              onClick={() => ir(i)}
+            />
+          ))}
+        </div>
       </div>
     </>
   );
