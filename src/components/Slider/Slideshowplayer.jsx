@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react";
 
 import MegaSale from "../Plantillas/MegaSale";
 import LuxeShow from "../Plantillas/LuxeShow";
+import CasaViva from "../Plantillas/CasaViva";
+import HotSale from "../Plantillas/HotSale";
 // import CasaViva from "./Plantillas/CasaViva";
 
 const PLANTILLAS_MAP = {
   megasale: MegaSale,
   luxeshow: LuxeShow,
-  casaviva: (props) => <PlaceholderPlantilla nombre="CasaViva" {...props} />,
+  casaviva: CasaViva,
+  hotsale: HotSale
 };
 
 // Placeholder visual hasta que conectes tus plantillas reales

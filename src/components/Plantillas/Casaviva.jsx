@@ -1,127 +1,27 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './../../assets/logo.png';
 import comedor from './../../assets/comedor.png';
-import juego4 from './../../assets/comedor4.png';
-import redondo from './../../assets/redonda.png';
 
-const DEFAULT_PRODUCTOS = [
-  {
-    id: 1,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
-    subtitulo: 'Mesa + 6 Sillas · Madera Sólida',
-    descripcion:
-      'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
-    precioViejo: '$ 299.999',
-    precioNuevo: '$ 199.999',
-    descuento: '33',
-    cuotas: '12',
-    imagen: comedor,
-    ambiente: 'Comedor · Familiar',
-    color: '#2d7a4f',
-    colorLight: '#e8f5ee',
-    colorRgb: '45,122,79',
-  },
-  {
-    id: 2,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
-    subtitulo: 'Mesa + 4 Sillas · Madera Sólida',
-    descripcion:
-      'Mesa extensible con 4 sillas tapizadas en tela premium. Ideal para ambientes compactos y modernos.',
-    precioViejo: '$ 189.999',
-    precioNuevo: '$ 129.999',
-    descuento: '31',
-    cuotas: '6',
-    imagen: juego4,
-    ambiente: 'Comedor · Compacto',
-    color: '#3a9e68',
-    colorLight: '#eaf7f0',
-    colorRgb: '58,158,104',
-  },
-  {
-    id: 3,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
-    subtitulo: 'Mesa Redonda + 4 Sillas · Madera Sólida',
-    descripcion:
-      'Set completo de comedor en madera laqueada. Mesa redonda extensible con sillas incluidas. Terminación Premium.',
-    precioViejo: '$ 450.000',
-    precioNuevo: '$ 299.999',
-    descuento: '33',
-    cuotas: '18',
-    imagen: redondo,
-    ambiente: 'Comedor · Premium',
-    color: '#1a5c3a',
-    colorLight: '#e4f2ea',
-    colorRgb: '26,92,58',
-  },
-];
-
-const DURACION = 5500;
-
-export default function ModeloCasaViva({ products }) {
+export default function CasaViva({
+  titulo = "Juego de Comedor",
+  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
+  imagenProducto = comedor,
+  precioLista = 500000,
+  precioOferta = 250000,
+  porcentajeDescuento = 50,
+  categoria = "Living & Comedor",
+}) {
   const [mounted, setMounted] = useState(false);
-  const [indice, setIndice] = useState(0);
-  const [fase, setFase] = useState('idle');
-  const [progreso, setProgreso] = useState(0);
-  const intervaloRef = useRef(null);
-  const progressRef = useRef(null);
-
-  const PRODUCTOS_LIST = products && products.length ? products : DEFAULT_PRODUCTOS;
-  const producto = PRODUCTOS_LIST[indice];
-  const color = producto.color;
-  const colorLight = producto.colorLight || '#e8f5ee';
-  const rgb = producto.colorRgb;
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      setMounted(true);
-    }, 200);
-    return () => clearTimeout(t);
-  }, []);
+    const t1 = setTimeout(() => setMounted(false), 0);
+    const t2 = setTimeout(() => setMounted(true), 80);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [titulo, imagenProducto]);
 
-  useEffect(() => {
-    if (!mounted) return;
-    const start = performance.now();
-    const tick = (now) => {
-      const pct = Math.min(((now - start) / DURACION) * 100, 100);
-      setProgreso(pct);
-      if (pct < 100) progressRef.current = requestAnimationFrame(tick);
-    };
-    progressRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(progressRef.current);
-  }, [indice, mounted]);
+  const formatPrecio = (n) =>
+    n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
 
-  const runTransition = (getNext) => {
-    setFase('saliendo');
-    setTimeout(() => {
-      setIndice(getNext);
-      setFase('entrando');
-      setTimeout(() => {
-        setFase('idle');
-      }, 700);
-    }, 420);
-  };
-
-  useEffect(() => {
-    if (!mounted) return;
-    intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
-      DURACION
-    );
-    return () => clearInterval(intervaloRef.current);
-  }, [mounted, PRODUCTOS_LIST.length]);
-
-  const ir = (i) => {
-    if (i === indice) return;
-    clearInterval(intervaloRef.current);
-    runTransition(i);
-    intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
-      DURACION
-    );
-  };
 
   return (
     <>
@@ -133,7 +33,7 @@ export default function ModeloCasaViva({ products }) {
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
         .cv {
-          width:100vw; height:100vh;
+          width:100%; height:100%;
           position:relative; overflow:hidden;
           font-family:'Outfit',sans-serif;
           background:#f4f6f2;
@@ -332,8 +232,8 @@ export default function ModeloCasaViva({ products }) {
         /* Título */
         .cv-titulo {
           font-family:'Playfair Display',serif;
-          font-size:clamp(36px,5vw,80px);
-          line-height:.98; letter-spacing:-.5px;
+          font-size:clamp(44px,6.2vw,100px);
+          line-height:.95; letter-spacing:-.5px;
           color:#1c2b20;
           text-align:center;
         }
@@ -621,10 +521,10 @@ export default function ModeloCasaViva({ products }) {
         {/* Formas decorativas */}
         <div
           className="cv-shape-main"
-          style={{ background: `linear-gradient(160deg, ${colorLight} 0%, rgba(255,255,255,0) 70%)` }}
+          style={{ background: 'linear-gradient(160deg, #e8f5ee 0%, rgba(255,255,255,0) 70%)' }}
         />
-        <div className="cv-shape-left" style={{ background: `radial-gradient(ellipse at top, rgba(${rgb},.1) 0%, transparent 70%)` }} />
-        <div className="cv-blob-top" style={{ background: `radial-gradient(circle at 30% 40%, rgba(${rgb},.15) 0%, transparent 70%)` }} />
+        <div className="cv-shape-left" style={{ background: 'radial-gradient(ellipse at top, rgba(45,122,79,.1) 0%, transparent 70%)' }} />
+        <div className="cv-blob-top" style={{ background: 'radial-gradient(circle at 30% 40%, rgba(45,122,79,.15) 0%, transparent 70%)' }} />
         <div className="cv-rings" />
         
         {/* Círculos flotantes */}
@@ -633,8 +533,8 @@ export default function ModeloCasaViva({ products }) {
         <div className="cv-circle-float cv-circle-float-3" />
 
         {/* Círculos deco top left */}
-        <div className="cv-circle-deco" style={{ borderColor: `rgba(${rgb},.14)` }} />
-        <div className="cv-circle-deco2" style={{ borderColor: `rgba(${rgb},.08)` }} />
+        <div className="cv-circle-deco" style={{ borderColor: 'rgba(45,122,79,.14)' }} />
+        <div className="cv-circle-deco2" style={{ borderColor: 'rgba(45,122,79,.08)' }} />
 
         {/* Línea vertical separadora */}
         <div className="cv-v-line" />
@@ -647,10 +547,10 @@ export default function ModeloCasaViva({ products }) {
         {/* BADGE AMBIENTE */}
         <div
           className={`cv-ambiente ${mounted ? 'on' : ''}`}
-          style={{ borderColor: `rgba(${rgb},.15)` }}
+          style={{ borderColor: 'rgba(45,122,79,.15)' }}
         >
-          <div className="cv-amb-dot" style={{ background: color }} />
-          <span className="cv-amb-txt">{producto.ambiente}</span>
+          <div className="cv-amb-dot" style={{ background: '#2d7a4f' }} />
+          <span className="cv-amb-txt">{categoria}</span>
         </div>
 
         {/* LAYOUT */}
@@ -664,52 +564,49 @@ export default function ModeloCasaViva({ products }) {
             >
               <div
                 className="cv-ey-pill"
-                style={{ borderLeftColor: color }}
+                style={{ borderLeftColor: '#2d7a4f' }}
               >
-                <span className="cv-ey-txt" style={{ color }}>✦ Oferta Especial</span>
+                <span className="cv-ey-txt" style={{ color: '#2d7a4f' }}>❆ Oferta Especial</span>
               </div>
             </div>
 
             {/* Contenido dinámico */}
-            <div
-              className={`cv-content ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in' : 'idle'}`}
-            >
+            <div className="cv-content idle">
               <div className="cv-titulo">
-                {producto.nombre}
-                <span className="cv-titulo-dest" style={{ color }}>
-                  {producto.nombreDestacado}
+                <span className="cv-titulo-dest" style={{ color: '#2d7a4f' }}>
+                  {titulo}
                 </span>
               </div>
 
               {/* Subtítulo en recuadro */}
-              <div className="cv-subtitle-box" style={{ borderColor: `rgba(${rgb},.14)` }}>
-                <div className="cv-div-line" style={{ background: color, height:'2px', width:'28px', borderRadius:'2px', flexShrink:0 }} />
-                <span className="cv-div-txt">{producto.subtitulo}</span>
+              <div className="cv-subtitle-box" style={{ borderColor: 'rgba(45,122,79,.14)' }}>
+                <div className="cv-div-line" style={{ background: '#2d7a4f', height:'2px', width:'28px', borderRadius:'2px', flexShrink:0 }} />
+                <span className="cv-div-txt">{categoria}</span>
               </div>
 
               {/* Descripción en recuadro */}
-              <div className="cv-desc-box" style={{ borderLeftColor: color }}>
-                <p className="cv-desc" style={{ margin:0 }}>{producto.descripcion}</p>
+              <div className="cv-desc-box" style={{ borderLeftColor: '#2d7a4f' }}>
+                <p className="cv-desc" style={{ margin:0 }}>{descripcion}</p>
               </div>
 
               {/* Tarjeta precio */}
-              <div className="cv-price-card" style={{ borderColor: `rgba(${rgb},.14)`, boxShadow: `0 8px 32px rgba(${rgb},.08)` }}>
+              <div className="cv-price-card" style={{ borderColor: 'rgba(45,122,79,.14)', boxShadow: '0 8px 32px rgba(45,122,79,.08)' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
                   <div style={{ display:'flex', flexDirection:'column', gap:'4px' }}>
                     <span className="cv-price-label">Precio oferta</span>
-                    <div className="cv-price-old">{producto.precioViejo}</div>
+                    <div className="cv-price-old">{formatPrecio(precioLista)}</div>
                     <div className="cv-price-row">
-                      <div className="cv-price-new">{producto.precioNuevo}</div>
+                      <div className="cv-price-new">{formatPrecio(precioOferta)}</div>
                     </div>
                     <div className="cv-cuotas">
-                      Hasta <strong style={{ color }}>{producto.cuotas} cuotas sin interés</strong>
+                      Hasta <strong style={{ color: '#2d7a4f' }}>12 cuotas sin interés</strong>
                     </div>
                   </div>
                   <div
                     className="cv-off-pill"
-                    style={{ background: color, marginLeft:'12px', flexShrink:0 }}
+                    style={{ background: '#2d7a4f', marginLeft:'12px', flexShrink:0 }}
                   >
-                    <span className="cv-off-pct">{producto.descuento}%</span>
+                    <span className="cv-off-pct">{porcentajeDescuento}%</span>
                     <span className="cv-off-lbl">OFF</span>
                   </div>
                 </div>
@@ -721,9 +618,9 @@ export default function ModeloCasaViva({ products }) {
               className={`cv-features cv-static ${mounted ? 'on' : ''}`}
               style={{ transitionDelay: '1.8s' }}
             >
-              <span className="cv-feat" style={{ borderColor: `rgba(${rgb},.18)`, color }}>✓ Envío gratis</span>
-              <span className="cv-feat" style={{ borderColor: `rgba(${rgb},.18)`, color }}>★ Alta calidad</span>
-              <span className="cv-feat" style={{ borderColor: `rgba(${rgb},.18)`, color }}>⏳ Stock limitado</span>
+              <span className="cv-feat" style={{ borderColor: 'rgba(45,122,79,.18)', color: '#2d7a4f' }}>✓ Envío gratis</span>
+              <span className="cv-feat" style={{ borderColor: 'rgba(45,122,79,.18)', color: '#2d7a4f' }}>★ Alta calidad</span>
+              <span className="cv-feat" style={{ borderColor: 'rgba(45,122,79,.18)', color: '#2d7a4f' }}>⏳ Stock limitado</span>
             </div>
             {/* WhatsApp */}
             <div
@@ -739,29 +636,29 @@ export default function ModeloCasaViva({ products }) {
           {/* DERECHA */}
           <div className="cv-right">
             {/* Marcos decorativos */}
-            <div className="cv-img-frame cv-img-frame-outer" style={{ borderColor: `rgba(${rgb},.1)` }} />
-            <div className="cv-img-frame cv-img-frame-inner" style={{ borderColor: `rgba(${rgb},.07)` }} />
+            <div className="cv-img-frame cv-img-frame-outer" style={{ borderColor: 'rgba(45,122,79,.1)' }} />
+            <div className="cv-img-frame cv-img-frame-inner" style={{ borderColor: 'rgba(45,122,79,.07)' }} />
             {/* Esquinas */}
-            <div className="cv-corner cv-corner-tl" style={{ borderColor: color }} />
-            <div className="cv-corner cv-corner-tr" style={{ borderColor: color }} />
-            <div className="cv-corner cv-corner-bl" style={{ borderColor: color }} />
-            <div className="cv-corner cv-corner-br" style={{ borderColor: color }} />
+            <div className="cv-corner cv-corner-tl" style={{ borderColor: '#2d7a4f' }} />
+            <div className="cv-corner cv-corner-tr" style={{ borderColor: '#2d7a4f' }} />
+            <div className="cv-corner cv-corner-bl" style={{ borderColor: '#2d7a4f' }} />
+            <div className="cv-corner cv-corner-br" style={{ borderColor: '#2d7a4f' }} />
 
             <div
               className="cv-img-glow"
-              style={{ background: `radial-gradient(ellipse,rgba(${rgb},.6) 0%,transparent 70%)` }}
+              style={{ background: 'radial-gradient(ellipse,rgba(45,122,79,.6) 0%,transparent 70%)' }}
             />
-            <div className="cv-floor" style={{ background: `radial-gradient(ellipse,rgba(${rgb},.15) 0%,transparent 70%)` }} />
+            <div className="cv-floor" style={{ background: 'radial-gradient(ellipse,rgba(45,122,79,.15) 0%,transparent 70%)' }} />
 
             <div
-              className={`cv-img-wrap ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in on' : mounted ? 'on' : ''}`}
+              className={`cv-img-wrap ${mounted ? 'on' : ''}`}
             >
               <img
                 className="cv-img"
-                src={producto.imagen}
-                alt={producto.nombreDestacado}
+                src={imagenProducto}
+                alt={titulo}
                 style={{
-                  filter: `drop-shadow(0 24px 48px rgba(45,90,55,.22)) drop-shadow(0 0 50px rgba(${rgb},.1))`,
+                  filter: 'drop-shadow(0 24px 48px rgba(45,90,55,.22)) drop-shadow(0 0 50px rgba(45,122,79,.1))',
                 }}
               />
             </div>
@@ -770,38 +667,20 @@ export default function ModeloCasaViva({ products }) {
 
         {/* FRANJA INFERIOR CON BADGES */}
         <div className="cv-bottom-strip" style={{ left:'6vw' }}>
-          <div className="cv-bstrip-block" style={{ borderColor: `rgba(${rgb},.12)` }}>
+          <div className="cv-bstrip-block" style={{ borderColor: 'rgba(45,122,79,.12)' }}>
             <span className="cv-bstrip-icon">🚚</span>
             <span className="cv-bstrip-txt">Envío gratis</span>
           </div>
-          <div className="cv-bstrip-block" style={{ borderColor: `rgba(${rgb},.12)` }}>
+          <div className="cv-bstrip-block" style={{ borderColor: 'rgba(45,122,79,.12)' }}>
             <span className="cv-bstrip-icon">🛡️</span>
             <span className="cv-bstrip-txt">Garantía 1 año</span>
           </div>
-          <div className="cv-bstrip-block" style={{ borderColor: `rgba(${rgb},.12)` }}>
+          <div className="cv-bstrip-block" style={{ borderColor: 'rgba(45,122,79,.12)' }}>
             <span className="cv-bstrip-icon">💳</span>
             <span className="cv-bstrip-txt">Sin interés</span>
           </div>
         </div>
 
-        {/* BARRA PROGRESO INFERIOR */}
-        <div className="cv-progress-bar-wrap">
-          <div
-            className="cv-progress-bar"
-            style={{ width: `${progreso}%`, background: color }}
-          />
-        </div>
-
-        {/* DOTS */}
-        <div className="cv-dots">
-          {PRODUCTOS_LIST.map((_, i) => (
-            <div
-              key={i}
-              className={`cv-dot ${i === indice ? 'active' : ''}`}
-              onClick={() => ir(i)}
-            />
-          ))}
-        </div>
       </div>
     </>
   );

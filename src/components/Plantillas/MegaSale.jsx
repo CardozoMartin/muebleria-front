@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import fondo from "./../../assets/fondo1.jpeg";
 import logo from "./../../assets/logo.png";
+import comedor from './../../assets/comedor.png';
 
 /**
  * MegaSale — plantilla publicitaria
@@ -16,13 +17,13 @@ import logo from "./../../assets/logo.png";
  *  - categoria       string
  */
 export default function MegaSale({
-  titulo = "Producto",
-  descripcion = "",
-  imagenProducto = "",
-  precioLista = 0,
-  precioOferta = 0,
-  porcentajeDescuento = 0,
-  categoria = "",
+  titulo = "Juego de Comedor",
+  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
+  imagenProducto = comedor,
+  precioLista = 500000,
+  precioOferta = 250000,
+  porcentajeDescuento = 50,
+  categoria = "Living & Comedor",
 }) {
   const [mounted, setMounted] = useState(false);
 
@@ -115,20 +116,22 @@ export default function MegaSale({
 
         /* ── IMAGEN DEL PRODUCTO ── */
         .mw-img-wrap {
-          position: absolute; right: 1vw; top: 50%;
-          transform: translateY(-52%) scale(0.5) translateX(120px) rotate(8deg);
+          position: absolute; right: 0; top: 0;
+          width: 35%; height: 100%;
           z-index: 3;
+          display: flex; align-items: center; justify-content: flex-end;
           opacity: 0;
+          transform: scale(0.5) translateX(120px) rotate(8deg);
           transition: opacity .9s ease .2s, transform 1.1s cubic-bezier(.34,1.62,.64,1) .2s;
         }
         .mw-img-wrap.on {
           opacity: 1;
-          transform: translateY(-52%) scale(1) translateX(0) rotate(0);
+          transform: scale(1) translateX(0) rotate(0);
         }
         .mw-img {
-          width: clamp(302px, 38vw, 648px);
-          height: auto;
-          max-height: 105vh;
+          width: 80%;
+          height: 75%;
+          max-height: 90%;
           object-fit: contain;
           filter: drop-shadow(0 30px 70px rgba(0,0,0,.5)) drop-shadow(0 0 50px rgba(230,53,0,.3));
           animation: floatImg 4.5s ease-in-out infinite 1.5s;

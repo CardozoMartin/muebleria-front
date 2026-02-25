@@ -1,131 +1,26 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './../../assets/logo.png';
 import comedor from './../../assets/comedor.png';
-import juego4 from './../../assets/comedor4.png';
-import redondo from './../../assets/redonda.png';
 
-const DEFAULT_PRODUCTOS = [
-  {
-    id: 1,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
-    subtitulo: 'Mesa + 6 Sillas · Madera Sólida',
-    descripcion:
-      'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
-    precioViejo: '$ 299.999',
-    precioNuevo: '$ 199.999',
-    descuento: '33',
-    cuotas: '12',
-    imagen: comedor,
-    ambiente: 'Comedor · Familiar',
-    color: '#0057FF',
-    colorElectric: '#00AAFF',
-    colorLight: '#e0eeff',
-    colorRgb: '0,87,255',
-    colorElectricRgb: '0,170,255',
-  },
-  {
-    id: 2,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
-    subtitulo: 'Mesa + 4 Sillas · Madera Sólida',
-    descripcion:
-      'Mesa extensible con 4 sillas tapizadas en tela premium. Ideal para ambientes compactos y modernos.',
-    precioViejo: '$ 189.999',
-    precioNuevo: '$ 129.999',
-    descuento: '31',
-    cuotas: '6',
-    imagen: juego4,
-    ambiente: 'Comedor · Compacto',
-    color: '#005CE6',
-    colorElectric: '#29B6FF',
-    colorLight: '#dceeff',
-    colorRgb: '0,92,230',
-    colorElectricRgb: '41,182,255',
-  },
-  {
-    id: 3,
-    nombre: 'Juego de',
-    nombreDestacado: 'Comedor',
-    subtitulo: 'Mesa Redonda + 4 Sillas · Madera Sólida',
-    descripcion:
-      'Set completo de comedor en madera laqueada. Mesa redonda extensible con sillas incluidas. Terminación Premium.',
-    precioViejo: '$ 450.000',
-    precioNuevo: '$ 299.999',
-    descuento: '33',
-    cuotas: '18',
-    imagen: redondo,
-    ambiente: 'Comedor · Premium',
-    color: '#0033CC',
-    colorElectric: '#00C8FF',
-    colorLight: '#d6e8ff',
-    colorRgb: '0,51,204',
-    colorElectricRgb: '0,200,255',
-  },
-];
-
-const DURACION = 5500;
-
-export default function CasaVivaAzul({ products }) {
+export default function ModeloCasaVivaAzul({
+  titulo = "Juego de Comedor",
+  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
+  imagenProducto = comedor,
+  precioLista = 500000,
+  precioOferta = 250000,
+  porcentajeDescuento = 50,
+  categoria = "Living & Comedor",
+}) {
   const [mounted, setMounted] = useState(false);
-  const [indice, setIndice] = useState(0);
-  const [fase, setFase] = useState('idle');
-  const [progreso, setProgreso] = useState(0);
-  const intervaloRef = useRef(null);
-  const progressRef = useRef(null);
-
-  const PRODUCTOS_LIST = products && products.length ? products : DEFAULT_PRODUCTOS;
-  const producto = PRODUCTOS_LIST[indice];
-  const color = producto.color;
-  const electric = producto.colorElectric;
-  const colorLight = producto.colorLight || '#e0eeff';
-  const rgb = producto.colorRgb;
-  const rgbE = producto.colorElectricRgb;
 
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 200);
-    return () => clearTimeout(t);
-  }, []);
+    const t1 = setTimeout(() => setMounted(false), 0);
+    const t2 = setTimeout(() => setMounted(true), 80);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [titulo, imagenProducto]);
 
-  useEffect(() => {
-    if (!mounted) return;
-    const start = performance.now();
-    const tick = (now) => {
-      const pct = Math.min(((now - start) / DURACION) * 100, 100);
-      setProgreso(pct);
-      if (pct < 100) progressRef.current = requestAnimationFrame(tick);
-    };
-    progressRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(progressRef.current);
-  }, [indice, mounted]);
-
-  const runTransition = (getNext) => {
-    setFase('saliendo');
-    setTimeout(() => {
-      setIndice(getNext);
-      setFase('entrando');
-      setTimeout(() => setFase('idle'), 700);
-    }, 420);
-  };
-
-  useEffect(() => {
-    if (!mounted) return;
-    intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
-      DURACION
-    );
-    return () => clearInterval(intervaloRef.current);
-  }, [mounted, PRODUCTOS_LIST.length]);
-
-  const ir = (i) => {
-    if (i === indice) return;
-    clearInterval(intervaloRef.current);
-    runTransition(i);
-    intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
-      DURACION
-    );
-  };
+  const formatPrecio = (n) =>
+    n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
 
   return (
     <>
@@ -137,7 +32,7 @@ export default function CasaVivaAzul({ products }) {
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
         .az {
-          width:100vw; height:100vh;
+          width:100%; height:100%;
           position:relative; overflow:hidden;
           font-family:'DM Sans',sans-serif;
           background:#f0f6ff;
@@ -406,7 +301,7 @@ export default function CasaVivaAzul({ products }) {
         /* Título */
         .az-titulo {
           font-family:'Space Grotesk',sans-serif;
-          font-size:clamp(38px,5.2vw,86px);
+          font-size:clamp(56px,8vw,130px);
           line-height:.92; letter-spacing:-1px;
           color:#08165a;
           text-align:center;
@@ -706,29 +601,29 @@ export default function CasaVivaAzul({ products }) {
         {/* Blobs */}
         <div
           className="az-blob-right"
-          style={{ background: `linear-gradient(160deg, ${colorLight} 0%, rgba(${rgbE},.08) 60%, transparent 100%)` }}
+          style={{ background: 'linear-gradient(160deg, #e0eeff 0%, rgba(0,170,255,.08) 60%, transparent 100%)' }}
         />
         <div
           className="az-blob-left"
-          style={{ background: `radial-gradient(ellipse, rgba(${rgb},.07) 0%, transparent 70%)` }}
+          style={{ background: 'radial-gradient(ellipse, rgba(0,87,255,.07) 0%, transparent 70%)' }}
         />
         <div
           className="az-orb-top"
-          style={{ background: `radial-gradient(circle, rgba(${rgbE},1) 0%, rgba(${rgb},.3) 60%, transparent 100%)` }}
+          style={{ background: 'radial-gradient(circle, rgba(0,170,255,1) 0%, rgba(0,87,255,.3) 60%, transparent 100%)' }}
         />
 
         {/* Arcos */}
-        <div className="az-arc" style={{ borderColor: `rgba(${rgb},.08)` }} />
+        <div className="az-arc" style={{ borderColor: 'rgba(0,87,255,.08)' }} />
         <div className="az-arc2" />
 
         {/* Línea vertical */}
         <div className="az-vline" />
 
         {/* Chispas */}
-        <div className="az-spark az-spark-1" style={{ color: electric }}>✦</div>
-        <div className="az-spark az-spark-2" style={{ color: color }}>◆</div>
-        <div className="az-spark az-spark-3" style={{ color: electric }}>✦</div>
-        <div className="az-spark az-spark-4" style={{ color: color }}>◆</div>
+        <div className="az-spark az-spark-1" style={{ color: '#00AAFF' }}>✦</div>
+        <div className="az-spark az-spark-2" style={{ color: '#0057FF' }}>◆</div>
+        <div className="az-spark az-spark-3" style={{ color: '#00AAFF' }}>✦</div>
+        <div className="az-spark az-spark-4" style={{ color: '#0057FF' }}>◆</div>
 
         {/* Texto rotado */}
         <div className="az-rotated-txt">Casa Viva · Muebles · Ofertas Especiales</div>
@@ -740,8 +635,8 @@ export default function CasaVivaAzul({ products }) {
 
         {/* BADGE AMBIENTE */}
         <div className={`az-badge-env ${mounted ? 'on' : ''}`}>
-          <div className="az-env-dot" style={{ background: electric }} />
-          <span className="az-env-txt">{producto.ambiente}</span>
+          <div className="az-env-dot" style={{ background: '#00AAFF' }} />
+          <span className="az-env-txt">{categoria}</span>
         </div>
 
         {/* LAYOUT */}
@@ -749,27 +644,27 @@ export default function CasaVivaAzul({ products }) {
 
           {/* IZQUIERDA: imagen */}
           <div className="az-left">
-            <div className="az-ring az-ring-1" style={{ borderColor: color }} />
-            <div className="az-ring az-ring-2" style={{ borderColor: electric }} />
+            <div className="az-ring az-ring-1" style={{ borderColor: '#0057FF' }} />
+            <div className="az-ring az-ring-2" style={{ borderColor: '#00AAFF' }} />
 
             <div
               className="az-img-glow"
-              style={{ background: `radial-gradient(ellipse, rgba(${rgbE},.8) 0%, rgba(${rgb},.4) 50%, transparent 70%)` }}
+              style={{ background: 'radial-gradient(ellipse, rgba(0,170,255,.8) 0%, rgba(0,87,255,.4) 50%, transparent 70%)' }}
             />
             <div
               className="az-floor"
-              style={{ background: `radial-gradient(ellipse, rgba(${rgb},.18) 0%, transparent 70%)` }}
+              style={{ background: 'radial-gradient(ellipse, rgba(0,87,255,.18) 0%, transparent 70%)' }}
             />
 
             <div
-              className={`az-img-wrap ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in on' : mounted ? 'on' : ''}`}
+              className={`az-img-wrap ${mounted ? 'on' : ''}`}
             >
               <img
                 className="az-img"
-                src={producto.imagen}
-                alt={producto.nombreDestacado}
+                src={imagenProducto}
+                alt={titulo}
                 style={{
-                  filter: `drop-shadow(0 28px 56px rgba(${rgb},.25)) drop-shadow(0 0 60px rgba(${rgbE},.15))`,
+                  filter: 'drop-shadow(0 28px 56px rgba(0,87,255,.25)) drop-shadow(0 0 60px rgba(0,170,255,.15))',
                 }}
               />
             </div>
@@ -787,9 +682,9 @@ export default function CasaVivaAzul({ products }) {
               {/* Badge descuento flotante */}
               <div
                 className={`az-off-floating ${mounted ? 'on' : ''}`}
-                style={{ background: `linear-gradient(135deg, ${color} 0%, ${electric} 100%)` }}
+                style={{ background: 'linear-gradient(135deg, #0057FF 0%, #00AAFF 100%)' }}
               >
-                <span className="az-off-pct">{producto.descuento}%</span>
+                <span className="az-off-pct">{porcentajeDescuento}%</span>
                 <span className="az-off-lbl">OFF</span>
               </div>
             </div>
@@ -801,7 +696,7 @@ export default function CasaVivaAzul({ products }) {
             <div className="az-tag">
               <div
                 className="az-tag-inner"
-                style={{ background: `linear-gradient(135deg, ${color} 0%, ${electric} 100%)` }}
+                style={{ background: 'linear-gradient(135deg, #0057FF 0%, #00AAFF 100%)' }}
               >
                 <div className="az-tag-dot" />
                 <span className="az-tag-txt">SUPER SALE !</span>
@@ -809,33 +704,32 @@ export default function CasaVivaAzul({ products }) {
             </div>
 
             {/* Contenido dinámico */}
-            <div className={`az-content ${fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in' : 'idle'}`}>
+            <div className="az-content idle">
 
               {/* Título */}
               <div className="az-titulo">
-                <span className="az-titulo-normal">{producto.nombre}</span>
-                <span className="az-titulo-dest" style={{ color }}>
-                  {producto.nombreDestacado}
+                <span className="az-titulo-dest" style={{ color: '#0057FF' }}>
+                  {titulo}
                 </span>
               </div>
 
               {/* Subtítulo */}
-              <div className="az-subtitulo" style={{ background: `rgba(${rgb},.05)`, borderColor: `rgba(${rgb},.12)` }}>
-                <div className="az-sub-bar" style={{ background: electric }} />
-                <span className="az-sub-txt">{producto.subtitulo}</span>
+                <div className="az-subtitulo" style={{ background: 'rgba(0,87,255,.05)', borderColor: 'rgba(0,87,255,.12)' }}>
+                <div className="az-sub-bar" style={{ background: '#00AAFF' }} />
+                <span className="az-sub-txt">{categoria}</span>
               </div>
 
               {/* Descripción */}
               <div className="az-desc-wrap">
-                <div className="az-desc-accent" style={{ background: `linear-gradient(to bottom, ${electric}, ${color})` }} />
-                <p className="az-desc">{producto.descripcion}</p>
+                <div className="az-desc-accent" style={{ background: 'linear-gradient(to bottom, #00AAFF, #0057FF)' }} />
+                <p className="az-desc">{descripcion}</p>
               </div>
 
               {/* Divisor */}
               <div className="az-divider">
-                <div className="az-div-line" style={{ background: `linear-gradient(to right, rgba(${rgb},.25), transparent)` }} />
-                <span className="az-div-gem" style={{ color: electric }}>◆</span>
-                <div className="az-div-line" style={{ background: `linear-gradient(to left, rgba(${rgb},.15), transparent)` }} />
+                <div className="az-div-line" style={{ background: 'linear-gradient(to right, rgba(0,87,255,.25), transparent)' }} />
+                <span className="az-div-gem" style={{ color: '#00AAFF' }}>◆</span>
+                <div className="az-div-line" style={{ background: 'linear-gradient(to left, rgba(0,87,255,.15), transparent)' }} />
               </div>
 
               {/* Precio */}
@@ -843,11 +737,11 @@ export default function CasaVivaAzul({ products }) {
                 <div className="az-price-main">
                   <div className="az-price-old-wrap">
                     <span className="az-price-old-label">Precio anterior</span>
-                    <div className="az-price-old">{producto.precioViejo}</div>
+                    <div className="az-price-old">{formatPrecio(precioLista)}</div>
                   </div>
-                  <div className="az-price-new" style={{ color: '#08165a' }}>{producto.precioNuevo}</div>
+                  <div className="az-price-new" style={{ color: '#08165a' }}>{formatPrecio(precioOferta)}</div>
                   <div className="az-cuotas">
-                    Hasta <strong style={{ color }}>{producto.cuotas} cuotas sin interés</strong>
+                    Hasta <strong style={{ color: '#0057FF' }}>12 cuotas sin interés</strong>
                   </div>
                 </div>
               </div>
@@ -855,9 +749,9 @@ export default function CasaVivaAzul({ products }) {
 
             {/* Chips */}
             <div className={`az-chips ${mounted ? 'on' : ''}`}>
-              <span className="az-chip" style={{ borderColor: `rgba(${rgb},.2)`, color }}>✓ Envío gratis</span>
-              <span className="az-chip" style={{ borderColor: `rgba(${rgb},.2)`, color }}>★ Alta calidad</span>
-              <span className="az-chip" style={{ borderColor: `rgba(${rgb},.2)`, color }}>⏳ Stock limitado</span>
+              <span className="az-chip" style={{ borderColor: 'rgba(0,87,255,.2)', color: '#0057FF' }}>✓ Envío gratis</span>
+              <span className="az-chip" style={{ borderColor: 'rgba(0,87,255,.2)', color: '#0057FF' }}>★ Alta calidad</span>
+              <span className="az-chip" style={{ borderColor: 'rgba(0,87,255,.2)', color: '#0057FF' }}>⏳ Stock limitado</span>
             </div>
 
             {/* WhatsApp */}
@@ -872,39 +766,21 @@ export default function CasaVivaAzul({ products }) {
 
         {/* FRANJA INFERIOR */}
         <div className="az-bottom">
-          <div className="az-bottom-pill" style={{ borderColor: `rgba(${rgb},.12)` }}>
+          <div className="az-bottom-pill" style={{ borderColor: 'rgba(0,87,255,.12)' }}>
             <span className="az-bottom-icon">🚚</span>
             <span className="az-bottom-txt">Envío gratis</span>
           </div>
-          <div className="az-bottom-pill" style={{ borderColor: `rgba(${rgb},.12)` }}>
+          <div className="az-bottom-pill" style={{ borderColor: 'rgba(0,87,255,.12)' }}>
             <span className="az-bottom-icon">🛡️</span>
             <span className="az-bottom-txt">Garantía 1 año</span>
           </div>
-          <div className="az-bottom-pill" style={{ borderColor: `rgba(${rgb},.12)` }}>
+          <div className="az-bottom-pill" style={{ borderColor: 'rgba(0,87,255,.12)' }}>
             <span className="az-bottom-icon">💳</span>
             <span className="az-bottom-txt">Sin interés</span>
           </div>
         </div>
 
-        {/* BARRA PROGRESO */}
-        <div className="az-progress-wrap">
-          <div
-            className="az-progress"
-            style={{ width: `${progreso}%`, background: `linear-gradient(to right, ${color}, ${electric})` }}
-          />
-        </div>
 
-        {/* DOTS */}
-        <div className="az-nav-dots">
-          {PRODUCTOS_LIST.map((_, i) => (
-            <button
-              key={i}
-              className={`az-nav-dot ${i === indice ? 'active' : ''}`}
-              style={i === indice ? { background: color } : { background: `rgba(${rgb},.2)` }}
-              onClick={() => ir(i)}
-            />
-          ))}
-        </div>
       </div>
     </>
   );

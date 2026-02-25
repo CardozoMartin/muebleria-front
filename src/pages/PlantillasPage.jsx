@@ -3,34 +3,38 @@ import ModeloMegaSale from '../components/ModelosPlantillas/ModeloMegaSale';
 import ModeloLuxeShow from '../components/ModelosPlantillas/ModeloLuxeShow';
 import ModeloCasaViva from '../components/ModelosPlantillas/ModeloCasaViva';
 import ModeloHotSale from '../components/ModelosPlantillas/ModeloHotSale';
+import LuxeShow from '../components/Plantillas/LuxeShow';
+import MegaSale from '../components/Plantillas/MegaSale';
+import CasaViva from '../components/Plantillas/CasaViva';
+import HotSale from '../components/Plantillas/HotSale';
 
 const PLANTILLAS = [
   {
     id: 'megasale',
     nombre: 'Mega Sale',
     descripcion: 'Energético · Naranja · Impacto',
-    component: ModeloMegaSale,
+    component: MegaSale,
     dot: 'bg-orange-500',
   },
   {
     id: 'luxeshow',
     nombre: 'Luxe Show',
     descripcion: 'Clásico · Madera clara · Sereno',
-    component: ModeloLuxeShow,
+    component: LuxeShow,
     dot: 'bg-amber-700',
   },
   {
     id: 'casaviva',
     nombre: 'Casa Viva',
     descripcion: 'Cinematográfico · Oscuro · Cálido',
-    component: ModeloCasaViva,
+    component: CasaViva,
     dot: 'bg-orange-300',
   },
   {
     id: 'hotsale',
     nombre: 'Hot Sale',
     descripcion: 'Dinámico · Rojo y negro · Urgente',
-    component: ModeloHotSale,
+    component: HotSale,
     dot: 'bg-red-600',
   },
 ];

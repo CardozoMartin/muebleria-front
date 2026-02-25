@@ -1,111 +1,29 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './../../assets/logo.png';
 import comedor from './../../assets/comedor.png';
-import juego4 from './../../assets/comedor4.png';
-import redondo from './../../assets/redonda.png';
 import fireBg from './../../assets/fire-png.webp';
 
-const DEFAULT_PRODUCTOS = [
-  {
-    id: 1,
-    nombreDestacado: 'Juego de  Comedor',
-    subtitulo: 'Mesa + 6 Sillas · Madera Sólida',
-    descripcion:
-      'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
-    precioViejo: '$ 299.999',
-    precioNuevo: '$ 199.999',
-    descuento: '33',
-    cuotas: '12',
-    imagen: comedor,
-    ambiente: 'Comedor · Familiar',
-  },
-  {
-    id: 2,
-    nombreDestacado: 'Juego de Comedor',
-    subtitulo: 'Mesa + 4 Sillas · Madera Sólida',
-    descripcion:
-      'Mesa extensible con 4 sillas tapizadas en tela premium. Ideal para ambientes compactos y modernos.',
-    precioViejo: '$ 189.999',
-    precioNuevo: '$ 129.999',
-    descuento: '31',
-    cuotas: '6',
-    imagen: juego4,
-    ambiente: 'Comedor · Compacto',
-  },
-  {
-    id: 3,
-    nombreDestacado: 'Juego de Comedor',
-    subtitulo: 'Mesa Redonda + 4 Sillas · Madera Sólida',
-    descripcion:
-      'Set completo de comedor en madera laqueada. Mesa redonda extensible con sillas incluidas. Terminación Premium.',
-    precioViejo: '$ 450.000',
-    precioNuevo: '$ 299.999',
-    descuento: '33',
-    cuotas: '18',
-    imagen: redondo,
-    ambiente: 'Comedor · Premium',
-  },
-];
-
-const DURACION = 5500;
-
-export default function HotSale({ products }) {
+export default function HotSale({
+  titulo = "Juego de Comedor",
+  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
+  imagenProducto = comedor,
+  precioLista = 500000,
+  precioOferta = 250000,
+  porcentajeDescuento = 50,
+  categoria = "Living & Comedor",
+}) {
   const [mounted, setMounted] = useState(false);
-  const [indice, setIndice] = useState(0);
-  const [fase, setFase] = useState('idle');
-  const [progreso, setProgreso] = useState(0);
-  const intervaloRef = useRef(null);
-  const progressRef = useRef(null);
-
-  const PRODUCTOS_LIST = products && products.length ? products : DEFAULT_PRODUCTOS;
-  const producto = PRODUCTOS_LIST[indice];
 
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 200);
-    return () => clearTimeout(t);
-  }, []);
+    const t1 = setTimeout(() => setMounted(false), 0);
+    const t2 = setTimeout(() => setMounted(true), 80);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [titulo, imagenProducto]);
 
-  useEffect(() => {
-    if (!mounted) return;
-    setProgreso(0);
-    const start = performance.now();
-    const tick = (now) => {
-      const pct = Math.min(((now - start) / DURACION) * 100, 100);
-      setProgreso(pct);
-      if (pct < 100) progressRef.current = requestAnimationFrame(tick);
-    };
-    progressRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(progressRef.current);
-  }, [indice, mounted]);
+  const formatPrecio = (n) =>
+    n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
 
-  const runTransition = (getNext) => {
-    setFase('saliendo');
-    setTimeout(() => {
-      setIndice(getNext);
-      setFase('entrando');
-      setTimeout(() => setFase('idle'), 700);
-    }, 420);
-  };
-
-  useEffect(() => {
-    if (!mounted) return;
-    intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
-      DURACION
-    );
-    return () => clearInterval(intervaloRef.current);
-  }, [mounted, PRODUCTOS_LIST.length]);
-
-  const ir = (i) => {
-    if (i === indice) return;
-    clearInterval(intervaloRef.current);
-    runTransition(i);
-    intervaloRef.current = setInterval(
-      () => runTransition((prev) => (prev + 1) % PRODUCTOS_LIST.length),
-      DURACION
-    );
-  };
 
   return (
     <>
@@ -679,9 +597,6 @@ export default function HotSale({ products }) {
         </div>
 
         {/* COUNTER */}
-        <div className={`hs-counter ${mounted ? 'on' : ''}`}>
-          {String(indice + 1).padStart(2, '0')} / {String(PRODUCTOS_LIST.length).padStart(2, '0')}
-        </div>
 
         {/* LÍNEA VERTICAL */}
         <div className="hs-vline" />
@@ -693,11 +608,11 @@ export default function HotSale({ products }) {
           <div className="hs-left">
             <div className="hs-img-glow" />
             <div className="hs-floor" />
-            <div className={`hs-img-wrap ${fase === 'idle' && mounted ? 'on' : fase === 'saliendo' ? 'out' : fase === 'entrando' ? 'in' : ''}`}>
-              <img className="hs-img" src={producto.imagen} alt={producto.nombreDestacado} />
+            <div className={`hs-img-wrap ${mounted ? 'on' : ''}`}>
+              <img className="hs-img" src={imagenProducto} alt={titulo} />
             </div>
             <div className={`hs-eyebrow ${mounted ? 'on' : ''}`}>
-              <span className="hs-eyebrow-txt">🔥 {producto.ambiente}</span>
+              <span className="hs-eyebrow-txt">🔥 {categoria}</span>
             </div>
             <div className="hs-corner hs-corner-tl" />
             <div className="hs-corner hs-corner-tr" />
@@ -708,40 +623,38 @@ export default function HotSale({ products }) {
           {/* DERECHA — CONTENIDO */}
           <div className="hs-right">
             <img className="hs-fire-bg" src={fireBg} alt="" />
-            <div className={`hs-content ${fase}`}>
+            <div className="hs-content idle">
 
               <div className="hs-slogan">Precios que arden!</div>
 
               <div className="hs-titulo-group">
-                <div className={`hs-img-titulo ${fase === 'idle' ? 'on' : ''}`}>
-                  <span className="hs-img-titulo-dest">{producto.nombreDestacado}</span>
+                <div className={`hs-img-titulo ${mounted ? 'on' : ''}`}>
+                  <span className="hs-img-titulo-dest">{titulo}</span>
                 </div>
 
-                <div className="hs-subtitulo">{producto.subtitulo}</div>
+                <div className="hs-subtitulo">{categoria}</div>
               </div>
 
-              <p className="hs-desc">{producto.descripcion}</p>
+              <p className="hs-desc">{descripcion}</p>
 
               <div className="hs-price-block">
                 <div className="hs-price-row">
                   <div className="hs-price-nums">
-                    {producto.precioViejo && (
-                      <div className="hs-price-antes">Antes: {producto.precioViejo}</div>
+                    {formatPrecio(precioLista) && (
+                      <div className="hs-price-antes">Antes: {formatPrecio(precioLista)}</div>
                     )}
-                    <div className="hs-price-nuevo">{producto.precioNuevo}</div>
+                    <div className="hs-price-nuevo">{formatPrecio(precioOferta)}</div>
                   </div>
-                  {producto.descuento && (
+                  {porcentajeDescuento && (
                     <div className="hs-off-badge">
-                      <span className="hs-off-pct">{producto.descuento}%</span>
+                      <span className="hs-off-pct">{porcentajeDescuento}%</span>
                       <span className="hs-off-lbl">OFF</span>
                     </div>
                   )}
                 </div>
-                {producto.cuotas && (
-                  <div className="hs-cuotas">
-                    Hasta <strong>{producto.cuotas} cuotas sin interés</strong>
-                  </div>
-                )}
+                <div className="hs-cuotas">
+                  Hasta <strong>12 cuotas sin interés</strong>
+                </div>
               </div>
 
               {/* WhatsApp */}
@@ -764,20 +677,8 @@ export default function HotSale({ products }) {
         </div>
 
         {/* DOTS */}
-        <div className="hs-dots">
-          {PRODUCTOS_LIST.map((_, i) => (
-            <div
-              key={i}
-              className={`hs-dot ${i === indice ? 'active' : ''}`}
-              onClick={() => ir(i)}
-            />
-          ))}
-        </div>
 
         {/* BARRA PROGRESO */}
-        <div className="hs-progress-wrap">
-          <div className="hs-progress-bar" style={{ width: `${progreso}%` }} />
-        </div>
 
       </div>
     </>
