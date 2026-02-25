@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import LuxeShow from '../components/Plantillas/LuxeShow';
 import MegaSale from '../components/Plantillas/MegaSale';
-import CasaViva from '../components/Plantillas/CasaViva';
 import HotSale from '../components/Plantillas/HotSale';
 import CyberMonday from '../components/Plantillas/CyberMonday';
+import CasaViva from '../components/Plantillas/Casaviva';
+import Liquidacion from '../components/Plantillas/Liquidacion';
 
 const PLANTILLAS = [
   {
@@ -26,6 +27,13 @@ const PLANTILLAS = [
     descripcion: 'En tonos verdes · Natural · Acogedor',
     component: CasaViva,
     dot: 'bg-green-500',
+  },
+  {
+    id: 'liquidacion',
+    nombre: 'Liquidación',
+    descripcion: 'Dinámico · Amarillo · Brillante',
+    component: Liquidacion,
+    dot: 'bg-yellow-300',
   },
   {
     id: 'hotsale',

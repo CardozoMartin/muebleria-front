@@ -373,7 +373,7 @@ export default function ModeloCasaVivaAzul({
           text-transform:uppercase; letter-spacing:2px; font-weight:600;
         }
         .az-price-old {
-          font-size:clamp(14px,1.1vw,18px); color:#a0b0cc;
+          font-size:clamp(24px,3.2vw,36px); color:#a0b0cc;
           text-decoration:line-through; font-weight:400;
         }
         .az-price-new {

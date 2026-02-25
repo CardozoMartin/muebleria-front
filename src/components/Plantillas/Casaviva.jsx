@@ -282,7 +282,7 @@ export default function CasaViva({
           color:#9aad9e; font-weight:600;
         }
         .cv-price-old {
-          font-size:clamp(15px,1.25vw,20px); color:#b0bdb3;
+          font-size:clamp(24px,3vw,40px); color:#b0bdb3;
           text-decoration:line-through; font-weight:500; letter-spacing:.5px;
         }
         .cv-price-row { display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; }

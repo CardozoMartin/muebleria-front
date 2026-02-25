@@ -260,7 +260,7 @@ export default function MegaSale({
           letter-spacing:1px; margin-bottom:4px;
         }
         .mw-price-old {
-          font-size: clamp(17px,1.7vw,28px);
+          font-size: clamp(30px,4vw,48px);
           font-weight:700; color:#000; text-decoration:line-through; margin-bottom:6px;
         }
         .mw-price-new-wrap {

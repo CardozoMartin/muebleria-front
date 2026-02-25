@@ -427,8 +427,8 @@ export default function HotSale({
         .hs-content.idle .hs-price-block { opacity: 1; transform: translateY(0) scale(1); }
 
         .hs-price-antes {
-          font-size: clamp(28px, 3.8%, 48px);
-          font-weight: 600; color: rgba(255,180,140,.5);
+          font-size: clamp(42px, 6.5%, 72px);
+          font-weight: 600; color: rgba(255,180,140,.6);
           text-decoration: line-through; letter-spacing: .5px;
           white-space: nowrap;
         }

@@ -223,10 +223,10 @@ export default function CyberMonday({
         .cm-price-block.on { opacity:1; transform:translateY(0) scale(1); }
 
         .cm-price-antes {
-          font-size:clamp(14px,1.1vw,18px);
-          color:rgba(200,160,255,.5);
-          text-decoration:line-through; font-weight:600; letter-spacing:.5px;
-          white-space:nowrap;
+          font-size: clamp(28px, 4.2vw, 48px);
+          color: rgba(200,160,255,.6);
+          text-decoration: line-through; font-weight:600; letter-spacing:.5px;
+          white-space: nowrap;
         }
         .cm-price-row { display:flex; align-items:center; gap:clamp(16px,2.5vw,50px); }
         .cm-price-nums { display:flex; flex-direction:column; gap:2px; min-width:0; }

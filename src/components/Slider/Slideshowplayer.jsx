@@ -2,15 +2,18 @@ import { useEffect, useRef, useState } from "react";
 
 import MegaSale from "../Plantillas/MegaSale";
 import LuxeShow from "../Plantillas/LuxeShow";
-import CasaViva from "../Plantillas/CasaViva";
 import HotSale from "../Plantillas/HotSale";
 import CyberMonday from "../Plantillas/CyberMonday";
+import Liquidacion from "../Plantillas/Liquidacion";
+import CasaViva from "../Plantillas/Casaviva";
+
 // import CasaViva from "./Plantillas/CasaViva";
 
 const PLANTILLAS_MAP = {
   megasale: MegaSale,
   luxeshow: LuxeShow,
   casaviva: CasaViva,
+  liquidacion: Liquidacion,
   hotsale: HotSale,
   cybermonday: CyberMonday,
 };
