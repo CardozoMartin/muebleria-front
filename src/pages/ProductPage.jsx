@@ -6,14 +6,22 @@ import FormProductos from '../components/Productos/FormProductos';
 
 export default function Products() {
   const [showForm, setShowForm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1">
           <h1 className="text-xl font-bold text-gray-900">Productos</h1>
           <p className="text-sm text-gray-400 mt-0.5">Inventario de producto</p>
         </div>
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
         {!showForm && 
         
         <button
@@ -30,7 +38,7 @@ export default function Products() {
       {showForm && <FormProductos setShowForm={setShowForm} />}
 
       {!showForm && (
-        <TableProducts setShowForm={setShowForm} />
+        <TableProducts setShowForm={setShowForm} searchQuery={searchQuery} />
 
       )}
     </div>

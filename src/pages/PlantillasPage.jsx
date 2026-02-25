@@ -1,8 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ModeloMegaSale from '../components/ModelosPlantillas/ModeloMegaSale';
-import ModeloLuxeShow from '../components/ModelosPlantillas/ModeloLuxeShow';
-import ModeloCasaViva from '../components/ModelosPlantillas/ModeloCasaViva';
-import ModeloHotSale from '../components/ModelosPlantillas/ModeloHotSale';
 import LuxeShow from '../components/Plantillas/LuxeShow';
 import MegaSale from '../components/Plantillas/MegaSale';
 import CasaViva from '../components/Plantillas/CasaViva';
