@@ -7,7 +7,7 @@ import {
 import Swal from "sweetalert2";
 import { useEditProduct } from "../../store/useEditProduct";
 
-const RowProducts = ({ product, index, setShowForm }) => {
+const RowProducts = ({ product, index, setShowForm, setShowVideo, setSelectedProduct }) => {
   const { setProduct } = useEditProduct();
   //hook para cambiar el estado del producto
   const { mutate: changeStateProduct } = useChangeStateProduct();
@@ -68,6 +68,11 @@ const RowProducts = ({ product, index, setShowForm }) => {
       }
     });
   }
+  //handle para mostrar la previsualización de la plantilla
+  const handleShowVideo = () => {
+    if (setSelectedProduct) setSelectedProduct(product);
+    setShowVideo(true);
+  }
   return (
     <tr
       key={product._id}
@@ -112,6 +117,10 @@ const RowProducts = ({ product, index, setShowForm }) => {
         <span className="font-bold">%</span>
         {Number(product.porcentajeDescuento).toLocaleString("es-AR")}
       </td>
+      <td className="px-5 py-3.5 text-sm font-medium text-gray-800/80">
+       
+        {product.plantillaId}
+      </td>
 
       {/* Estado */}
       <td className="px-5 py-3.5">
@@ -135,8 +144,11 @@ const RowProducts = ({ product, index, setShowForm }) => {
       {/* Acciones */}
       <td className="px-5 py-3.5">
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-500/30 text-gray-800/80 text-xs font-medium rounded-md hover:bg-blue-500/10  transition">
-            <MonitorPlay className="hover:bg-blue-500/10 hover:text-blue-500" />
+          <button 
+            onClick={handleShowVideo}
+            className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-500/30 text-gray-800/80 text-xs font-medium rounded-md hover:bg-blue-500/10 transition"
+          >
+            <MonitorPlay className="w-4 h-4" />
           </button>
           <button
             onClick={handleDeleteProduct}

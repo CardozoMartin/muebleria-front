@@ -2,12 +2,17 @@ import { useState } from 'react';
 import { useGetProducts } from '../../hooks/useProducts';
 import { Loader2, AlertCircle, PackageOpen, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import RowProducts from './RowProducts';
+import ModalVideo from './ModalVideo';
 
 const TableProducts = ({ setShowForm }) => {
+  const [showVideo, setShowVideo] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading, isError } = useGetProducts(currentPage);
+
   
   const products = data?.productos || [];
+  console.log("Productos obtenidos:", products);
   const totalPages = data?.totalPages || 1;
   const totalProducts = data?.total || 0;
 
@@ -33,6 +38,9 @@ const TableProducts = ({ setShowForm }) => {
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 P.Descuento
+              </th>
+               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
+                Plantilla
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 Estado
@@ -84,7 +92,14 @@ const TableProducts = ({ setShowForm }) => {
               !isError &&
               products.length > 0 &&
               products.map((product, index) => (
-                <RowProducts key={product._id} product={product} index={index} setShowForm={setShowForm} />
+                <RowProducts 
+                  key={product._id} 
+                  product={product} 
+                  index={index} 
+                  setShowForm={setShowForm} 
+                  setShowVideo={setShowVideo}
+                  setSelectedProduct={setSelectedProduct}
+                />
               ))}
           </tbody>
         </table>
@@ -133,6 +148,15 @@ const TableProducts = ({ setShowForm }) => {
             </button>
           </div>
         </div>
+        {showVideo && selectedProduct && (
+          <ModalVideo 
+            product={selectedProduct} 
+            setShowVideo={(visible) => {
+              setShowVideo(visible);
+              if (!visible) setSelectedProduct(null);
+            }} 
+          />
+        )}
     </div>
   );
 };
