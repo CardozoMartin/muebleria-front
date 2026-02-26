@@ -2,13 +2,19 @@ import { useState } from 'react';
 import { useGetProducts, useSearchProducts } from '../../hooks/useProducts';
 import { Loader2, AlertCircle, PackageOpen, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import RowProducts from './RowProducts';
+import ModalVideo from './ModalVideo';
 
+const TableProducts = ({ setShowForm }) => {
+  const [showVideo, setShowVideo] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) => {
   const [currentPage, setCurrentPage] = useState(1);
   
   // Si hay búsqueda, usar el hook de búsqueda, sino usar el hook de productos paginados
   const searchData = useSearchProducts(searchQuery);
   const regularData = useGetProducts(currentPage);
+  const { data, isLoading, isError } = useGetProducts(currentPage);
+
   
   const { data, isLoading, isError } = searchQuery ? searchData : regularData;
   
@@ -22,6 +28,8 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
     products = products.filter(product => product.categoria === categoryFilter);
   }
 
+  const products = data?.productos || [];
+  console.log("Productos obtenidos:", products);
   const totalPages = data?.totalPages || 1;
   const totalProducts = searchQuery 
     ? (Array.isArray(data) ? data.length : 0)
@@ -49,6 +57,9 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 P.Descuento
+              </th>
+               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
+                Plantilla
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 Estado
@@ -100,7 +111,14 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
               !isError &&
               products.length > 0 &&
               products.map((product, index) => (
-                <RowProducts key={product._id} product={product} index={index} setShowForm={setShowForm} />
+                <RowProducts 
+                  key={product._id} 
+                  product={product} 
+                  index={index} 
+                  setShowForm={setShowForm} 
+                  setShowVideo={setShowVideo}
+                  setSelectedProduct={setSelectedProduct}
+                />
               ))}
           </tbody>
         </table>
@@ -149,8 +167,18 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
             </button>
           </div>
         </div>
+        {showVideo && selectedProduct && (
+          <ModalVideo 
+            product={selectedProduct} 
+            setShowVideo={(visible) => {
+              setShowVideo(visible);
+              if (!visible) setSelectedProduct(null);
+            }} 
+          />
+        )}
     </div>
   );
 };
+}
 
 export default TableProducts;
