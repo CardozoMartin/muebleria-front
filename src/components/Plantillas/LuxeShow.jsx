@@ -826,7 +826,7 @@ export default function ModeloCasaVivaAzul({
             <div className={`az-chips ${mounted ? "on" : ""}`}>
               <span
                 className="az-chip"
-                style={{ borderColor: "rgba(0,87,255,.2)", color: "#0057FF" }}
+                style={{ borderColor: "rgba(0,87,255,.2)", color: "#5c0303" }}
               >
                 www.mueblesdepinoml.com
               </span>

@@ -453,7 +453,7 @@ export default function Liquidacion({
         </div>
         {/* Tags */}
         <div className={`lq-tags ${mounted ? 'on' : ''}`}>
-          <span className="lq-tag lq-tag-green">www.mueblesdepinoml.com.ar</span>
+          <span className="lq-tag lq-tag-green">www.mueblesdepinoml.com</span>
         </div>
 
       </div>

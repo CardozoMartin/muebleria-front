@@ -670,7 +670,7 @@ export default function HotSale({
 
         {/* TAGS */}
         <div className={`hs-tags ${mounted ? 'on' : ''}`}>
-          <span className="hs-tag hs-tag-white">www.muuebleriasdepinoml.com</span>
+          <span className="hs-tag hs-tag-white">www.mueblesdepinoml.com</span>
         </div>
 
         {/* DOTS */}

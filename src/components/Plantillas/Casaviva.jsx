@@ -704,7 +704,7 @@ export default function CasaViva({
             >
               <span
                 className="cv-feat"
-                style={{ borderColor: "rgba(45,122,79,.18)", color: "#2d7a4f", fontWeight:700, fontSize:'1rem' }}
+                style={{ borderColor: "rgba(194, 4, 4, 0.18)", color: "#da0505", fontWeight:700, fontSize:'1rem' }}
               >
                 www.mueblesdepinoml.com
               </span>
