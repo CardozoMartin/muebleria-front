@@ -182,7 +182,7 @@ export const Plantillas = () => {
         </div>
 
         {/* Grid 3 por fila */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-6 auto-rows-max">
           {PLANTILLAS.map((p) => (
             <MiniCard key={p.id} plantilla={p} onClick={() => setAbierta(p)} />
           ))}

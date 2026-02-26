@@ -7,6 +7,7 @@ import {
   getAllProducts,
   getProductosAll,
   getProducts,
+  searchProducts,
 } from "../services/Productos/productos.services";
 import { toast } from "sonner";
 
@@ -15,6 +16,17 @@ export const useGetProducts = (page = 1) => {
   return useQuery({
     queryKey: ["products", page],
     queryFn: () => getProducts(page),
+    staleTime: 1000 * 60 * 5,
+    retry: 3,
+  });
+};
+
+//Hook para buscar productos por nombre
+export const useSearchProducts = (query) => {
+  return useQuery({
+    queryKey: ["search-products", query],
+    queryFn: () => searchProducts(query),
+    enabled: !!query, // solo ejecutar si hay un término de búsqueda
     staleTime: 1000 * 60 * 5,
     retry: 3,
   });

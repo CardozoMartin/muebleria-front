@@ -1,15 +1,34 @@
 import { useState } from 'react';
-import { useGetProducts } from '../../hooks/useProducts';
+import { useGetProducts, useSearchProducts } from '../../hooks/useProducts';
 import { Loader2, AlertCircle, PackageOpen, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import RowProducts from './RowProducts';
+import ModalVideo from './ModalVideo';
 
-const TableProducts = ({ setShowForm }) => {
+const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading, isError } = useGetProducts(currentPage);
-  
-  const products = data?.productos || [];
+  const [showVideo, setShowVideo] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Si hay búsqueda, usar el hook de búsqueda, sino usar el hook de productos paginados
+  const searchData = useSearchProducts(searchQuery);
+  const regularData = useGetProducts(currentPage);
+
+  const { data, isLoading, isError } = searchQuery ? searchData : regularData;
+
+  // Si es búsqueda, los datos vienen como array directo; si es normal, vienen con estructura
+  let products = searchQuery
+    ? (Array.isArray(data) ? data : [])
+    : (data?.productos || []);
+
+  // Filtrar por categoría si está seleccionada
+  if (categoryFilter) {
+    products = products.filter(product => product.categoria === categoryFilter);
+  }
+
   const totalPages = data?.totalPages || 1;
-  const totalProducts = data?.total || 0;
+  const totalProducts = searchQuery
+    ? (Array.isArray(data) ? data.length : 0)
+    : (data?.total || 0);
 
   return (
     <div className="bg-white rounded-md border border-gray-500/30 overflow-hidden">
@@ -33,6 +52,9 @@ const TableProducts = ({ setShowForm }) => {
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 P.Descuento
+              </th>
+               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
+                Plantilla
               </th>
               <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
                 Estado
@@ -84,7 +106,14 @@ const TableProducts = ({ setShowForm }) => {
               !isError &&
               products.length > 0 &&
               products.map((product, index) => (
-                <RowProducts key={product._id} product={product} index={index} setShowForm={setShowForm} />
+                <RowProducts 
+                  key={product._id} 
+                  product={product} 
+                  index={index} 
+                  setShowForm={setShowForm} 
+                  setShowVideo={setShowVideo}
+                  setSelectedProduct={setSelectedProduct}
+                />
               ))}
           </tbody>
         </table>
@@ -133,6 +162,15 @@ const TableProducts = ({ setShowForm }) => {
             </button>
           </div>
         </div>
+        {showVideo && selectedProduct && (
+          <ModalVideo 
+            product={selectedProduct} 
+            setShowVideo={(visible) => {
+              setShowVideo(visible);
+              if (!visible) setSelectedProduct(null);
+            }} 
+          />
+        )}
     </div>
   );
 };
