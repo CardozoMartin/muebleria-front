@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import '../../css/login.css';
 
 
 const LoginForm = () => {
@@ -42,26 +43,22 @@ const LoginForm = () => {
     });
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="login-form">
       {/* Email */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-gray-800/70 text-xs">Correo electrónico</label>
-        <div
-          className={`flex items-center gap-2 border rounded-md px-3 py-2 transition bg-white ${errors.email ? 'border-red-400/60 bg-red-50/40' : 'border-gray-500/30 hover:border-gray-400/50 focus-within:border-gray-500/60'}`}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <div className="form-group">
+        <label className="form-label">Correo electrónico</label>
+        <div className={`input-wrapper ${errors.email ? 'error' : ''}`}>
+          <svg className="input-icon" viewBox="0 0 24 24" fill="none">
             <path
               d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-              stroke="#1F2937"
-              strokeOpacity="0.5"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <path
               d="m22 6-10 7L2 6"
-              stroke="#1F2937"
-              strokeOpacity="0.5"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -70,7 +67,7 @@ const LoginForm = () => {
           <input
             type="email"
             placeholder="tu@email.com"
-            className="flex-1 outline-none text-gray-800/80 text-sm placeholder:text-gray-400/60 bg-transparent"
+            className="form-input"
             {...register('email', {
               required: 'El email es requerido',
               pattern: {
@@ -80,44 +77,40 @@ const LoginForm = () => {
             })}
           />
         </div>
-        {errors.email && <span className="text-red-500/80 text-xs">{errors.email.message}</span>}
+        {errors.email && <span className="form-error">{errors.email.message}</span>}
       </div>
 
       {/* Contraseña */}
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <label className="text-gray-800/70 text-xs">Contraseña</label>
-          <a href="#" className="text-gray-500/70 text-xs hover:text-gray-700/80 transition">
+      <div className="form-group">
+        <div className="form-group-header">
+          <label className="form-label">Contraseña</label>
+          <a href="#" className="forgot-password-link">
             ¿Olvidaste tu contraseña?
           </a>
         </div>
-        <div
-          className={`flex items-center gap-2 border rounded-md px-3 py-2 transition bg-white ${errors.password ? 'border-red-400/60 bg-red-50/40' : 'border-gray-500/30 hover:border-gray-400/50 focus-within:border-gray-500/60'}`}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <div className={`input-wrapper ${errors.password ? 'error' : ''}`}>
+          <svg className="input-icon" viewBox="0 0 24 24" fill="none">
             <rect
               x="3"
               y="11"
               width="18"
               height="11"
               rx="2"
-              stroke="#1F2937"
-              strokeOpacity="0.5"
+              stroke="currentColor"
               strokeWidth="1.5"
             />
             <path
               d="M7 11V7a5 5 0 0 1 10 0v4"
-              stroke="#1F2937"
-              strokeOpacity="0.5"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinecap="round"
             />
-            <circle cx="12" cy="16" r="1.5" fill="#1F2937" fillOpacity="0.5" />
+            <circle cx="12" cy="16" r="1.5" fill="currentColor" />
           </svg>
           <input
             type={showPassword ? 'text' : 'password'}
             placeholder="••••••••"
-            className="flex-1 outline-none text-gray-800/80 text-sm placeholder:text-gray-400/60 bg-transparent"
+            className="form-input"
             {...register('password', {
               required: 'La contraseña es requerida',
               minLength: {
@@ -129,10 +122,10 @@ const LoginForm = () => {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="text-gray-400/60 hover:text-gray-600/80 transition cursor-pointer"
+            className="toggle-password"
           >
             {showPassword ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <svg viewBox="0 0 24 24" fill="none">
                 <path
                   d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
                   stroke="currentColor"
@@ -156,7 +149,7 @@ const LoginForm = () => {
                 />
               </svg>
             ) : (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <svg viewBox="0 0 24 24" fill="none">
                 <path
                   d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
                   stroke="currentColor"
@@ -168,27 +161,27 @@ const LoginForm = () => {
           </button>
         </div>
         {errors.password && (
-          <span className="text-red-500/80 text-xs">{errors.password.message}</span>
+          <span className="form-error">{errors.password.message}</span>
         )}
       </div>
 
-
       {/* Mensaje de error general */}
       {error && (
-        <span className="text-red-500/80 text-xs">{error.message}</span>
+        <div className="form-error-general">{error.message}</div>
       )}
+
       {/* Separador */}
-      <div className="w-full h-px bg-gray-300/50 my-1" />
+      <div className="form-divider" />
 
       {/* Botón submit */}
       <button
         type="submit"
         disabled={isPending}
-        className="flex items-center justify-center gap-2 bg-gray-800/90 hover:bg-gray-900 text-white/90 text-sm font-medium px-4 py-2.5 rounded-md transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+        className="submit-button"
       >
         {isPending ? (
           <>
-            <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <svg className="spinner" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="white" strokeOpacity="0.3" strokeWidth="2" />
               <path
                 d="M12 2a10 10 0 0 1 10 10"
@@ -202,7 +195,7 @@ const LoginForm = () => {
         ) : (
           <>
             Ingresar
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <svg viewBox="0 0 24 24" fill="none">
               <path
                 d="M5 12h14M12 5l7 7-7 7"
                 stroke="white"
