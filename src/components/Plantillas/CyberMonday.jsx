@@ -108,7 +108,7 @@ export default function CyberMonday({
         .cm-logo {
           position:absolute; top:0; left:0;
           z-index:15;
-          width:clamp(180px,20vw,280px); height:clamp(180px,20vw,280px);
+          width:clamp(100px,14.5vw,280px); height:clamp(100px,14.5vw,280px);
           border-radius:0 0 24px 0; background:#fff;
           display:flex; align-items:center; justify-content:center;
           box-shadow: 0 0 0 3px #c400ff, 0 0 30px rgba(196,0,255,.8), 0 0 70px rgba(0,212,255,.35);

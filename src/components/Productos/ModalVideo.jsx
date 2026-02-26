@@ -1,6 +1,109 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { createRoot } from 'react-dom/client'
 import { PLANTILLAS } from '../../constants/plantillas'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+
+// Dimensiones nativas del "televisor" para el que están diseñadas las plantillas
+const TV_W = 1280
+const TV_H = 720
+
+/**
+ * ScaledPreview – renderiza la plantilla dentro de un iframe 1280×720
+ * para que vw/vh/clamp() funcionen con las mismas proporciones que en
+ * pantalla completa. Luego escala el iframe para que encaje en el modal
+ * sin tocar las plantillas en absoluto.
+ */
+const ScaledPreview = ({ TemplateComponent, product, imagenActual }) => {
+  const containerRef = useRef(null)
+  const iframeRef    = useRef(null)
+  const rootRef      = useRef(null)
+  const [scale, setScale] = useState(1)
+
+  // Recalcula el factor de escala cuando el contenedor cambia de tamaño
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const update = () => {
+      const s = Math.min(el.clientWidth / TV_W, el.clientHeight / TV_H)
+      setScale(s || 1)
+    }
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    update()
+    return () => ro.disconnect()
+  }, [])
+
+  // Inicializa el documento del iframe con doc.write() (sincrónico) y monta / actualiza
+  // el árbol React. Se combina init + update en un solo efecto para evitar
+  // problemas de timing con srcDoc y el doble-disparo de Strict Mode.
+  useEffect(() => {
+    const iframe = iframeRef.current
+    if (!iframe || !TemplateComponent) return
+
+    // doc.write() es sincrónico: el DOM queda listo inmediatamente
+    const doc = iframe.contentDocument || iframe.contentWindow.document
+    doc.open()
+    doc.write(
+      `<!doctype html><html><head><meta charset="utf-8">` +
+      `<style>*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}` +
+      `body{width:${TV_W}px;height:${TV_H}px;overflow:hidden;background:#000}</style>` +
+      `</head><body>` +
+      `<div id="root" style="width:${TV_W}px;height:${TV_H}px;overflow:hidden"></div>` +
+      `</body></html>`
+    )
+    doc.close()
+
+    const mount = doc.getElementById('root')
+    if (!mount) return
+
+    // Limpiar root anterior si existe (Strict Mode / cambio de plantilla)
+    if (rootRef.current) {
+      // eslint-disable-next-line no-empty
+      try { rootRef.current.unmount() } catch {}
+    }
+    rootRef.current = createRoot(mount)
+    rootRef.current.render(
+      <TemplateComponent
+        titulo={product.titulo}
+        descripcion={product.descripcion}
+        imagenProducto={imagenActual}
+        precioLista={product.precioLista}
+        precioOferta={product.precioOferta}
+        porcentajeDescuento={product.porcentajeDescuento}
+        categoria={product.categoria}
+      />
+    )
+
+    return () => {
+      // eslint-disable-next-line no-empty
+      try { rootRef.current?.unmount() } catch {}
+      rootRef.current = null
+    }
+  }, [TemplateComponent, product, imagenActual])
+
+  return (
+    <div
+      ref={containerRef}
+      style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', background: '#000' }}
+    >
+      <iframe
+        ref={iframeRef}
+        title="template-preview"
+        style={{
+          width: TV_W,
+          height: TV_H,
+          border: 'none',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: `translate(-50%, -50%) scale(${scale})`,
+          transformOrigin: 'center center',
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  )
+}
 
 const ModalVideo = ({ product, setShowVideo }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -26,11 +129,7 @@ const ModalVideo = ({ product, setShowVideo }) => {
     if (imagenes.length <= 1) return; // No rotar si solo hay 1 imagen
     
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => {
-        const nextIndex = (prev + 1) % imagenes.length;
-        console.log(`🖼️ Rotando imagen: ${prev + 1} → ${nextIndex + 1}/${imagenes.length}`);
-        return nextIndex;
-      });
+      setCurrentImageIndex((prev) => (prev + 1) % imagenes.length);
     }, 4000); // Cambiar cada 4 segundos
 
     return () => clearInterval(interval);
@@ -94,17 +193,11 @@ const ModalVideo = ({ product, setShowVideo }) => {
         {/* Contenedor de la plantilla simulando pantalla de TV */}
         <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
           {TemplateComponent ? (
-            <div className="w-full h-full">
-              <TemplateComponent 
-                titulo={product.titulo}
-                descripcion={product.descripcion}
-                imagenProducto={imagenActual}
-                precioLista={product.precioLista}
-                precioOferta={product.precioOferta}
-                porcentajeDescuento={product.porcentajeDescuento}
-                categoria={product.categoria}
-              />
-            </div>
+            <ScaledPreview
+              TemplateComponent={TemplateComponent}
+              product={product}
+              imagenActual={imagenActual}
+            />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white">
               <div className="text-center space-y-4">
