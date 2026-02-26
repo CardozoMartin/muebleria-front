@@ -494,12 +494,12 @@ export default function HotSale({
 
         /* ── WHATSAPP ── */
         .hs-whatsapp {
-          display: inline-flex; align-items: center; gap: 14px;
-          padding: 20px 42px; border-radius: 14px;
+          display: inline-flex; align-items: center; gap: 16px;
+          padding: 22px 48px; border-radius: 16px;
           background: #25D366;
-          color: #fff; font-size: clamp(24px, 2.8%, 36px);
-          font-weight: 700; letter-spacing: .5px;
-          box-shadow: 0 6px 24px rgba(37,211,102,.35);
+          color: #fff; font-size: clamp(26px, 3.2%, 40px);
+          font-weight: 800; letter-spacing: .5px;
+          box-shadow: 0 8px 28px rgba(37,211,102,.36);
           align-self: center;
           opacity: 0; transform: translateY(30px) scale(.88);
           transition: opacity .8s ease .6s, transform .9s cubic-bezier(.34,1.8,.64,1) .6s;
@@ -511,15 +511,15 @@ export default function HotSale({
         .hs-tags {
           display: flex; gap: 8px; flex-wrap: wrap;
           position: absolute; bottom: 4%; left: 4%;
-          z-index: 10;
+          z-index: 10; justify-content:flex-start;
           opacity: 0; transform: translateY(30px);
           transition: opacity .8s ease .5s, transform .8s cubic-bezier(.34,1.6,.64,1) .5s;
         }
         .hs-tags.on { opacity: 1; transform: translateY(0); }
         .hs-tag {
-          font-size: clamp(9px, .85%, 12px);
-          font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-          padding: 7px 14px; border-radius: 6px;
+          font-size: clamp(12px, 1.0vw, 16px);
+          font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+          padding: 8px 16px; border-radius: 8px;
         }
         .hs-tag-fire   { background: rgba(255,60,0,.15); color: #ff8844; border: 1px solid rgba(255,80,0,.3); }
         .hs-tag-gold   { background: rgba(255,200,0,.12); color: #ffcc44; border: 1px solid rgba(255,200,0,.25); }
@@ -652,7 +652,7 @@ export default function HotSale({
                   )}
                 </div>
                 <div className="hs-cuotas">
-                  Hasta <strong>12 cuotas sin interés</strong>
+                  Sujeto a stock -  <strong>Consultar medios de pago</strong>
                 </div>
               </div>
 
@@ -670,9 +670,7 @@ export default function HotSale({
 
         {/* TAGS */}
         <div className={`hs-tags ${mounted ? 'on' : ''}`}>
-          <span className="hs-tag hs-tag-fire">🔥 Hot Sale</span>
-          <span className="hs-tag hs-tag-gold">⚡ Oferta limitada</span>
-          <span className="hs-tag hs-tag-white">✓ Envío gratis</span>
+          <span className="hs-tag hs-tag-white">www.muuebleriasdepinoml.com</span>
         </div>
 
         {/* DOTS */}

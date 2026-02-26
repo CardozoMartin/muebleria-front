@@ -321,11 +321,11 @@ export default function Liquidacion({
 
         /* WhatsApp */
         .lq-whatsapp {
-          display:inline-flex; align-items:center; gap:14px;
-          padding:16px 36px; border-radius:50px;
+          display:inline-flex; align-items:center; gap:16px;
+          padding:18px 40px; border-radius:50px;
           background:rgba(0,200,80,.12); border:1.5px solid rgba(0,200,80,.35);
-          color:rgba(0,120,50,.95); font-weight:800;
-          font-size:clamp(20px,2vw,30px); width:fit-content;
+          color:rgba(0,120,50,.95); font-weight:900;
+          font-size:clamp(22px,2.2vw,34px); width:fit-content; align-self:center;
           margin-top:clamp(20px,3vh,42px);
           opacity:0; transform:scale(.7) translateY(30px);
           transition: opacity .5s ease 1.3s, transform .7s cubic-bezier(.34,1.6,.64,1) 1.3s;
@@ -342,8 +342,8 @@ export default function Liquidacion({
         }
         .lq-tags.on { opacity:1; transform:translateY(0); }
         .lq-tag {
-          font-size:clamp(11px,.9vw,15px); font-weight:800;
-          letter-spacing:1px; text-transform:uppercase; padding:9px 20px; border-radius:8px;
+          font-size:clamp(13px,1.05vw,18px); font-weight:900;
+          letter-spacing:1px; text-transform:uppercase; padding:10px 22px; border-radius:10px;
         }
         .lq-tag-fire { background:rgba(255,100,0,.15); color:#cc3d00; border:1.5px solid rgba(255,120,0,.4); box-shadow:0 0 12px rgba(255,120,0,.25); }
         .lq-tag-sun  { background:rgba(255,200,0,.2); color:#995500; border:1.5px solid rgba(255,180,0,.45); box-shadow:0 0 12px rgba(255,200,0,.3); }
@@ -428,7 +428,7 @@ export default function Liquidacion({
               </div>
 
               <div className={`lq-cuotas ${mounted ? 'on' : ''}`}>
-                Hasta <strong>12 cuotas sin interés</strong>
+                Sujeto a Stock • <strong>Consultar medios de Pago</strong>
               </div>
 
             </div>
@@ -453,9 +453,7 @@ export default function Liquidacion({
         </div>
         {/* Tags */}
         <div className={`lq-tags ${mounted ? 'on' : ''}`}>
-          <span className="lq-tag lq-tag-fire">🔥 Liquidación</span>
-          <span className="lq-tag lq-tag-sun">☀️ Precios de verano</span>
-          <span className="lq-tag lq-tag-green">✔ Envío gratis</span>
+          <span className="lq-tag lq-tag-green">www.mueblesdepinoml.com.ar</span>
         </div>
 
       </div>

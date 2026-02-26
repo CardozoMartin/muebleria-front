@@ -285,12 +285,12 @@ export default function CyberMonday({
 
         /* WhatsApp */
         .cm-whatsapp {
-          display:inline-flex; align-items:center; gap:14px;
-          padding:16px 36px; border-radius:50px;
+          display:inline-flex; align-items:center; gap:16px;
+          padding:18px 40px; border-radius:50px;
           background:rgba(0,255,120,.12); border:1.5px solid rgba(0,255,120,.35);
-          color:rgba(180,255,210,.95); font-weight:800;
-          font-size:clamp(20px,2vw,30px); width:fit-content;
-          margin-top:clamp(20px,3vh,42px);
+          color:rgba(180,255,210,.95); font-weight:900;
+          font-size:clamp(22px,2.2vw,34px); width:fit-content;
+          margin-top:clamp(20px,3vh,42px); align-self:center;
           opacity:0; transform:translateY(28px);
           transition: opacity .5s ease 1.3s, transform .6s cubic-bezier(.34,1.56,.64,1) 1.3s;
         }
@@ -315,15 +315,15 @@ export default function CyberMonday({
 
         /* Tags */
         .cm-tags {
-          position:absolute; bottom:clamp(14px,2.5vh,30px); left:0; right:0; z-index:8;
-          display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding:0 20px;
+          position:absolute; bottom:clamp(14px,2.5vh,30px); left:clamp(20px,3vw,40px); right:auto; z-index:8;
+          display:flex; justify-content:flex-start; gap:12px; flex-wrap:wrap; padding:0 20px;
           opacity:0; transform:translateY(30px);
           transition: opacity .7s ease 1.5s, transform .7s cubic-bezier(.34,1.56,.64,1) 1.5s;
         }
         .cm-tags.on { opacity:1; transform:translateY(0); }
         .cm-tag {
-          font-size:clamp(11px,.9vw,15px); font-weight:700;
-          letter-spacing:1px; text-transform:uppercase; padding:9px 20px; border-radius:8px;
+          font-size:clamp(13px,1.1vw,18px); font-weight:800;
+          letter-spacing:1px; text-transform:uppercase; padding:10px 22px; border-radius:10px;
         }
         .cm-tag-cyber { background:rgba(110,0,255,.25); color:#d580ff; border:1.5px solid rgba(196,0,255,.45); box-shadow:0 0 12px rgba(196,0,255,.3); }
         .cm-tag-cyan  { background:rgba(0,180,255,.18); color:#7eeaff; border:1.5px solid rgba(0,200,255,.4); box-shadow:0 0 12px rgba(0,200,255,.25); }
@@ -385,7 +385,7 @@ export default function CyberMonday({
             </div>
 
             <div className={`cm-cuotas ${mounted ? 'on' : ''}`}>
-              Hasta <strong>12 cuotas sin interés</strong>
+               Consultar medios de Pago - <strong>Sujeto a Stock</strong>
             </div>
 
             </div>{/* /cm-box */}
@@ -402,9 +402,7 @@ export default function CyberMonday({
 
         {/* Tags fijos abajo */}
         <div className={`cm-tags ${mounted ? 'on' : ''}`}>
-          <span className="cm-tag cm-tag-cyber">âš¡ Cyber Monday</span>
-          <span className="cm-tag cm-tag-cyan">ðŸ› Ofertas digitales</span>
-          <span className="cm-tag cm-tag-green">âœ“ EnvÃ­o gratis</span>
+          <span className="cm-tag cm-tag-green">www.mueblesdepinoml.com.ar</span>
         </div>
 
       </div>

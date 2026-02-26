@@ -323,12 +323,12 @@ export default function MegaSale({
         .mw-whatsapp-icon { width:clamp(30px,2.2vw,40px); height:clamp(30px,2.2vw,40px); fill:#fff; }
 
         /* ── TAGS ── */
-        .mw-tags { display:flex; gap:12px; flex-wrap:wrap; }
+        .mw-tags { display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-start; }
         .mw-tag {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(11px,.95vw,16px);
-          font-weight:700; letter-spacing:1.2px;
-          padding: 10px 20px; border-radius:8px; text-transform:uppercase;
+          font-size: clamp(13px,1.1vw,20px);
+          font-weight:800; letter-spacing:1.2px;
+          padding: 12px 22px; border-radius:10px; text-transform:uppercase;
           opacity: 0; transform: translateY(30px) scale(.9);
           transition: opacity .8s ease, transform .8s cubic-bezier(.34,1.8,.64,1);
         }
@@ -425,9 +425,8 @@ export default function MegaSale({
 
             {/* TAGS fijos */}
             <div className={`mw-tags ${mounted ? "on" : ""}`} style={{ marginTop: "auto", paddingBottom: "3vh" }}>
-              <span className="mw-tag tag-dark">🛍 Mega Ofertas</span>
-              <span className="mw-tag tag-green">✓ Envío gratis</span>
-              <span className="mw-tag tag-orange">⏳ Últimas unidades</span>
+              <span className="mw-tag tag-dark">www.mueblesdepinoml.com</span>
+
             </div>
 
           </div>
