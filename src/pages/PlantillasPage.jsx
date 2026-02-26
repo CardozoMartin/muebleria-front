@@ -4,6 +4,9 @@ import LuxeShow from '../components/Plantillas/LuxeShow';
 import MegaSale from '../components/Plantillas/MegaSale';
 import CasaViva from '../components/Plantillas/CasaViva';
 import HotSale from '../components/Plantillas/HotSale';
+import LiquidacionBanner from '../components/Plantillas/LiquidacionBanner';
+import MegaSaleRustico from '../components/Plantillas/MegaSaleRustico';
+import NeonGrid from '../components/Plantillas/NeonGrid';
 
 const PLANTILLAS = [
   {
@@ -33,6 +36,27 @@ const PLANTILLAS = [
     descripcion: 'Dinámico · Rojo y negro · Urgente',
     component: HotSale,
     dot: 'bg-red-600',
+  },
+  {
+    id: 'liquidacion',
+    nombre: 'Liquidación Banner',
+    descripcion: 'Promocional · Descuentos · Activo',
+    component: LiquidacionBanner,
+    dot: 'bg-yellow-500',
+  },
+  {
+    id: 'megasalerustico',
+    nombre: 'Mega Sale Rústico',
+    descripcion: 'Vintage · Madera · Cálido',
+    component: MegaSaleRustico,
+    dot: 'bg-amber-600',
+  },
+  {
+    id: 'neongrid',
+    nombre: 'Neon Grid',
+    descripcion: 'Moderno · Neon · Futurista',
+    component: NeonGrid,
+    dot: 'bg-cyan-500',
   },
 ];
 
@@ -166,7 +190,7 @@ export const Plantillas = () => {
         </div>
 
         {/* Grid 3 por fila */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-6 auto-rows-max">
           {PLANTILLAS.map((p) => (
             <MiniCard key={p.id} plantilla={p} onClick={() => setAbierta(p)} />
           ))}
