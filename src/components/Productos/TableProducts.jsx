@@ -4,23 +4,20 @@ import { Loader2, AlertCircle, PackageOpen, Eye, ChevronLeft, ChevronRight } fro
 import RowProducts from './RowProducts';
 import ModalVideo from './ModalVideo';
 
-const TableProducts = ({ setShowForm }) => {
-  const [showVideo, setShowVideo] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
 const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  
+  const [showVideo, setShowVideo] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   // Si hay búsqueda, usar el hook de búsqueda, sino usar el hook de productos paginados
   const searchData = useSearchProducts(searchQuery);
   const regularData = useGetProducts(currentPage);
-  const { data, isLoading, isError } = useGetProducts(currentPage);
 
-  
   const { data, isLoading, isError } = searchQuery ? searchData : regularData;
-  
+
   // Si es búsqueda, los datos vienen como array directo; si es normal, vienen con estructura
-  let products = searchQuery 
-    ? (Array.isArray(data) ? data : []) 
+  let products = searchQuery
+    ? (Array.isArray(data) ? data : [])
     : (data?.productos || []);
 
   // Filtrar por categoría si está seleccionada
@@ -28,10 +25,8 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
     products = products.filter(product => product.categoria === categoryFilter);
   }
 
-  const products = data?.productos || [];
-  console.log("Productos obtenidos:", products);
   const totalPages = data?.totalPages || 1;
-  const totalProducts = searchQuery 
+  const totalProducts = searchQuery
     ? (Array.isArray(data) ? data.length : 0)
     : (data?.total || 0);
 
@@ -179,6 +174,5 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
     </div>
   );
 };
-}
 
 export default TableProducts;
