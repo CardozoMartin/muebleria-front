@@ -1,0 +1,10 @@
+/* Dots animados del loader */
+.repro-dot:nth-child(1) { animation-delay: 0s; }
+.repro-dot:nth-child(2) { animation-delay: 0.15s; }
+.repro-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Patrón de puntos decorativo en las cards */
+.repro-card-dots {
+  background-image: radial-gradient(circle, white 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
