@@ -2,6 +2,7 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import Logo from "./../assets/logo.png"
 import useAuthStore from "../store/useAuthStore";
 import { toast } from "sonner";
+import '../css/dashboardLayout.css';
 
 const navItems = [
   {
@@ -50,50 +51,42 @@ export default function DashboardLayout() {
 
   console.log("Usuario autenticado:", user)
   return (
-    <div className="flex h-screen bg-[#f5f5f3] font-sans overflow-hidden">
+    <div className="dashboard-layout">
       {/* Sidebar */}
-      <aside className="w-56 flex-shrink-0 flex flex-col bg-white border-r border-gray-200/80 shadow-sm">
+      <aside className="dashboard-sidebar">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="w-14 h-14  rounded-lg flex items-center justify-center shadow-sm">
+        <div className="sidebar-logo-section">
+          <div className="sidebar-logo-wrapper">
+            <div className="sidebar-logo-icon">
               <img src={Logo} alt="Logo" className="object-contain"/>
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-900 leading-none">Mueblesdepinoml</p>
+            <div className="sidebar-logo-text">
+              <p>Muebles de Pino ML</p>
             </div>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
+        <nav className="sidebar-nav">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
-                }`
+                `nav-item ${isActive ? 'active' : ''}`
               }
             >
               {item.icon}
-              {item.label}
+              <span>{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
         {/* User + Logout */}
-        <div className="px-3 py-4 border-t border-gray-100 space-y-1">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-
-
-          </div>
+        <div className="sidebar-user-section">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all duration-150">
+            className="logout-button">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path
                 d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"
@@ -120,23 +113,22 @@ export default function DashboardLayout() {
                 strokeLinejoin="round"
               />
             </svg>
-            Logout
+            <span>Logout</span>
           </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="dashboard-main">
         {/* Top bar */}
-        <header className="h-14 bg-white border-b border-gray-200/80 flex items-center justify-between px-6 flex-shrink-0 shadow-sm">
-
-          <div className="flex text-center gap-3">
-            <h3 className="text-sm font-medium text-gray-700">Bienvenido a Mueblerias de Pino ML</h3>
+        <header className="dashboard-header">
+          <div className="dashboard-header-title">
+            Bienvenido a <span className="dashboard-header-accent">Muebles de Pino ML</span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="dashboard-content">
           <Outlet />
         </main>
       </div>

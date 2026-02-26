@@ -63,7 +63,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
         <div>
           <h1 className="text-xl font-bold text-gray-900">OFERTAS</h1>
           <p className="text-sm text-gray-400 mt-0.5">
-            Reproducir slideshow por categoría
+            Reproducir por categoría
           </p>
         </div>
 
