@@ -130,7 +130,6 @@ export default function Reproductor() {
     }, {});
   }, [allProducts]);
 
-  const categorias = Object.keys(productosPorCategoria);
 
   const productosCategoria = categoriaActiva
     ? productosPorCategoria[categoriaActiva] ?? []
@@ -179,8 +178,10 @@ export default function Reproductor() {
       {/* ── Header ── */}
       <header className="bg-gray-900 border-b-4 border-red-600 px-16 py-8 flex items-center justify-between shadow-lg">
         <div className="flex items-center gap-10">
-          <img src={Logo} alt="Logo" className="h-20 object-contain" />
-          <div className="w-px h-16 bg-red-600/50" />
+          <div className="self-stretch -my-8 -ml-16 flex items-center gap-10 pl-16 pr-10" style={{background: "linear-gradient(to right, white 45%, rgba(255,255,255,0.6) 65%, rgba(255,255,255,0.2) 85%, transparent 100%)"}}>
+            <img src={Logo} alt="Logo" className="h-16 object-contain" />
+            <div className="w-px h-16 bg-red-600/50" />
+          </div>
           <div className="flex flex-col gap-3">
             <p className="text-white text-4xl font-extrabold tracking-wide leading-none">
               Catálogo Digital
@@ -190,13 +191,22 @@ export default function Reproductor() {
             </p>
           </div>
         </div>
-        <div className="hidden sm:block text-white/25 text-base uppercase tracking-widest">
-          {categorias.length} categoría{categorias.length !== 1 ? "s" : ""}
-        </div>
       </header>
 
       {/* ── Body ── */}
-      <main className="flex-1 flex flex-col items-center justify-center px-8 py-14">
+      <main className="relative flex-1 flex flex-col items-center justify-center px-8 py-14 overflow-hidden">
+
+        {/* ── Logos flotantes decorativos ── */}
+        <div className="pointer-events-none select-none absolute inset-0 z-0">
+          {[0,1,2,3,4,5,6,7,8,9].map((i) => (
+            <img
+              key={i}
+              src={Logo}
+              alt=""
+              className={`repro-logo-float repro-logo-${i}`}
+            />
+          ))}
+        </div>
 
         {/* ── Grid de 5 cards ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 w-full max-w-[1700px]">
