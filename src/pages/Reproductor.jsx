@@ -268,6 +268,7 @@ export default function Reproductor() {
         <SlideShowPlayer
           productos={productosCategoria}
           duracionSegundos={duracionGlobal}
+          tvMode={true}
           onClose={() => setSlideshowAbierto(false)}
         />
       )}

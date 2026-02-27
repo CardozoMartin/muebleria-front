@@ -21,8 +21,8 @@ export default function App() {
         />
 
         {/* Ruta pública para reproducción sin login */}
-        <Route path="/reproductor" element={<Reproductor />} />
-        <Route path="/reproductor/:category" element={<Reproductor />} />
+        <Route path="/inicio" element={<Reproductor />} />
+        <Route path="/inicio/:category" element={<Reproductor />} />
 
         <Route
           path="/"
