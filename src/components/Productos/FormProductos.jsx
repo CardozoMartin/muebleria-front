@@ -19,12 +19,13 @@ import { usePostProduct, useEditProduct as useEditProductMutation } from "../../
 import { useEditProduct } from "../../store/useEditProduct";
 import { PLANTILLA_OPTIONS } from "../../constants/plantillas";
 import '../../css/productos.css';
+import Swal from "sweetalert2";
 
 const FormProductos = ({ setShowForm }) => {
   const [preview, setPreview] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const fileInputRef = useRef(null);
-  const { product } = useEditProduct();
+  const { product, clearProduct } = useEditProduct();
   //hook para crear un nuevo producto
   const { mutate: CrearProductos, isLoading: isPending } = usePostProduct();
   //hook para editar un producto (mutation)
@@ -95,20 +96,37 @@ const FormProductos = ({ setShowForm }) => {
   console.log(key, "→", val);
 }
     //ahora verificamos si estamos editando o creando un producto nuevo, si product tiene un valor es porque estamos editando, sino estamos creando
+    Swal.fire({
+      title: 'Guardando producto...',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
     if (product) {
       EditarProducto(
         { id: product._id, data: formDataToSend },
         {
           onSuccess: () => {
+            Swal.fire({
+              icon: 'success',
+              title: '¡Producto actualizado!',
+              text: 'Los cambios se guardaron correctamente.',
+              timer: 2000,
+              showConfirmButton: false,
+            });
             setShowSuccess(true);
             setShowForm(false);
             reset();
             setPreview(null);
+            clearProduct();
             setTimeout(() => setShowSuccess(false), 3000);
           },
           onError: (err) => {
             console.error("error editing product", err);
             const msg = err.response?.data?.message || err.message || "Error al editar el producto";
+            Swal.fire({ icon: 'error', title: 'Error', text: msg });
             toast.error(msg);
           },
         },
@@ -116,15 +134,25 @@ const FormProductos = ({ setShowForm }) => {
     } else {
       CrearProductos(formDataToSend, {
         onSuccess: () => {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Producto guardado!',
+            text: 'El producto fue creado correctamente.',
+            timer: 2000,
+            showConfirmButton: false,
+          });
           setShowSuccess(true);
           setShowForm(false);
           reset();
           setPreview(null);
+          clearProduct();
           setTimeout(() => setShowSuccess(false), 3000);
         },
         onError: (err) => {
           console.error("error creating product", err);
-          toast.error("Error al crear el producto");
+          const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Error al crear el producto";
+          Swal.fire({ icon: 'error', title: 'Error', text: msg });
+          toast.error(msg);
         },
       });
     }
@@ -162,6 +190,7 @@ const FormProductos = ({ setShowForm }) => {
             onClick={() => {
               reset();
               setPreview(null);
+              clearProduct();
               setShowForm(false);
             }}
             className="form-close-btn"
@@ -218,9 +247,9 @@ const FormProductos = ({ setShowForm }) => {
               >
                 <option value="">Selecciona una categoría</option>
                 <option value="Cocina">Cocina</option>
-                <option value="Living">Living</option>
                 <option value="Dormitorio">Dormitorio</option>
                 <option value="Jardin">Jardin</option>
+                <option value="Living">Living</option>
                 <option value="Varios">Varios</option>
               </select>
               {errors.categoria && (
@@ -287,10 +316,10 @@ const FormProductos = ({ setShowForm }) => {
               {/* Precio Lista */}
               <div className="form-group">
                 <label className="form-label">
-                  Precio de Lista *
+                   <DollarSign style={{ width: '14px', height: '14px' }} />
+                  Precio de Lista 
                 </label>
                 <div className="form-input-with-prefix">
-                  <span className="form-input-prefix">$</span>
                   <input
                     {...register("precioLista", {
                       required: "El precio es obligatorio",
@@ -315,10 +344,10 @@ const FormProductos = ({ setShowForm }) => {
               {/* Precio Oferta */}
               <div className="form-group">
                 <label className="form-label">
+                  <DollarSign style={{ width: '14px', height: '14px' }} />
                   Precio Oferta
                 </label>
                 <div className="form-input-with-prefix">
-                  <span className="form-input-prefix">$</span>
                   <input
                     {...register("precioOferta", {
                       min: { value: 0, message: "Debe ser ≥ 0" },
@@ -342,8 +371,8 @@ const FormProductos = ({ setShowForm }) => {
               {/* Porcentaje Descuento */}
               <div className="form-group">
                 <label className="form-label">
-                  <Percent style={{ width: '14px', height: '14px' }} />
-                  % Descuento
+                   <Percent style={{ width: '14px', height: '14px' }} />
+                   Descuento
                 </label>
                 <div className="form-input-with-prefix">
                   <input
@@ -356,7 +385,6 @@ const FormProductos = ({ setShowForm }) => {
                     className={`form-input ${errors.porcentajeDescuento ? 'error' : ''}`}
                     placeholder="0"
                   />
-                  <span className="form-input-suffix">%</span>
                 </div>
                 {errors.porcentajeDescuento && (
                   <div className="form-error">
@@ -376,51 +404,45 @@ const FormProductos = ({ setShowForm }) => {
               <ToggleLeft style={{ width: '16px', height: '16px' }} />
               Estado
             </h3>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', width: 'fit-content' }}>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type="checkbox"
-                  style={{ opacity: 0, width: 0, height: 0 }}
-                  {...register("productoActivo")}
-                />
-                <div
-                  onClick={() => setValue("productoActivo", !productoActivo)}
-                  style={{
-                    width: '40px',
-                    height: '20px',
-                    borderRadius: '20px',
-                    backgroundColor: productoActivo ? '#1c1c1c' : '#999999',
-                    transition: 'background-color 0.3s',
-                    position: 'relative'
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '2px',
-                      width: '16px',
-                      height: '16px',
-                      backgroundColor: 'white',
-                      borderRadius: '50%',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                      transition: 'left 0.3s',
-                      left: productoActivo ? '22px' : '2px'
-                    }}
-                  />
-                </div>
+            <div
+              onClick={() => setValue("productoActivo", !productoActivo)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', cursor: 'pointer', userSelect: 'none' }}
+            >
+              {/* input oculto para react-hook-form */}
+              <input type="checkbox" style={{ display: 'none' }} {...register("productoActivo")} />
+
+              {/* Track */}
+              <div style={{
+                width: '44px',
+                height: '24px',
+                borderRadius: '12px',
+                backgroundColor: productoActivo ? '#1c1c1c' : '#d1d5db',
+                transition: 'background-color 0.25s',
+                position: 'relative',
+                flexShrink: 0,
+              }}>
+                {/* Thumb */}
+                <div style={{
+                  position: 'absolute',
+                  top: '3px',
+                  left: productoActivo ? '23px' : '3px',
+                  width: '18px',
+                  height: '18px',
+                  backgroundColor: 'white',
+                  borderRadius: '50%',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+                  transition: 'left 0.25s',
+                }} />
               </div>
-              <span style={{ fontSize: '13px', color: '#1c1c1c' }}>
-                Producto{" "}
-                <span
-                  style={{
-                    color: productoActivo ? '#22c55e' : '#999999',
-                    fontWeight: '500'
-                  }}
-                >
-                  {productoActivo ? "activo" : "inactivo"}
+
+              {/* Texto */}
+              <span style={{ fontSize: '13px', color: '#1c1c1c', fontWeight: '500' }}>
+                Producto{' '}
+                <span style={{ color: productoActivo ? '#22c55e' : '#9ca3af' }}>
+                  {productoActivo ? 'activo' : 'inactivo'}
                 </span>
               </span>
-            </label>
+            </div>
           </div>
 
           {/* ── Imagen ── */}
@@ -509,6 +531,7 @@ const FormProductos = ({ setShowForm }) => {
               onClick={() => {
                 reset();
                 setPreview(null);
+                clearProduct();
                 setShowForm(false);
               }}
               className="btn-cancel"

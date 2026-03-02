@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   cambiarEstadoProducto,
@@ -48,6 +49,7 @@ export const usePostProduct = () => {
     mutationFn: createProduct,
     onSuccess: () => {
       queryCliente.invalidateQueries({ queryKey: ["products"] });
+      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
       toast.success("Producto creado exitosamente");
     },
     onError: () => {
@@ -62,6 +64,7 @@ export const useChangeStateProduct = () => {
     mutationFn: cambiarEstadoProducto,
     onSuccess: () => {
       queryCliente.invalidateQueries({ queryKey: ["products"] });
+      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
       toast.success("Estado del producto actualizado");
     },
     onError: () => {
