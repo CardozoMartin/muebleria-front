@@ -171,22 +171,20 @@ export const Plantillas = () => {
   const [abierta, setAbierta] = useState(null);
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-1">Plantillas Publicitarias</h1>
-          <p className="text-gray-500 text-sm">
-            Hacé click en una plantilla para verla en pantalla completa · Optimizadas para 32" o más
-          </p>
-        </div>
+    <div className="flex flex-col gap-8">
+      {/* Header */}
+      <div className="border-l-4 border-red-600 pl-4">
+        <h1 className="text-2xl font-extrabold text-gray-900 tracking-wider uppercase leading-none mb-2">Plantillas Publicitarias</h1>
+        <p className="text-red-600 text-xs font-semibold tracking-[0.2em] uppercase">
+          Hacé click en una plantilla para verla en pantalla completa · Optimizadas para 32" o más
+        </p>
+      </div>
 
-        {/* Grid 3 por fila */}
-        <div className="grid grid-cols-3 gap-6 auto-rows-max">
-          {PLANTILLAS.map((p) => (
-            <MiniCard key={p.id} plantilla={p} onClick={() => setAbierta(p)} />
-          ))}
-        </div>
+      {/* Grid 3 por fila */}
+      <div className="grid grid-cols-3 gap-6 auto-rows-max">
+        {PLANTILLAS.map((p) => (
+          <MiniCard key={p.id} plantilla={p} onClick={() => setAbierta(p)} />
+        ))}
       </div>
 
       {/* Modal fullscreen */}
