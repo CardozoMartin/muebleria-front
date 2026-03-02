@@ -3,6 +3,7 @@ import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/ProductPage';
 import Offers from './pages/Offers';
+import Reproductor from './pages/Reproductor';
 import { Plantillas } from './pages/PlantillasPage';
 import LoginPage from './pages/LoginPage';
 import useAuthStore from './store/useAuthStore';
@@ -18,6 +19,10 @@ export default function App() {
           path="/login"
           element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />}
         />
+
+        {/* Ruta pública para reproducción sin login */}
+        <Route path="/inicio" element={<Reproductor />} />
+        <Route path="/inicio/:category" element={<Reproductor />} />
 
         <Route
           path="/"

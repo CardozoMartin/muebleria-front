@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import {api} from '../api';
 
 
@@ -80,6 +81,18 @@ export const editProduct = async (productId, productData) => {
   }
 }
 
+//funcion para buscar productos por nombre o coincidencia
+export const searchProducts = async (query) => {
+  try {
+    const response = await api.get(`/productos/search?query=${encodeURIComponent(query)}`);
+    console.log('Resultados de búsqueda:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching products:', error);
+    throw error;
+  }
+}
+
 //funcion para obtener todos los productos
 export const getProductosAll = async () => {
   try {
@@ -91,4 +104,12 @@ export const getProductosAll = async () => {
   }
 }
 
-
+//Funcion para buscar productos por categoria
+export const searchProductsByCategory = async (category) => {
+  try {    const response = await api.get(`/productos/search/category?category=${encodeURIComponent(category)}`);
+    console.log('Resultados de búsqueda por categoría:', response.data);
+    return response.data;
+  } catch (error) {    console.error('Error searching products by category:', error);
+    throw error;
+  }   
+}

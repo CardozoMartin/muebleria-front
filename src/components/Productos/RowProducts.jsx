@@ -1,4 +1,4 @@
-import { Eye, MonitorPlay, SquarePen, Trash } from "lucide-react";
+import { Eye, MonitorPlay, SquarePen, Trash, PackageOpen } from "lucide-react";
 import React from "react";
 import {
   useChangeStateProduct,
@@ -6,8 +6,9 @@ import {
 } from "../../hooks/useProducts";
 import Swal from "sweetalert2";
 import { useEditProduct } from "../../store/useEditProduct";
+import '../../css/productos.css';
 
-const RowProducts = ({ product, index, setShowForm }) => {
+const RowProducts = ({ product, index, setShowForm, setShowVideo, setSelectedProduct }) => {
   const { setProduct } = useEditProduct();
   //hook para cambiar el estado del producto
   const { mutate: changeStateProduct } = useChangeStateProduct();
@@ -68,85 +69,90 @@ const RowProducts = ({ product, index, setShowForm }) => {
       }
     });
   }
+  //handle para mostrar la previsualización de la plantilla
+  const handleShowVideo = () => {
+    if (setSelectedProduct) setSelectedProduct(product);
+    setShowVideo(true);
+  }
   return (
-    <tr
-      key={product._id}
-      className="border-b border-gray-300/50 last:border-0 hover:bg-gray-500/5 transition"
-    >
+    <tr key={product._id}>
       {/* # */}
-      <td className="px-5 py-3.5 text-xs text-gray-600/60 font-medium font-bold">
+      <td className="table-number">
         {String(index + 1).padStart(2, "0")}
       </td>
 
       {/* Producto (imagen + nombre) */}
-      <td className="px-5 py-3.5">
-        <div className="flex  items-center gap-2">
+      <td>
+        <div className="product-info">
           {product.imagenProducto ? (
             <img
               src={product.imagenProducto}
               alt={product.titulo}
-              className="w-10 h-10 object-cover rounded-md border border-gray-500/20 shrink-0"
+              className="product-image"
             />
           ) : (
-            <div className="w-10 h-10 rounded-md border border-gray-500/20 bg-gray-500/10  shrink-0">
-              <PackageOpen className="w-4 h-4 text-gray-400/60" />
+            <div className="product-image-placeholder">
+              <PackageOpen style={{ width: '16px', height: '16px', color: '#999999' }} />
             </div>
           )}
-          <span className="text-sm font-bold text-gray-800/80 text-center ">
+          <span className="product-name">
             {product.titulo}
           </span>
         </div>
       </td>
 
       {/* Precio actual */}
-      <td className="px-5 py-3.5 text-sm items-center justify-center font-medium text-gray-800/80">
+      <td className="price-cell">
         ${Number(product.precioLista).toLocaleString("es-AR")}
       </td>
 
       {/* Precio anterior */}
-      <td className="px-5 py-3.5 text-sm font-medium text-gray-800/80">
+      <td className="price-cell">
         ${Number(product.precioOferta).toLocaleString("es-AR")}
       </td>
 
-      <td className="px-5 py-3.5 text-sm font-medium text-gray-800/80">
-        <span className="font-bold">%</span>
+      <td className="price-cell">
+        <span style={{ fontWeight: 'bold' }}>%</span>
         {Number(product.porcentajeDescuento).toLocaleString("es-AR")}
+      </td>
+      <td className="price-cell">
+        {product.plantillaId || '-'}
       </td>
 
       {/* Estado */}
-      <td className="px-5 py-3.5">
+      <td>
         <button
           onClick={handleStateChange}
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium ${
-            product.productoActivo
-              ? "bg-gray-800/5 text-green-700/70 border border-green-500/20"
-              : "bg-red-50/60 text-red-500/80 border border-red-400/20"
-          }`}
+          className={`status-badge ${product.productoActivo ? 'active' : 'inactive'}`}
         >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              product.productoActivo ? "bg-green-600/60" : "bg-red-400/80"
-            }`}
-          />
+          <span className="status-badge-dot" />
           {product.productoActivo ? "Activo" : "Inactivo"}
         </button>
       </td>
 
       {/* Acciones */}
-      <td className="px-5 py-3.5">
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-500/30 text-gray-800/80 text-xs font-medium rounded-md hover:bg-blue-500/10  transition">
-            <MonitorPlay className="hover:bg-blue-500/10 hover:text-blue-500" />
+      <td>
+        <div className="actions-cell">
+          <button 
+            onClick={handleShowVideo}
+            className="btn-action view"
+            title="Ver plantilla"
+          >
+            <MonitorPlay style={{ width: '16px', height: '16px' }} />
           </button>
           <button
             onClick={handleDeleteProduct}
-            className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-500/30 text-gray-800/80 text-xs font-medium rounded-md hover:bg-red-500/10 transition"
+            className="btn-action"
+            title="Eliminar"
           >
-            <Trash className="hover:bg-red-500/10 hover:text-red-500" />
+            <Trash style={{ width: '16px', height: '16px' }} />
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-500/30 text-gray-800/80 text-xs font-medium rounded-md hover:bg-yellow-500/10 transition"
-          onClick={handleEditProduct}>
-            <SquarePen className="hover:bg-yellow-500/10 hover:text-yellow-500" />
+          <button 
+            className="btn-action edit"
+            onClick={handleEditProduct}
+            title="Editar"
+          >
+            <SquarePen style={{ width: '16px', height: '16px' }} />
           </button>
         </div>
       </td>

@@ -1,8 +1,9 @@
 import MegaSale from '../components/Plantillas/MegaSale';
 import LuxeShow from '../components/Plantillas/LuxeShow';
+import HotSale from '../components/Plantillas/HotSale';
+import CyberMonday from '../components/Plantillas/CyberMonday';
+import Liquidacion from '../components/Plantillas/Liquidacion';
 import CasaViva from '../components/Plantillas/Casaviva';
-import CuotasBanner from '../components/Plantillas/CustomBanner';
-import LiquidacionBanner from '../components/Plantillas/LiquidacionBanner';
 
 // central list of available templates; used in PlantillasPage and product form
 export const PLANTILLAS = [
@@ -26,6 +27,27 @@ export const PLANTILLAS = [
     descripcion: 'Cinematográfico · Oscuro · Cálido',
     component: CasaViva,
     dot: 'bg-orange-300',
+  },
+  {
+    id: 'liquidacion',
+    nombre: 'Liquidación',
+    descripcion: 'Dinámico · Rojo · Fuego',
+    component: Liquidacion,
+    dot: 'bg-red-500',
+  },
+  {
+    id: 'hotsale',
+    nombre: 'Hot Sale',
+    descripcion: 'Dinámico · Rojo · Fuego',
+    component: HotSale,
+    dot: 'bg-red-500',
+  },
+    {
+    id: 'cybermonday',
+    nombre: 'Cyber Monday',
+    descripcion: 'Dinámico · Rojo · Fuego',
+    component: CyberMonday,
+    dot: 'bg-red-500',
   },
 ];
 

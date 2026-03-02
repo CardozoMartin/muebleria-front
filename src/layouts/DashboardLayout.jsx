@@ -1,49 +1,98 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
-import Logo from "./../assets/logo.png"
+import Logo from "./../assets/logo.png";
 import useAuthStore from "../store/useAuthStore";
 import { toast } from "sonner";
+import "../css/dashboardLayout.css";
+import Swal from "sweetalert2";
 
 const navItems = [
-  {
-    to: "/dashboard",
-    label: "Panel de Control",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
-        <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
-        <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
-        <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6"/>
-      </svg>
-    ),
-  },
   {
     to: "/products",
     label: "Productos",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M20 7H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1Z" stroke="currentColor" strokeWidth="1.6"/>
-        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-        <path d="M12 12v4M10 14h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+        <path
+          d="M16 11V7a4 4 0 10-8 0v4"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M3 11h18l-1.5 9a2 2 0 01-2 1.5H6.5A2 2 0 014 20L3 11z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     ),
   },
   {
     to: "/offers",
-    label: "Ofertas",
+    label: "Vista Previa Categorias",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="m12.586 2.586-9 9a2 2 0 0 0 0 2.828l6 6a2 2 0 0 0 2.828 0l9-9A2 2 0 0 0 21 10V5a3 3 0 0 0-3-3h-5a2 2 0 0 0-1.414.586Z" stroke="currentColor" strokeWidth="1.6"/>
-        <circle cx="16.5" cy="7.5" r="1" fill="currentColor"/>
+        <path
+          d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="3"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     ),
   },
   {
     to: "/plantillas",
-    label: "Plantillas",
+    label: "Modelos de Plantillas",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 20 18" fill="none">
-        <path d="M10 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M1.664 9.733V8.267c0-.867.708-1.584 1.583-1.584 1.509 0 2.125-1.066 1.367-2.375a1.583 1.583 0 0 1 .583-2.158l1.442-.825c.658-.392 1.508-.158 1.9.5l.092.158c.75 1.309 1.983 1.309 2.741 0l.092-.158c.392-.658 1.242-.892 1.9-.5l1.442.825a1.583 1.583 0 0 1 .583 2.158c-.758 1.309-.142 2.375 1.367 2.375.866 0 1.583.709 1.583 1.584v1.466c0 .867-.708 1.583-1.583 1.583-1.509 0-2.125 1.067-1.367 2.375a1.58 1.58 0 0 1-.583 2.159l-1.442.825c-.658.392-1.508.158-1.9-.5l-.092-.159c-.75-1.308-1.983-1.308-2.741 0l-.092.159c-.392.658-1.242.892-1.9.5l-1.442-.825a1.583 1.583 0 0 1-.583-2.158c.758-1.309.142-2.376-1.367-2.376a1.59 1.59 0 0 1-1.583-1.583" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <rect
+          x="3"
+          y="3"
+          width="8"
+          height="8"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          rx="1"
+        />
+        <rect
+          x="13"
+          y="3"
+          width="8"
+          height="8"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          rx="1"
+        />
+        <rect
+          x="3"
+          y="13"
+          width="8"
+          height="8"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          rx="1"
+        />
+        <rect
+          x="13"
+          y="13"
+          width="8"
+          height="8"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          rx="1"
+        />
       </svg>
     ),
   },
@@ -54,57 +103,60 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    clearAuth();
-    toast.success('Sesión cerrada');
-    navigate('/login');
+    Swal.fire({
+      title: "¿Cerrar sesión?",
+      text: "¿Estás seguro de que deseas cerrar sesión?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, cerrar sesión",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        clearAuth();
+        toast.success("Sesión cerrada exitosamente");
+        navigate("/login");
+      }
+    });
   };
 
-  console.log("Usuario autenticado:", user)
+  console.log("Usuario autenticado:", user);
   return (
-    <div className="flex h-screen bg-[#f5f5f3] font-sans overflow-hidden">
+    <div className="dashboard-layout">
       {/* Sidebar */}
-      <aside className="w-56 flex-shrink-0 flex flex-col bg-white border-r border-gray-200/80 shadow-sm">
+      <aside className="dashboard-sidebar">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="w-14 h-14  rounded-lg flex items-center justify-center shadow-sm">
-              <img src={Logo} alt="Logo" className="object-contain"/>
+        <div className="sidebar-logo-section">
+          <div className="sidebar-logo-wrapper">
+            <div className="sidebar-logo-icon">
+              <img src={Logo} alt="Logo" className="object-contain" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-900 leading-none">Mueblesdepinoml</p>
+            <div className="sidebar-logo-text">
+              <p>Muebles de Pino ML</p>
             </div>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
+        <nav className="sidebar-nav">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
-                }`
+                `nav-item ${isActive ? "active" : ""}`
               }
             >
               {item.icon}
-              {item.label}
+              <span>{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
         {/* User + Logout */}
-        <div className="px-3 py-4 border-t border-gray-100 space-y-1">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-
-
-          </div>
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all duration-150">
+        <div className="sidebar-user-section">
+          <button onClick={handleLogout} className="logout-button">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path
                 d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"
@@ -131,64 +183,23 @@ export default function DashboardLayout() {
                 strokeLinejoin="round"
               />
             </svg>
-            Logout
+            <span>Logout</span>
           </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="dashboard-main">
         {/* Top bar */}
-        <header className="h-14 bg-white border-b border-gray-200/80 flex items-center justify-between px-6 flex-shrink-0 shadow-sm">
-          <div className="relative w-80">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.8" />
-              <path
-                d="m21 21-4.35-4.35"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search products, orders, or offers..."
-              className="w-full pl-9 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 placeholder-gray-400 transition"
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <h3 className="text-sm font-medium text-gray-700">Welcome back, Admin!</h3>
-            <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M13.73 21a2 2 0 01-3.46 0"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+        <header className="dashboard-header">
+          <div className="dashboard-header-title">
+            Bienvenido a{" "}
+            <span className="dashboard-header-accent">Muebles de Pino ML</span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="dashboard-content">
           <Outlet />
         </main>
       </div>

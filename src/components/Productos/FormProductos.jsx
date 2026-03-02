@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { usePostProduct, useEditProduct as useEditProductMutation } from "../../hooks/useProducts";
 import { useEditProduct } from "../../store/useEditProduct";
 import { PLANTILLA_OPTIONS } from "../../constants/plantillas";
+import '../../css/productos.css';
 
 const FormProductos = ({ setShowForm }) => {
   const [preview, setPreview] = useState(null);
@@ -135,24 +136,24 @@ const FormProductos = ({ setShowForm }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="form-container">
       {showSuccess && (
-        <div className="fixed top-4 right-4 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg z-50 flex items-center gap-3">
-          <CheckCircle className="w-5 h-5 text-green-600" />
-          <span className="text-sm font-medium text-green-800">
+        <div className="success-message">
+          <CheckCircle className="success-message-icon" />
+          <span className="success-message-text">
             Producto guardado exitosamente
           </span>
         </div>
       )}
 
-      <div className="bg-white rounded-md border border-gray-500/30 p-6 max-w-3xl mx-auto">
+      <div className="form-card">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-medium text-gray-800/80">
+        <div className="form-header">
+          <div className="form-title">
+            <h2>
               {product ? "Editar Producto" : "Agregar Nuevo Producto"}
             </h2>
-            <p className="text-sm text-gray-600/70 mt-1">
+            <p>
               Completa la información del producto
             </p>
           </div>
@@ -163,25 +164,25 @@ const FormProductos = ({ setShowForm }) => {
               setPreview(null);
               setShowForm(false);
             }}
-            className="p-2 text-gray-600/70 hover:text-gray-800 hover:bg-gray-500/10 rounded transition"
+            className="form-close-btn"
           >
-            <X className="w-5 h-5" />
+            <X style={{ width: '20px', height: '20px' }} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-5">
+        <form onSubmit={handleSubmit(handleSubmitForm)} className="form-content" style={{ marginTop: '24px' }}>
           {/* ── Información Básica ── */}
-          <div className="bg-gray-500/5 rounded-md p-5 border border-gray-500/20 space-y-4">
-            <h3 className="text-sm font-medium text-gray-800/80 flex items-center">
-              <Package className="w-4 h-4 text-gray-700/70 mr-2" /> Información
-              Básica
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <Package style={{ width: '16px', height: '16px' }} />
+              Información Básica
             </h3>
 
             {/* Nombre */}
-            <div>
-              <label className="block text-sm font-medium text-gray-800/80 mb-2 flex items-center">
-                <Tag className="w-3.5 h-3.5 mr-1.5 text-gray-600/60" /> Nombre
-                del Producto *
+            <div className="form-group">
+              <label className="form-label">
+                <Tag style={{ width: '14px', height: '14px' }} />
+                Nombre del Producto *
               </label>
               <input
                 {...register("titulo", {
@@ -189,17 +190,13 @@ const FormProductos = ({ setShowForm }) => {
                   minLength: { value: 3, message: "Mínimo 3 caracteres" },
                   maxLength: { value: 50, message: "Máximo 50 caracteres" },
                 })}
-                className={`w-full border rounded-md px-3 py-2 text-sm text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition ${
-                  errors.titulo
-                    ? "border-red-400/60 bg-red-50/30"
-                    : "border-gray-500/30 hover:border-gray-500/50"
-                }`}
+                className={`form-input ${errors.titulo ? 'error' : ''}`}
                 placeholder="Ej: Mesa de Madera Roble"
               />
               {errors.titulo && (
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                  <span className="text-red-600/80 text-xs">
+                <div className="form-error">
+                  <AlertCircle style={{ width: '14px', height: '14px' }} />
+                  <span>
                     {errors.titulo.message}
                   </span>
                 </div>
@@ -207,19 +204,15 @@ const FormProductos = ({ setShowForm }) => {
             </div>
 
             {/* Categoría */}
-            <div>
-              <label className="block text-sm font-medium text-gray-800/80 mb-2">
+            <div className="form-group">
+              <label className="form-label">
                 Categoría *
               </label>
               <select
                 {...register("categoria", {
                   required: "La categoría es obligatoria",
                 })}
-                className={`w-full border rounded-md px-3 py-2 text-sm text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition bg-white ${
-                  errors.categoria
-                    ? "border-red-400/60 bg-red-50/30"
-                    : "border-gray-500/30 hover:border-gray-500/50"
-                }`}
+                className={`form-select ${errors.categoria ? 'error' : ''}`}
               >
                 <option value="">Selecciona una categoría</option>
                 <option value="Cocina">Cocina</option>
@@ -229,9 +222,9 @@ const FormProductos = ({ setShowForm }) => {
                 <option value="Varios">Varios</option>
               </select>
               {errors.categoria && (
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                  <span className="text-red-600/80 text-xs">
+                <div className="form-error">
+                  <AlertCircle style={{ width: '14px', height: '14px' }} />
+                  <span>
                     {errors.categoria.message}
                   </span>
                 </div>
@@ -239,13 +232,13 @@ const FormProductos = ({ setShowForm }) => {
             </div>
 
             {/* Plantilla */}
-            <div>
-              <label className="block text-sm font-medium text-gray-800/80 mb-2">
+            <div className="form-group">
+              <label className="form-label">
                 Plantilla
               </label>
               <select
                 {...register('plantillaId')}
-                className="w-full border rounded-md px-3 py-2 text-sm text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition bg-white border-gray-500/30 hover:border-gray-500/50"
+                className="form-select"
               >
                 <option value="">-- Ninguna --</option>
                 {PLANTILLA_OPTIONS.map((opt) => (
@@ -257,9 +250,9 @@ const FormProductos = ({ setShowForm }) => {
             </div>
 
             {/* Descripción */}
-            <div>
-              <label className="block text-sm font-medium text-gray-800/80 mb-2 flex items-center">
-                <FileText className="w-3.5 h-3.5 mr-1.5 text-gray-600/60" />{" "}
+            <div className="form-group">
+              <label className="form-label">
+                <FileText style={{ width: '14px', height: '14px' }} />
                 Descripción
               </label>
               <textarea
@@ -267,17 +260,13 @@ const FormProductos = ({ setShowForm }) => {
                   maxLength: { value: 500, message: "Máximo 500 caracteres" },
                 })}
                 rows={3}
-                className={`w-full border rounded-md px-3 py-2 text-sm text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition resize-none ${
-                  errors.descripcion
-                    ? "border-red-400/60 bg-red-50/30"
-                    : "border-gray-500/30 hover:border-gray-500/50"
-                }`}
+                className={`form-textarea ${errors.descripcion ? 'error' : ''}`}
                 placeholder="Descripción opcional del producto..."
               />
               {errors.descripcion && (
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                  <span className="text-red-600/80 text-xs">
+                <div className="form-error">
+                  <AlertCircle style={{ width: '14px', height: '14px' }} />
+                  <span>
                     {errors.descripcion.message}
                   </span>
                 </div>
@@ -286,21 +275,20 @@ const FormProductos = ({ setShowForm }) => {
           </div>
 
           {/* ── Precios ── */}
-          <div className="bg-gray-500/5 rounded-md p-5 border border-gray-500/20 space-y-4">
-            <h3 className="text-sm font-medium text-gray-800/80 flex items-center">
-              <DollarSign className="w-4 h-4 text-gray-700/70 mr-2" /> Precios
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <DollarSign style={{ width: '16px', height: '16px' }} />
+              Precios
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="form-grid cols-3">
               {/* Precio Lista */}
-              <div>
-                <label className="block text-sm font-medium text-gray-800/80 mb-2">
+              <div className="form-group">
+                <label className="form-label">
                   Precio de Lista *
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700/70 text-sm">
-                    $
-                  </span>
+                <div className="form-input-with-prefix">
+                  <span className="form-input-prefix">$</span>
                   <input
                     {...register("precioLista", {
                       required: "El precio es obligatorio",
@@ -308,18 +296,14 @@ const FormProductos = ({ setShowForm }) => {
                     })}
                     type="number"
                     step="0.01"
-                    className={`w-full border rounded-md pl-8 pr-3 py-2 text-sm text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition ${
-                      errors.precioLista
-                        ? "border-red-400/60 bg-red-50/30"
-                        : "border-gray-500/30 hover:border-gray-500/50"
-                    }`}
+                    className={`form-input ${errors.precioLista ? 'error' : ''}`}
                     placeholder="0.00"
                   />
                 </div>
                 {errors.precioLista && (
-                  <div className="flex items-center gap-1.5 mt-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                    <span className="text-red-600/80 text-xs">
+                  <div className="form-error">
+                    <AlertCircle style={{ width: '14px', height: '14px' }} />
+                    <span>
                       {errors.precioLista.message}
                     </span>
                   </div>
@@ -327,32 +311,26 @@ const FormProductos = ({ setShowForm }) => {
               </div>
 
               {/* Precio Oferta */}
-              <div>
-                <label className="block text-sm font-medium text-gray-800/80 mb-2">
+              <div className="form-group">
+                <label className="form-label">
                   Precio Oferta
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700/70 text-sm">
-                    $
-                  </span>
+                <div className="form-input-with-prefix">
+                  <span className="form-input-prefix">$</span>
                   <input
                     {...register("precioOferta", {
                       min: { value: 0, message: "Debe ser ≥ 0" },
                     })}
                     type="number"
                     step="0.01"
-                    className={`w-full border rounded-md pl-8 pr-3 py-2 text-sm text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition ${
-                      errors.precioOferta
-                        ? "border-red-400/60 bg-red-50/30"
-                        : "border-gray-500/30 hover:border-gray-500/50"
-                    }`}
+                    className={`form-input ${errors.precioOferta ? 'error' : ''}`}
                     placeholder="0.00"
                   />
                 </div>
                 {errors.precioOferta && (
-                  <div className="flex items-center gap-1.5 mt-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                    <span className="text-red-600/80 text-xs">
+                  <div className="form-error">
+                    <AlertCircle style={{ width: '14px', height: '14px' }} />
+                    <span>
                       {errors.precioOferta.message}
                     </span>
                   </div>
@@ -360,12 +338,12 @@ const FormProductos = ({ setShowForm }) => {
               </div>
 
               {/* Porcentaje Descuento */}
-              <div>
-                <label className="block text-sm font-medium text-gray-800/80 mb-2 flex items-center">
-                  <Percent className="w-3.5 h-3.5 mr-1 text-gray-600/60" /> %
-                  Descuento
+              <div className="form-group">
+                <label className="form-label">
+                  <Percent style={{ width: '14px', height: '14px' }} />
+                  % Descuento
                 </label>
-                <div className="relative">
+                <div className="form-input-with-prefix">
                   <input
                     {...register("porcentajeDescuento", {
                       min: { value: 0, message: "Debe ser ≥ 0" },
@@ -373,21 +351,15 @@ const FormProductos = ({ setShowForm }) => {
                     })}
                     type="number"
                     step="1"
-                    className={`w-full border rounded-md pl-3 pr-8 py-2 text-sm text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition ${
-                      errors.porcentajeDescuento
-                        ? "border-red-400/60 bg-red-50/30"
-                        : "border-gray-500/30 hover:border-gray-500/50"
-                    }`}
+                    className={`form-input ${errors.porcentajeDescuento ? 'error' : ''}`}
                     placeholder="0"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700/70 text-sm">
-                    %
-                  </span>
+                  <span className="form-input-suffix">%</span>
                 </div>
                 {errors.porcentajeDescuento && (
-                  <div className="flex items-center gap-1.5 mt-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                    <span className="text-red-600/80 text-xs">
+                  <div className="form-error">
+                    <AlertCircle style={{ width: '14px', height: '14px' }} />
+                    <span>
                       {errors.porcentajeDescuento.message}
                     </span>
                   </div>
@@ -397,38 +369,52 @@ const FormProductos = ({ setShowForm }) => {
           </div>
 
           {/* ── Estado del producto ── */}
-          <div className="bg-gray-500/5 rounded-md p-5 border border-gray-500/20">
-            <h3 className="text-sm font-medium text-gray-800/80 flex items-center mb-4">
-              <ToggleLeft className="w-4 h-4 text-gray-700/70 mr-2" /> Estado
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <ToggleLeft style={{ width: '16px', height: '16px' }} />
+              Estado
             </h3>
-            <label className="flex items-center gap-3 cursor-pointer w-fit">
-              <div className="relative">
+            <label style={{ display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', width: 'fit-content' }}>
+              <div style={{ position: 'relative' }}>
                 <input
                   type="checkbox"
-                  className="sr-only"
+                  style={{ opacity: 0, width: 0, height: 0 }}
                   {...register("productoActivo")}
                 />
                 <div
                   onClick={() => setValue("productoActivo", !productoActivo)}
-                  className={`w-10 h-5 rounded-full transition-colors duration-200 ${
-                    productoActivo ? "bg-gray-800/80" : "bg-gray-300/80"
-                  }`}
+                  style={{
+                    width: '40px',
+                    height: '20px',
+                    borderRadius: '20px',
+                    backgroundColor: productoActivo ? '#1c1c1c' : '#999999',
+                    transition: 'background-color 0.3s',
+                    position: 'relative'
+                  }}
                 >
                   <div
-                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${
-                      productoActivo ? "translate-x-5" : "translate-x-0"
-                    }`}
+                    style={{
+                      position: 'absolute',
+                      top: '2px',
+                      left: '2px',
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: 'white',
+                      borderRadius: '50%',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                      transition: 'left 0.3s',
+                      left: productoActivo ? '22px' : '2px'
+                    }}
                   />
                 </div>
               </div>
-              <span className="text-sm text-gray-800/80">
+              <span style={{ fontSize: '13px', color: '#1c1c1c' }}>
                 Producto{" "}
                 <span
-                  className={
-                    productoActivo
-                      ? "text-green-600 font-medium"
-                      : "text-gray-500 font-medium"
-                  }
+                  style={{
+                    color: productoActivo ? '#22c55e' : '#999999',
+                    fontWeight: '500'
+                  }}
                 >
                   {productoActivo ? "activo" : "inactivo"}
                 </span>
@@ -437,27 +423,24 @@ const FormProductos = ({ setShowForm }) => {
           </div>
 
           {/* ── Imagen ── */}
-          <div className="bg-gray-500/5 rounded-md p-5 border border-gray-500/20">
-            <h3 className="text-sm font-medium text-gray-800/80 mb-4 flex items-center">
-              <UploadCloud className="w-4 h-4 text-gray-700/70 mr-2" /> Imagen
-              del Producto
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <UploadCloud style={{ width: '16px', height: '16px' }} />
+              Imagen del Producto
             </h3>
 
             <label
-              className={`flex items-center gap-3 border rounded-md px-3 py-2 cursor-pointer bg-white transition w-full ${
-                errors.imagenProducto
-                  ? "border-red-400/60 bg-red-50/30"
-                  : "border-gray-500/30 hover:border-gray-500/60"
-              }`}
+              className={`file-upload-area ${errors.imagenProducto ? 'error' : ''}`}
             >
-              <UploadCloud className="w-4 h-4 text-gray-500/70 shrink-0" />
-              <span className="text-sm text-gray-500/80 truncate">
-                {preview ? "Cambiar imagen..." : "Seleccionar imagen..."}
-              </span>
+              <div className="file-upload-content">
+                <UploadCloud className="file-upload-icon" />
+                <span className="file-upload-text">
+                  {preview ? "Cambiar imagen..." : "Seleccionar imagen..."}
+                </span>
+              </div>
               <input
                 type="file"
                 accept="image/*"
-                className="hidden"
                 ref={(e) => {
                   registerRef(e);
                   fileInputRef.current = e;
@@ -472,18 +455,18 @@ const FormProductos = ({ setShowForm }) => {
             </label>
 
             {errors.imagenProducto && (
-              <div className="flex items-center gap-1.5 mt-1.5">
-                <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                <span className="text-red-600/80 text-xs">
+              <div className="form-error" style={{ marginTop: '8px' }}>
+                <AlertCircle style={{ width: '14px', height: '14px' }} />
+                <span>
                   {errors.imagenProducto.message}
                 </span>
               </div>
             )}
 
             {preview && (
-              <div className="mt-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-800/80">
+              <div className="preview-container">
+                <div className="preview-header">
+                  <span className="preview-title">
                     Vista Previa
                   </span>
                   <button
@@ -492,33 +475,31 @@ const FormProductos = ({ setShowForm }) => {
                       setPreview(null);
                       setValue("imagenProducto", null);
                     }}
-                    className="flex items-center gap-1 text-xs text-gray-600/70 hover:text-red-500 transition"
+                    className="preview-remove"
                   >
-                    <X className="w-3.5 h-3.5" /> Quitar
+                    <X style={{ width: '14px', height: '14px' }} /> Quitar
                   </button>
                 </div>
-                <div className="border border-gray-500/30 rounded-md p-3 bg-white">
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-40 object-cover rounded"
-                  />
-                </div>
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="preview-image"
+                />
               </div>
             )}
           </div>
 
           {/* ── Botones ── */}
-          <div className="flex gap-3 pt-4 border-t border-gray-300/70">
+          <div className="form-buttons">
             <button
               type="submit"
               disabled={isPending}
-              className="flex items-center gap-2 bg-gray-800/80 hover:bg-gray-800 text-white text-sm font-medium px-5 py-2.5 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-submit"
             >
               {isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 0.8s linear infinite' }} />
               ) : (
-                <Save className="w-4 h-4" />
+                <Save style={{ width: '16px', height: '16px' }} />
               )}
               {isPending ? "Guardando..." : "Guardar Producto"}
             </button>
@@ -529,7 +510,7 @@ const FormProductos = ({ setShowForm }) => {
                 setPreview(null);
                 setShowForm(false);
               }}
-              className="px-5 py-2.5 border border-gray-500/30 text-gray-800/80 text-sm font-medium rounded-md hover:bg-gray-500/10 transition"
+              className="btn-cancel"
             >
               Cancelar
             </button>
