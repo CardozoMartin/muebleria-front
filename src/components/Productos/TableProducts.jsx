@@ -94,7 +94,7 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
                 <RowProducts 
                   key={product._id} 
                   product={product} 
-                  index={index} 
+                  index={searchQuery ? index : (currentPage - 1) * 10 + index} 
                   setShowForm={setShowForm} 
                   setShowVideo={setShowVideo}
                   setSelectedProduct={setSelectedProduct}
