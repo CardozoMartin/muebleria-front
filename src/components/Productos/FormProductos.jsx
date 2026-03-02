@@ -65,7 +65,11 @@ const FormProductos = ({ setShowForm }) => {
   const { ref: registerRef, ...registerImageProps } = register(
     "imagenProducto",
     {
-      required: product ? false : "La imagen es requerida",
+      validate: (value) => {
+        if (product) return true;
+        if (!value || value.length === 0) return "La imagen es requerida";
+        return true;
+      },
     },
   );
 
