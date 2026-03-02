@@ -190,8 +190,10 @@ const FormProductos = ({ setShowForm }) => {
                   minLength: { value: 3, message: "Mínimo 3 caracteres" },
                   maxLength: { value: 50, message: "Máximo 50 caracteres" },
                 })}
+                type="text"
                 className={`form-input ${errors.titulo ? 'error' : ''}`}
                 placeholder="Ej: Mesa de Madera Roble"
+                style={{ width: '100%', display: 'block' }}
               />
               {errors.titulo && (
                 <div className="form-error">
@@ -396,7 +398,6 @@ const FormProductos = ({ setShowForm }) => {
                     style={{
                       position: 'absolute',
                       top: '2px',
-                      left: '2px',
                       width: '16px',
                       height: '16px',
                       backgroundColor: 'white',
