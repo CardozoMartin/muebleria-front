@@ -108,7 +108,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
                 </span>
               </div>
 
-              {/* Preview de productos */}
+              {/* Preview de productos
               <div className="offer-products-list">
                 {productos.slice(0, 3).map((p) => (
                   <div key={p._id} className="offer-product-item">
@@ -131,7 +131,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
                     +{productos.length - 3} más...
                   </p>
                 )}
-              </div>
+              </div> */}
 
               {/* Botón reproducir */}
               <button
