@@ -23,6 +23,8 @@ export default function CyberMonday({
   const formatPrecio = (n) =>
     n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
 
+  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
+
   return (
     <>
       <link
@@ -126,8 +128,47 @@ export default function CyberMonday({
 
         /* Imagen */
         .cm-left {
+          position: relative;
           display:flex; align-items:center; justify-content:center;
           padding:clamp(60px,8vh,120px) clamp(10px,2vw,30px) clamp(20px,4vh,60px);
+        }
+
+        /* Badge descuento flotante sobre la imagen */
+        .cm-badge-img {
+          position: absolute;
+          top: 12%;
+          right: 4%;
+          z-index: 15;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          width: clamp(85px,10vw,145px);
+          height: clamp(85px,10vw,145px);
+          border-radius: 50%;
+          background: radial-gradient(circle at 40% 35%, rgba(255,255,255,.22), transparent 58%),
+                       radial-gradient(circle, #9b00ff, #ff00cc, #5500cc);
+          border: 3px solid rgba(255,255,255,.3);
+          box-shadow:
+            0 0 30px rgba(196,0,255,.9),
+            0 0 70px rgba(196,0,255,.5),
+            0 0 120px rgba(0,200,255,.25),
+            inset 0 0 20px rgba(255,255,255,.1);
+          opacity: 0; transform: scale(.3) rotate(20deg);
+          transition: opacity .6s ease 1s, transform .9s cubic-bezier(.34,1.9,.64,1) 1s;
+          animation: cmBadgeImgPulse 2.5s ease-in-out infinite 2s;
+        }
+        .cm-badge-img.on { opacity:1; transform:scale(1) rotate(0deg); }
+        @keyframes cmBadgeImgPulse {
+          0%,100% { transform:scale(1) rotate(0deg); box-shadow:0 0 30px rgba(196,0,255,.9),0 0 70px rgba(196,0,255,.5); }
+          40%      { transform:scale(1.12) rotate(4deg); box-shadow:0 0 55px rgba(196,0,255,1),0 0 110px rgba(0,200,255,.7); }
+          65%      { transform:scale(1.07) rotate(-3deg); }
+        }
+        .cm-badge-img-pct {
+          font-family:'Orbitron',sans-serif;
+          font-size:clamp(38px,5vw,70px); line-height:1;
+          color:#fff; font-weight:900; text-shadow:0 2px 10px rgba(0,0,0,.5);
+        }
+        .cm-badge-img-lbl {
+          font-size:clamp(12px,1.1vw,18px); letter-spacing:3px; font-weight:800;
+          text-transform:uppercase; color:rgba(255,255,255,.9);
         }
 
         /* Recuadro neon derecha */
@@ -197,7 +238,7 @@ export default function CyberMonday({
         /* TÃ­tulo */
         .cm-titulo {
           font-family:'Orbitron',sans-serif;
-          font-size:clamp(26px,3.2vw,52px); line-height:1.1;
+          font-size:calc(clamp(26px,3.2vw,52px) * var(--titulo-scale, 1)); line-height:1.1;
           color:#fff;
           text-shadow:0 0 20px rgba(196,0,255,.8), 0 0 50px rgba(0,200,255,.4);
           opacity:0; transform:translateX(50px);
@@ -205,10 +246,11 @@ export default function CyberMonday({
         }
         .cm-titulo.on { opacity:1; transform:translateX(0); }
 
-        /* DescripciÃ³n */
+        /* Descripción */
         .cm-desc {
           font-size:clamp(16px,1.4vw,22px);
           color:rgba(200,180,255,.95); line-height:1.45; font-weight:800;
+          white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
           opacity:0; transform:translateX(40px);
           transition: opacity .6s ease .6s, transform .6s cubic-bezier(.34,1.56,.64,1) .6s;
         }
@@ -248,7 +290,7 @@ export default function CyberMonday({
         .cm-off-badge {
           flex-shrink:0;
           display:flex; flex-direction:column; align-items:center; justify-content:center;
-          width:clamp(100px,12vw,170px); height:clamp(100px,12vw,170px);
+          width:clamp(80px,9vw,130px); height:clamp(80px,9vw,130px);
           border-radius:50%;
           background:radial-gradient(circle at 40% 35%, rgba(255,255,255,.25), transparent 60%),
                      radial-gradient(circle, #9b00ff, #ff00cc, #5500cc);
@@ -352,6 +394,12 @@ export default function CyberMonday({
         <div className="cm-layout">
 
           <div className="cm-left">
+            {porcentajeDescuento > 0 && (
+              <div className={`cm-badge-img ${mounted ? 'on' : ''}`}>
+                <span className="cm-badge-img-pct">{porcentajeDescuento}%</span>
+                <span className="cm-badge-img-lbl">OFF</span>
+              </div>
+            )}
             <div className={`cm-img-wrap ${mounted ? 'on' : ''}`}>
               <div className={`cm-img-inner ${mounted ? 'on' : ''}`}>
                 <img src={imagenProducto} alt={titulo} className="cm-img" />
@@ -364,7 +412,7 @@ export default function CyberMonday({
             <div className={`cm-box ${mounted ? 'on' : ''}`}>
 
             <div className={`cm-categoria ${mounted ? 'on' : ''}`}>{categoria}</div>
-            <div className={`cm-titulo ${mounted ? 'on' : ''}`}>{titulo}</div>
+            <div className={`cm-titulo ${mounted ? 'on' : ''}`} style={{'--titulo-scale': titleScale}}>{titulo}</div>
             <p className={`cm-desc ${mounted ? 'on' : ''}`}>{descripcion}</p>
 
             <div className={`cm-price-block ${mounted ? 'on' : ''}`}>
@@ -375,12 +423,6 @@ export default function CyberMonday({
                 <div className="cm-price-nums">
                   <div className="cm-price-nuevo">{formatPrecio(precioOferta)}</div>
                 </div>
-                {porcentajeDescuento > 0 && (
-                  <div className="cm-off-badge">
-                    <span className="cm-off-pct">{porcentajeDescuento}%</span>
-                    <span className="cm-off-lbl">OFF</span>
-                  </div>
-                )}
               </div>
             </div>
 

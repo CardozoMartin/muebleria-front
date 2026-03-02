@@ -23,6 +23,8 @@ export default function HotSale({
   const formatPrecio = (n) =>
     n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
 
+  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
+
 
   return (
     <>
@@ -237,7 +239,7 @@ export default function HotSale({
         }
         .hs-img-titulo-dest {
           display: block;
-          font-size: clamp(100px, 17%, 200px);
+          font-size: calc(clamp(100px, 17%, 200px) * var(--titulo-scale, 1));
           color: #fff;
         }
 
@@ -413,6 +415,7 @@ export default function HotSale({
           background: rgba(255,60,0,.06);
           border-radius: 8px;
           backdrop-filter: blur(4px);
+          white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
           opacity: 0; transform: translateX(50px);
           transition: opacity .75s ease .35s, transform .85s cubic-bezier(.34,1.5,.64,1) .35s;
         }
@@ -627,7 +630,7 @@ export default function HotSale({
               <div className="hs-slogan">Precios que arden!</div>
 
               <div className="hs-titulo-group">
-                <div className={`hs-img-titulo ${mounted ? 'on' : ''}`}>
+                <div className={`hs-img-titulo ${mounted ? 'on' : ''}`} style={{'--titulo-scale': titleScale}}>
                   <span className="hs-img-titulo-dest">{titulo}</span>
                 </div>
 
