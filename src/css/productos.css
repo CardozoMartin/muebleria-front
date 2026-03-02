@@ -1366,3 +1366,109 @@ input:checked + .toggle-slider:before {
     font-size: 11px;
   }
 }
+
+/* OFERTAS - grid cards */
+.offers-page {
+  padding: 18px 12px 40px 12px;
+}
+
+.offers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.offers-title h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+/* Forzar 3 columnas en pantallas grandes según pedido */
+@media (min-width: 1024px) {
+  .offers-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.offer-card {
+  background: var(--blanco);
+  border: 1px solid var(--gris-border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.offer-card-icon {
+  height: 84px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #fff 0%, #fbfbfb 100%);
+  border: 1px solid #f0f0f0;
+}
+
+/* Asegurar que los SVG importados (que vienen en blanco) sean visibles sobre fondo claro */
+.offer-card-icon svg {
+  width: 72%;
+  height: 72%;
+  display: block;
+}
+.offer-card-icon svg * {
+  /* color neutral para trazos */
+  stroke: #9ca3af !important;
+  /* colores de relleno suaves para las formas */
+  fill: #ffffff !important;
+  fill-opacity: 0.18 !important;
+}
+.offer-card-icon svg path,
+.offer-card-icon svg rect,
+.offer-card-icon svg ellipse,
+.offer-card-icon svg circle {
+  stroke-width: 1.8px !important;
+}
+
+.offer-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.offer-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: #1c1c1c;
+}
+
+.offer-card-badge {
+  background: #f5f5f5;
+  color: #666666;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.offer-play-button {
+  margin-top: 6px;
+}
+
+@media (max-width: 640px) {
+  .offer-card-icon {
+    height: 72px;
+  }
+}
