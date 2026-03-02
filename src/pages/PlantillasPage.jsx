@@ -8,32 +8,11 @@ import Liquidacion from '../components/Plantillas/Liquidacion';
 
 const PLANTILLAS = [
   {
-    id: 'megasale',
-    nombre: 'Mega Sale',
-    descripcion: 'Energético · Naranja · Impacto',
-    component: MegaSale,
-    dot: 'bg-orange-500',
-  },
-  {
-    id: 'luxeshow',
-    nombre: 'Super Sale',
-    descripcion: 'En tonos azules · Elegante · Sofisticado',
-    component: LuxeShow,
-    dot: 'bg-blue-500',
-  },
-  {
-    id: 'casaviva',
-    nombre: 'Oferta Especial',
-    descripcion: 'En tonos verdes · Natural · Acogedor',
-    component: CasaViva,
-    dot: 'bg-green-500',
-  },
-  {
-    id: 'liquidacion',
-    nombre: 'Liquidación',
-    descripcion: 'Dinámico · Amarillo · Brillante',
-    component: Liquidacion,
-    dot: 'bg-yellow-300',
+    id: 'cybermonday',
+    nombre: 'Cyber Monday',
+    descripcion: 'Dinámico · con tonos morados, lilas y azules · Moderno ',
+    component: CyberMonday,
+    dot: 'bg-purple-600',
   },
   {
     id: 'hotsale',
@@ -43,13 +22,33 @@ const PLANTILLAS = [
     dot: 'bg-red-600',
   },
   {
-    id: 'cybermonday',
-    nombre: 'Cyber Monday',
-    descripcion: 'Dinámico · con tonos morados, lilas y azules · Moderno ',
-    component: CyberMonday,
-    dot: 'bg-purple-600',
+    id: 'liquidacion',
+    nombre: 'Liquidación',
+    descripcion: 'Dinámico · Amarillo · Brillante',
+    component: Liquidacion,
+    dot: 'bg-yellow-300',
   },
-
+  {
+    id: 'megasale',
+    nombre: 'Mega Sale',
+    descripcion: 'Energético · Naranja · Impacto',
+    component: MegaSale,
+    dot: 'bg-orange-500',
+  },
+  {
+    id: 'casaviva',
+    nombre: 'Oferta Especial',
+    descripcion: 'En tonos verdes · Natural · Acogedor',
+    component: CasaViva,
+    dot: 'bg-green-500',
+  },
+  {
+    id: 'luxeshow',
+    nombre: 'Super Sale',
+    descripcion: 'En tonos azules · Elegante · Sofisticado',
+    component: LuxeShow,
+    dot: 'bg-blue-500',
+  },
 ];
 
 // Dimensiones de referencia del template
