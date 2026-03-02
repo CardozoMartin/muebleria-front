@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-
+import '../css/productos.css';
 import { usetGetAllProducts } from "../hooks/useProducts";
 import SlideShowPlayer from "../components/Slider/Slideshowplayer";
 
@@ -42,7 +42,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-40 text-gray-400 text-sm">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '160px', color: '#999999', fontSize: '13px' }}>
         Cargando productos...
       </div>
     );
@@ -50,84 +50,84 @@ console.log("categorias:", Object.keys(productosPorCategoria));
 
   if (isError) {
     return (
-      <div className="flex items-center justify-center h-40 text-red-400 text-sm">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '160px', color: '#ef4444', fontSize: '13px' }}>
         Error al cargar productos.
       </div>
     );
   }
 
   return (
-    <div className="space-y-5">
+    <div className="offers-page">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">OFERTAS</h1>
-          <p className="text-sm text-gray-400 mt-0.5">
+      <div className="offers-header">
+        <div className="offers-title">
+          <h1>OFERTAS</h1>
+          <p>
             Reproducir por categoría
           </p>
         </div>
 
         {/* Duración global configurable */}
-        <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500 font-medium">Seg. por slide</label>
+        <div className="offers-duration-control">
+          <label className="duration-label">Seg. por slide</label>
           <input
             type="number"
             min={2}
             max={60}
             value={duracionGlobal}
             onChange={(e) => setDuracionGlobal(Number(e.target.value))}
-            className="w-16 px-2 py-1.5 text-sm border border-gray-200 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="duration-input"
           />
         </div>
       </div>
 
       {/* Sin categorías configuradas */}
       {categorias.length === 0 && (
-        <div className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-gray-200 rounded-xl text-center">
-          <p className="text-gray-400 text-sm">No hay productos con plantilla asignada.</p>
-          <p className="text-gray-300 text-xs mt-1">
-            Asigná un <code className="bg-gray-100 px-1 rounded">plantilla</code> a tus productos para verlos acá.
+        <div className="offers-empty-state">
+          <p className="offers-empty-text">No hay productos con plantilla asignada.</p>
+          <p className="offers-empty-subtext">
+            Asigná un <code>plantilla</code> a tus productos para verlos acá.
           </p>
         </div>
       )}
 
       {/* Grid de categorías */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="offers-grid">
         {categorias.map((categoria) => {
           const productos = productosPorCategoria[categoria];
           return (
             <div
               key={categoria}
-              className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition"
+              className="offer-card"
             >
               {/* Nombre categoría + cantidad */}
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-semibold text-gray-800">{categoria}</h2>
-                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+              <div className="offer-card-header">
+                <h2 className="offer-card-title">{categoria}</h2>
+                <span className="offer-card-badge">
                   {productos.length} producto{productos.length !== 1 ? "s" : ""}
                 </span>
               </div>
 
               {/* Preview de productos */}
-              <div className="space-y-2 mb-4">
+              <div className="offer-products-list">
                 {productos.slice(0, 3).map((p) => (
-                  <div key={p._id} className="flex items-center gap-2">
+                  <div key={p._id} className="offer-product-item">
                     <img
                       src={p.imagenProducto}
                       alt={p.titulo}
-                      className="w-8 h-8 rounded object-cover bg-gray-100 flex-shrink-0"
+                      className="offer-product-image"
                     />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-700 truncate">{p.titulo}</p>
-                      <p className="text-xs text-gray-400">{p.plantilla}</p>
+                    <div className="offer-product-info">
+                      <p className="offer-product-name">{p.titulo}</p>
+                      <p className="offer-product-template">{p.plantilla}</p>
                     </div>
-                    <span className="text-xs font-medium text-gray-600">
+                    <span className="offer-product-price">
                       ${p.precioActual?.toLocaleString()}
                     </span>
                   </div>
                 ))}
                 {productos.length > 3 && (
-                  <p className="text-xs text-gray-400 pl-10">
+                  <p className="offer-products-more">
                     +{productos.length - 3} más...
                   </p>
                 )}
@@ -136,10 +136,10 @@ console.log("categorias:", Object.keys(productosPorCategoria));
               {/* Botón reproducir */}
               <button
                 onClick={() => abrirSlideshow(categoria)}
-                className="w-full flex items-center justify-center gap-2 py-2 bg-gray-900 hover:bg-gray-700 text-white text-sm font-semibold rounded-lg transition"
+                className="offer-play-button"
               >
-                <svg className="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
+                <svg className="offer-play-button-icon" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" fill="currentColor" />
                 </svg>
                 Reproducir
               </button>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import '../css/productos.css';
 import LoginProductos from '../components/Productos/FormProductos';
 
 import TableProducts from '../components/Productos/TableProducts';
@@ -12,19 +13,19 @@ export default function Products() {
   const categories = ['Cocina', 'Living', 'Dormitorio', 'Jardin', 'Varios'];
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-gray-900">Productos</h1>
-          <p className="text-sm text-gray-400 mt-0.5">Inventario de producto</p>
+    <div className="productos-page">
+      <div className="productos-header">
+        <div className="productos-title">
+          <h1>Productos</h1>
+          <p>Inventario de producto</p>
         </div>
         
         {!showForm && (
-          <>
+          <div className="productos-controls">
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="productos-filter-select"
             >
               <option value="">Todas las categorías</option>
               {categories.map(cat => (
@@ -37,11 +38,11 @@ export default function Products() {
               placeholder="Buscar por nombre..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="productos-search-input"
             />
 
             <button
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition shadow-sm"
+              className="btn-agregar-producto"
               onClick={() => setShowForm(true)}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -49,7 +50,7 @@ export default function Products() {
               </svg>
               Agregar Producto
             </button>
-          </>
+          </div>
         )}
       </div>
       {showForm && <FormProductos setShowForm={setShowForm} />}
