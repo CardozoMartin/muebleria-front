@@ -61,7 +61,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
       {/* Header */}
       <div className="offers-header">
         <div className="offers-title">
-          <h1>OFERTAS</h1>
+          <h1>Vista previa de plantillas</h1>
           <p>
             Reproducir por categoría
           </p>
@@ -69,7 +69,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
 
         {/* Duración global configurable */}
         <div className="offers-duration-control">
-          <label className="duration-label">Seg. por slide</label>
+          <label className="duration-label">Duracion de cada presentacion</label>
           <input
             type="number"
             min={2}

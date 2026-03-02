@@ -1066,11 +1066,12 @@ input:checked + .toggle-slider:before {
   display: flex;
   align-items: center;
   gap: 12px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .duration-label {
   font-size: 11px;
-  color: #999999;
+  color: #ff0101;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
