@@ -25,6 +25,8 @@ export default function ModeloCasaVivaAzul({
   const formatPrecio = (n) =>
     n ? `$ ${Number(n).toLocaleString("es-AR")}` : null;
 
+  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
+
   return (
     <>
       <link
@@ -304,7 +306,7 @@ export default function ModeloCasaVivaAzul({
         /* Título */
         .az-titulo {
           font-family:'Space Grotesk',sans-serif;
-          font-size:clamp(56px,8vw,130px);
+          font-size:calc(clamp(56px,8vw,130px) * var(--titulo-scale, 1));
           line-height:.92; letter-spacing:-1px;
           color:#08165a;
           text-align:center;
@@ -353,6 +355,7 @@ export default function ModeloCasaVivaAzul({
           color:#4a5e8a; font-weight:300;
           padding-left:4px;
           text-align:center;
+          white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
         }
 
         /* Precio */
@@ -742,7 +745,7 @@ export default function ModeloCasaVivaAzul({
             {/* Contenido dinámico */}
             <div className="az-content idle">
               {/* Título */}
-              <div className="az-titulo">
+              <div className="az-titulo" style={{'--titulo-scale': titleScale}}>
                 <span className="az-titulo-dest" style={{ color: "#0057FF" }}>
                   {titulo}
                 </span>

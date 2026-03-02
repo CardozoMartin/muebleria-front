@@ -24,6 +24,8 @@ export default function Liquidacion({
   const formatPrecio = (n) =>
     n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
 
+  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
+
   return (
     <>
       <link
@@ -118,8 +120,8 @@ export default function Liquidacion({
           padding: 14px 40px;
           background: linear-gradient(90deg, #ff8c00 0%, #ffcc00 50%, #ff6b00 100%);
           font-family:'Bebas Neue',sans-serif;
-          font-size: clamp(40px,2.6vw,40px);
-          letter-spacing:8px; color:#fff; text-align:center;
+          font-size: clamp(40px,2.6vw,48px);
+          letter-spacing:16px; color:#fff; text-align:center;
           text-shadow: 0 2px 6px rgba(180,60,0,.4);
           box-shadow: 0 4px 30px rgba(255,140,0,.55), 0 0 80px rgba(255,200,0,.25);
           opacity:0; transform:translateY(-100%);
@@ -131,7 +133,7 @@ export default function Liquidacion({
         .lq-logo {
           position:absolute; top:0; right:0; left:auto;
           z-index:15;
-          width:clamp(180px,20vw,280px); height:clamp(180px,20vw,280px);
+          width:clamp(100px,12vw,160px); height:clamp(100px,12vw,160px);
           border-radius:0 0 0 24px;
           background:#fff;
           display:flex; align-items:center; justify-content:center;
@@ -150,8 +152,47 @@ export default function Liquidacion({
 
         /* Imagen */
         .lq-left {
+          position: relative;
           display:flex; align-items:center; justify-content:center;
           padding:clamp(60px,8vh,120px) clamp(10px,2vw,30px) clamp(20px,4vh,60px);
+        }
+
+        /* Badge descuento flotante sobre la imagen */
+        .lq-badge-img {
+          position: absolute;
+          top: 12%;
+          left: 4%;
+          z-index: 15;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          width: clamp(85px,10vw,140px);
+          height: clamp(85px,10vw,140px);
+          border-radius: 50%;
+          background: radial-gradient(circle at 38% 32%, rgba(255,255,255,.35), transparent 55%),
+                       radial-gradient(circle, #ff6000, #ff3d00, #cc2200);
+          border: 3px solid rgba(255,255,255,.5);
+          box-shadow:
+            0 0 30px rgba(255,140,0,.85),
+            0 0 70px rgba(255,200,0,.55),
+            0 0 120px rgba(255,100,0,.25),
+            inset 0 0 20px rgba(255,255,255,.15);
+          opacity: 0; transform: scale(.3) rotate(-20deg);
+          transition: opacity .6s ease 1s, transform .9s cubic-bezier(.34,1.9,.64,1) 1s;
+          animation: lqBadgeImgPulse 2.5s ease-in-out infinite 2s;
+        }
+        .lq-badge-img.on { opacity:1; transform:scale(1) rotate(0deg); }
+        @keyframes lqBadgeImgPulse {
+          0%,100% { transform:scale(1) rotate(0deg); box-shadow:0 0 30px rgba(255,140,0,.85),0 0 70px rgba(255,200,0,.55); }
+          40%      { transform:scale(1.12) rotate(-4deg); box-shadow:0 0 55px rgba(255,180,0,1),0 0 110px rgba(255,220,0,.7); }
+          65%      { transform:scale(1.07) rotate(3deg); }
+        }
+        .lq-badge-img-pct {
+          font-family:'Bebas Neue',sans-serif;
+          font-size:clamp(38px,5vw,70px); line-height:1;
+          color:#fff; font-weight:400; text-shadow:0 2px 10px rgba(120,40,0,.5);
+        }
+        .lq-badge-img-lbl {
+          font-size:clamp(12px,1.1vw,18px); letter-spacing:3px; font-weight:800;
+          text-transform:uppercase; color:rgba(255,255,255,.95);
         }
 
         .lq-img-wrap {
@@ -197,8 +238,8 @@ export default function Liquidacion({
 
         /* Columna derecha */
         .lq-right {
-          display:flex; flex-direction:column; align-items:center; justify-content:center;
-          padding:clamp(50px,6vh,90px) clamp(16px,2vw,36px);
+          display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+          padding:calc(clamp(85px,10vw,140px) + 48px) clamp(16px,2vw,36px) clamp(20px,3vh,40px);
           gap:clamp(14px,2vh,28px);
         }
 
@@ -232,7 +273,7 @@ export default function Liquidacion({
         /* Título */
         .lq-titulo {
           font-family:'Playfair Display',serif;
-          font-size:clamp(36px,5.2vw,72px); line-height:1.02;
+          font-size:calc(clamp(36px,5.2vw,72px) * var(--titulo-scale, 1)); line-height:1.02;
           color:#2a1600;
           text-shadow:0 4px 20px rgba(255,160,0,.38);
           opacity:0; transform:translateY(-18px);
@@ -244,6 +285,7 @@ export default function Liquidacion({
         .lq-desc {
           font-size:clamp(16px,1.4vw,22px);
           color:rgba(80,40,0,.85); line-height:1.45; font-weight:700;
+          white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
           opacity:0; transform:translateY(-18px);
           transition: opacity .6s ease .65s, transform .6s cubic-bezier(.34,1.56,.64,1) .65s;
         }
@@ -283,7 +325,7 @@ export default function Liquidacion({
         .lq-off-badge {
           flex-shrink:0;
           display:flex; flex-direction:column; align-items:center; justify-content:center;
-          width:clamp(100px,12vw,170px); height:clamp(100px,12vw,170px);
+          width:clamp(80px,9vw,130px); height:clamp(80px,9vw,130px);
           border-radius:50%;
           background:radial-gradient(circle at 38% 32%, rgba(255,255,255,.35), transparent 55%),
                      radial-gradient(circle, #ff8c00, #ffcc00, #ff4500);
@@ -407,7 +449,7 @@ export default function Liquidacion({
             <div className={`lq-box ${mounted ? 'on' : ''}`}>
 
               {/* categoria moved to stamp on the right */}
-              <div className={`lq-titulo ${mounted ? 'on' : ''}`}>{titulo}</div>
+              <div className={`lq-titulo ${mounted ? 'on' : ''}`} style={{'--titulo-scale': titleScale}}>{titulo}</div>
               <p className={`lq-desc ${mounted ? 'on' : ''}`}>{descripcion}</p>
 
               <div className={`lq-price-block ${mounted ? 'on' : ''}`}>
@@ -418,12 +460,6 @@ export default function Liquidacion({
                   <div className="lq-price-nums">
                     <div className="lq-price-nuevo">{formatPrecio(precioOferta)}</div>
                   </div>
-                  {porcentajeDescuento > 0 && (
-                    <div className="lq-off-badge">
-                      <span className="lq-off-pct">{porcentajeDescuento}%</span>
-                      <span className="lq-off-lbl">OFF</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -442,6 +478,12 @@ export default function Liquidacion({
           </div>
 
           <div className="lq-left">
+            {porcentajeDescuento > 0 && (
+              <div className={`lq-badge-img ${mounted ? 'on' : ''}`}>
+                <span className="lq-badge-img-pct">{porcentajeDescuento}%</span>
+                <span className="lq-badge-img-lbl">OFF</span>
+              </div>
+            )}
             <div className={`lq-img-wrap ${mounted ? 'on' : ''}`}>
               <div className={`lq-img-inner ${mounted ? 'on' : ''}`}>
                 <img src={imagenProducto} alt={titulo} className="lq-img" />

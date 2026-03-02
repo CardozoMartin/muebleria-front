@@ -37,6 +37,8 @@ export default function MegaSale({
   const formatPrecio = (n) =>
     n ? `$ ${Number(n).toLocaleString("es-AR")}` : null;
 
+  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
+
   return (
     <>
       <link
@@ -195,7 +197,7 @@ export default function MegaSale({
         /* ── NOMBRE ── */
         .mw-nombre {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(36px,5vw,86px);
+          font-size: calc(clamp(36px,5vw,86px) * var(--titulo-scale, 1));
           color: #1a1a1a;
           line-height: 0.92; letter-spacing: 1px;
           opacity: 0; transform: translateX(-120vw) rotate(-8deg) skewX(-12deg);
@@ -242,6 +244,7 @@ export default function MegaSale({
           border: 1.5px solid rgba(230,53,0,.2);
           border-radius: 12px;
           backdrop-filter: blur(4px);
+          white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
           opacity: 0; transform: translateX(110vw) skewX(8deg);
           transition: opacity .6s ease 1.4s, transform 1s cubic-bezier(.22,1.4,.36,1) 1.4s;
         }
@@ -386,7 +389,7 @@ export default function MegaSale({
                 <span className="mw-deco-txt">{categoria}</span>
               </div>
 
-              <div className="mw-nombre" style={{ marginTop: "1.5vh" }}>
+              <div className="mw-nombre" style={{ marginTop: "1.5vh", '--titulo-scale': titleScale }}>
                 <span className="mw-nombre-dest">{titulo}</span>
               </div>
 

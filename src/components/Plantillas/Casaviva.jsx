@@ -25,6 +25,8 @@ export default function CasaViva({
   const formatPrecio = (n) =>
     n ? `$ ${Number(n).toLocaleString("es-AR")}` : null;
 
+  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
+
   return (
     <>
       <link
@@ -234,7 +236,7 @@ export default function CasaViva({
         /* Título */
         .cv-titulo {
           font-family:'Playfair Display',serif;
-          font-size:clamp(44px,6.2vw,100px);
+          font-size:calc(clamp(44px,6.2vw,100px) * var(--titulo-scale, 1));
           line-height:.95; letter-spacing:-.5px;
           color:#1c2b20;
           text-align:center;
@@ -266,6 +268,7 @@ export default function CasaViva({
         .cv-desc {
           font-size:clamp(15px,1.3vw,20px); line-height:1.7; font-weight:400;
           color:#6a7f70; max-width:500px;
+          white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
         }
 
         /* Tarjeta de precio */
@@ -597,7 +600,7 @@ export default function CasaViva({
 
             {/* Contenido dinámico */}
             <div className="cv-content idle">
-              <div className="cv-titulo">
+              <div className="cv-titulo" style={{'--titulo-scale': titleScale}}>
                 <span className="cv-titulo-dest" style={{ color: "#2d7a4f" }}>
                   {titulo}
                 </span>
