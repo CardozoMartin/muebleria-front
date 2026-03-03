@@ -1,46 +1,62 @@
-import { useGetProducts } from '../../hooks/useProducts';
-import { Loader2, AlertCircle, PackageOpen, Eye } from 'lucide-react';
+import { useState } from 'react';
+import { useGetProducts, useSearchProducts } from '../../hooks/useProducts';
+import { Loader2, AlertCircle, PackageOpen, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import RowProducts from './RowProducts';
+import ModalVideo from './ModalVideo';
+import '../../css/productos.css';
 
-const TableProducts = () => {
-  const { data, isLoading, isError } = useGetProducts();
+const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showVideo, setShowVideo] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Si hay búsqueda, usar el hook de búsqueda, sino usar el hook de productos paginados
+  const searchData = useSearchProducts(searchQuery);
+  const regularData = useGetProducts(currentPage);
+
+  const { data, isLoading, isError } = searchQuery ? searchData : regularData;
+
+  // Si es búsqueda, los datos vienen como array directo; si es normal, vienen con estructura
+  let products = searchQuery
+    ? (Array.isArray(data) ? data : [])
+    : (data?.productos || []);
+
+  // Filtrar por categoría si está seleccionada
+  if (categoryFilter) {
+    products = products.filter(product => product.categoria === categoryFilter);
+  }
+
+  const totalPages = data?.totalPages || 1;
+  const totalProducts = searchQuery
+    ? (Array.isArray(data) ? data.length : 0)
+    : (data?.total || 0);
 
   return (
-    <div className="bg-white rounded-md border border-gray-500/30 overflow-hidden">
+    <div className="table-container">
       {/* Header tabla */}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="table-wrapper">
+        <table className="productos-table">
           <thead>
-            <tr className="border-b border-gray-300/70 bg-gray-500/5">
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
-                #
-              </th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
-                Producto
-              </th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
-                P. Actual
-              </th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
-                P. Anterior
-              </th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
-                Estado
-              </th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-gray-600/70 uppercase tracking-wider">
-                Acciones
-              </th>
+            <tr>
+              <th>#</th>
+              <th>Producto</th>
+              <th>P. Lista</th>
+              <th>P. Oferta</th>
+              <th>P.Descuento</th>
+              <th>Plantilla</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {/* Loading */}
             {isLoading && (
               <tr>
-                <td colSpan="6" className="py-16 text-center">
-                  <div className="flex flex-col items-center gap-2 text-gray-500/70">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="text-xs font-medium">Cargando productos...</span>
+                <td colSpan="8" className="empty-state">
+                  <div className="loading-state">
+                    <div className="loading-spinner" />
+                    <span className="loading-text">Cargando productos...</span>
                   </div>
                 </td>
               </tr>
@@ -49,22 +65,22 @@ const TableProducts = () => {
             {/* Error */}
             {isError && (
               <tr>
-                <td colSpan="6" className="py-16 text-center">
-                  <div className="flex flex-col items-center gap-2 text-red-500/70">
-                    <AlertCircle className="w-5 h-5" />
-                    <span className="text-xs font-medium">Error al cargar productos</span>
+                <td colSpan="8" className="empty-state">
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: '#ef4444' }}>
+                    <AlertCircle style={{ width: '24px', height: '24px' }} />
+                    <span style={{ fontSize: '12px', fontWeight: '500' }}>Error al cargar productos</span>
                   </div>
                 </td>
               </tr>
             )}
 
             {/* Vacío */}
-            {!isLoading && !isError && (!data || data.length === 0) && (
+            {!isLoading && !isError && products.length === 0 && (
               <tr>
-                <td colSpan="6" className="py-16 text-center">
-                  <div className="flex flex-col items-center gap-2 text-gray-400/70">
-                    <PackageOpen className="w-6 h-6" />
-                    <span className="text-xs font-medium">No hay productos disponibles</span>
+                <td colSpan="8" className="empty-state">
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: '#cccccc' }}>
+                    <PackageOpen style={{ width: '24px', height: '24px' }} />
+                    <span style={{ fontSize: '12px', fontWeight: '500' }}>No hay productos disponibles</span>
                   </div>
                 </td>
               </tr>
@@ -73,13 +89,71 @@ const TableProducts = () => {
             {/* Filas */}
             {!isLoading &&
               !isError &&
-              data &&
-              data.map((product, index) => (
-               <RowProducts key={product._id} product={product} index={index} />
+              products.length > 0 &&
+              products.map((product, index) => (
+                <RowProducts 
+                  key={product._id} 
+                  product={product} 
+                  index={searchQuery ? index : (currentPage - 1) * 10 + index} 
+                  setShowForm={setShowForm} 
+                  setShowVideo={setShowVideo}
+                  setSelectedProduct={setSelectedProduct}
+                />
               ))}
           </tbody>
         </table>
       </div>
+      
+      <div className="pagination-container">
+        <div className="pagination-info">
+          Mostrando {((currentPage - 1) * 10) + 1} - {Math.min(currentPage * 10, totalProducts)} de {totalProducts} productos
+        </div>
+      
+        <div className="pagination-controls">
+          <button 
+            type="button" 
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="pagination-button"
+          >
+            <ChevronLeft style={{ width: '16px', height: '16px' }} />
+            <span>anterior</span>
+          </button>
+        
+          <div className="pagination-numbers">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                type="button"
+                onClick={() => setCurrentPage(page)}
+                className={`page-number ${currentPage === page ? 'active' : ''}`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+        
+          <button 
+            type="button" 
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="pagination-button"
+          >
+            <span>siguiente</span>
+            <ChevronRight style={{ width: '16px', height: '16px' }} />
+          </button>
+        </div>
+      </div>
+      
+      {showVideo && selectedProduct && (
+        <ModalVideo 
+          product={selectedProduct} 
+          setShowVideo={(visible) => {
+            setShowVideo(visible);
+            if (!visible) setSelectedProduct(null);
+          }} 
+        />
+      )}
     </div>
   );
 };

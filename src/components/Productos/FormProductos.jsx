@@ -1,49 +1,165 @@
 import {
   AlertCircle,
+  CheckCircle,
+  DollarSign,
+  FileText,
+  Loader2,
+  Package,
+  Percent,
   Save,
+  Tag,
+  ToggleLeft,
   UploadCloud,
   X,
-  Package,
-  DollarSign,
-  Tag,
-  CheckCircle,
-  Loader2,
-} from 'lucide-react';
-import { useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { usePostProduct, useEditProduct as useEditProductMutation } from "../../hooks/useProducts";
+import { useEditProduct } from "../../store/useEditProduct";
+import { PLANTILLA_OPTIONS } from "../../constants/plantillas";
+import '../../css/productos.css';
+import Swal from "sweetalert2";
 
-const FormProductos = ( { setShowForm }) => {
+const FormProductos = ({ setShowForm }) => {
   const [preview, setPreview] = useState(null);
-  const [dragOver, setDragOver] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const fileInputRef = useRef(null);
-
-
-  const { mutate: CrearProductos, isPending } = useMutation();
+  const { product, clearProduct } = useEditProduct();
+  //hook para crear un nuevo producto
+  const { mutate: CrearProductos, isLoading: isPending } = usePostProduct();
+  //hook para editar un producto (mutation)
+  const { mutate: EditarProducto } = useEditProductMutation();
 
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      productoActivo: true,
+      plantillaId: '',
+    },
+  });
+
+  //con el useEfffec cargamos los datos del producto en el formulario
+  useEffect(() => {
+    if (product) {
+      setValue("titulo", product.titulo);
+      setValue("categoria", product.categoria);
+      setValue("precioLista", product.precioLista);
+      setValue("precioOferta", product.precioOferta);
+      setValue("porcentajeDescuento", product.porcentajeDescuento);
+      setValue("descripcion", product.descripcion);
+      setValue("productoActivo", product.productoActivo);
+        setValue("plantillaId", product.plantillaId || '');
+      // la URL puede venir en "imagenProducto" o en un campo separado
+      setPreview(product.imagenProducto || product.imagenProductoURL || null);
+    }
+  }, [product]);
+
+  //imagen requerida solo si es un producto nuevo (no edición)
+  const { ref: registerRef, ...registerImageProps } = register(
+    "imagenProducto",
+    {
+      validate: (value) => {
+        if (product) return true;
+        if (!value || value.length === 0) return "La imagen es requerida";
+        return true;
+      },
+    },
+  );
+
+  const productoActivo = watch("productoActivo");
 
   const handleSubmitForm = (formData) => {
     const formDataToSend = new FormData();
-    formDataToSend.append('titulo', formData.titulo);
-    formDataToSend.append('precioActual', formData.precioActual);
-    formDataToSend.append('imagenProducto', formData.imagenProducto[0]);
-
-    CrearProductos(formDataToSend, {
-      onSuccess: () => {
-        setShowSuccess(true);
-        reset();
-        setPreview(null);
-        setTimeout(() => setShowSuccess(false), 3000);
-      },
+    formDataToSend.append("titulo", formData.titulo);
+    formDataToSend.append("categoria", formData.categoria);
+    formDataToSend.append("precioLista", formData.precioLista);
+    if (formData.precioOferta)
+      formDataToSend.append("precioOferta", formData.precioOferta);
+    if (formData.porcentajeDescuento)
+      formDataToSend.append(
+        "porcentajeDescuento",
+        formData.porcentajeDescuento,
+      );
+    if (formData.descripcion)
+      formDataToSend.append("descripcion", formData.descripcion);
+    formDataToSend.append("productoActivo", formData.productoActivo);
+    formDataToSend.append("plantillaId", formData.plantillaId || "");
+    console.log("valor de plantillaId antes de enviar:", formData.plantillaId);
+    // solo adjuntar imagen si se seleccionó un archivo nuevo
+    if (formData.imagenProducto?.[0]) {
+      formDataToSend.append("imagenProducto", formData.imagenProducto[0]);
+    }
+    for (let [key, val] of formDataToSend.entries()) {
+  console.log(key, "→", val);
+}
+    //ahora verificamos si estamos editando o creando un producto nuevo, si product tiene un valor es porque estamos editando, sino estamos creando
+    Swal.fire({
+      title: 'Guardando producto...',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
     });
+
+    if (product) {
+      EditarProducto(
+        { id: product._id, data: formDataToSend },
+        {
+          onSuccess: () => {
+            Swal.fire({
+              icon: 'success',
+              title: '¡Producto actualizado!',
+              text: 'Los cambios se guardaron correctamente.',
+              timer: 2000,
+              showConfirmButton: false,
+            });
+            setShowSuccess(true);
+            setShowForm(false);
+            reset();
+            setPreview(null);
+            clearProduct();
+            setTimeout(() => setShowSuccess(false), 3000);
+          },
+          onError: (err) => {
+            console.error("error editing product", err);
+            const msg = err.response?.data?.message || err.message || "Error al editar el producto";
+            Swal.fire({ icon: 'error', title: 'Error', text: msg });
+            toast.error(msg);
+          },
+        },
+      );
+    } else {
+      CrearProductos(formDataToSend, {
+        onSuccess: () => {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Producto guardado!',
+            text: 'El producto fue creado correctamente.',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          setShowSuccess(true);
+          setShowForm(false);
+          reset();
+          setPreview(null);
+          clearProduct();
+          setTimeout(() => setShowSuccess(false), 3000);
+        },
+        onError: (err) => {
+          console.error("error creating product", err);
+          const msg = err.response?.data?.message || err.response?.data?.error || err.message || "Error al crear el producto";
+          Swal.fire({ icon: 'error', title: 'Error', text: msg });
+          toast.error(msg);
+        },
+      });
+    }
   };
 
   const handleImageChange = (e) => {
@@ -51,229 +167,378 @@ const FormProductos = ( { setShowForm }) => {
     if (file) setPreview(URL.createObjectURL(file));
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      setPreview(URL.createObjectURL(file));
-      setValue('imagenProducto', e.dataTransfer.files);
-    }
-  };
-
-
-
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      {/* Toast éxito */}
+    <div className="form-container">
       {showSuccess && (
-        <div className="fixed top-4 right-4 bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg z-50 flex items-center gap-3">
-          <CheckCircle className="w-5 h-5 text-green-600" />
-          <span className="text-sm font-medium text-green-800">Producto guardado exitosamente</span>
+        <div className="success-message">
+          <CheckCircle className="success-message-icon" />
+          <span className="success-message-text">
+            Producto guardado exitosamente
+          </span>
         </div>
       )}
 
-      <div className="bg-white rounded-md border border-gray-500/30 p-6 max-w-3xl mx-auto">
+      <div className="form-card">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-medium text-gray-800/80">Agregar Nuevo Producto</h2>
-            <p className="text-sm text-gray-600/70 mt-1">Completa la información del producto</p>
+        <div className="form-header">
+          <div className="form-title">
+            <h2>
+              {product ? "Editar Producto" : "Agregar Nuevo Producto"}
+            </h2>
+            <p>
+              Completa la información del producto
+            </p>
           </div>
           <button
             type="button"
             onClick={() => {
               reset();
               setPreview(null);
+              clearProduct();
               setShowForm(false);
             }}
-            className="p-2 text-gray-600/70 hover:text-gray-800 hover:bg-gray-500/10 rounded transition"
+            className="form-close-btn"
           >
-            <X className="w-5 h-5" />
+            <X style={{ width: '20px', height: '20px' }} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-5">
-          {/* Sección: Información Básica */}
-          <div className="bg-gray-500/5 rounded-md p-5 border border-gray-500/20">
-            <h3 className="text-sm font-medium text-gray-800/80 mb-4 flex items-center">
-              <Package className="w-4 h-4 text-gray-700/70 mr-2" />
+        <form onSubmit={handleSubmit(handleSubmitForm)} className="form-content" style={{ marginTop: '24px' }}>
+          {/* ── Información Básica ── */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <Package style={{ width: '16px', height: '16px' }} />
               Información Básica
             </h3>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-800/80 mb-2 flex items-center">
-                <Tag className="w-3.5 h-3.5 mr-1.5 text-gray-600/60" />
+            {/* Nombre */}
+            <div className="form-group">
+              <label className="form-label">
+                <Tag style={{ width: '14px', height: '14px' }} />
                 Nombre del Producto *
               </label>
               <input
-                {...register('titulo', {
-                  required: 'El nombre es obligatorio',
-                  minLength: { value: 3, message: 'Mínimo 3 caracteres' },
-                  maxLength: { value: 50, message: 'Máximo 50 caracteres' },
+                {...register("titulo", {
+                  required: "El nombre es obligatorio",
+                  minLength: { value: 3, message: "Mínimo 3 caracteres" },
+                  maxLength: { value: 50, message: "Máximo 50 caracteres" },
                 })}
-                className={`w-full border rounded-md px-3 py-2 text-sm font-medium text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition ${
-                  errors.titulo
-                    ? 'border-red-400/60 bg-red-50/30'
-                    : 'border-gray-500/30 hover:border-gray-500/50'
-                }`}
+                type="text"
+                className={`form-input ${errors.titulo ? 'error' : ''}`}
                 placeholder="Ej: Mesa de Madera Roble"
+                style={{ width: '100%', display: 'block' }}
               />
               {errors.titulo && (
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                  <span className="text-red-600/80 text-xs font-medium">
+                <div className="form-error">
+                  <AlertCircle style={{ width: '14px', height: '14px' }} />
+                  <span>
                     {errors.titulo.message}
                   </span>
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Sección: Precio */}
-          <div className="bg-gray-500/5 rounded-md p-5 border border-gray-500/20">
-            <h3 className="text-sm font-medium text-gray-800/80 mb-4 flex items-center">
-              <DollarSign className="w-4 h-4 text-gray-700/70 mr-2" />
-              Precio
-            </h3>
-
-            <div className="max-w-xs">
-              <label className="block text-sm font-medium text-gray-800/80 mb-2">
-                Precio de Venta *
+            {/* Categoría */}
+            <div className="form-group">
+              <label className="form-label">
+                Categoría *
               </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700/70 font-medium text-sm">
-                  $
-                </span>
-                <input
-                  {...register('precioActual', {
-                    required: 'El precio es obligatorio',
-                    min: { value: 0, message: 'Debe ser mayor o igual a 0' },
-                  })}
-                  type="number"
-                  step="0.01"
-                  className={`w-full border rounded-md pl-8 pr-3 py-2 text-sm font-medium text-gray-800/80 focus:outline-none focus:ring-1 focus:ring-gray-400 transition ${
-                    errors.precioActual
-                      ? 'border-red-400/60 bg-red-50/30'
-                      : 'border-gray-500/30 hover:border-gray-500/50'
-                  }`}
-                  placeholder="0.00"
-                />
-              </div>
-              {errors.precioActual && (
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                  <span className="text-red-600/80 text-xs font-medium">
-                    {errors.precioActual.message}
+              <select
+                {...register("categoria", {
+                  required: "La categoría es obligatoria",
+                })}
+                className={`form-select ${errors.categoria ? 'error' : ''}`}
+              >
+                <option value="">Selecciona una categoría</option>
+                <option value="Cocina">Cocina</option>
+                <option value="Dormitorio">Dormitorio</option>
+                <option value="Jardin">Jardin</option>
+                <option value="Living">Living</option>
+                <option value="Varios">Varios</option>
+              </select>
+              {errors.categoria && (
+                <div className="form-error">
+                  <AlertCircle style={{ width: '14px', height: '14px' }} />
+                  <span>
+                    {errors.categoria.message}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Plantilla */}
+            <div className="form-group">
+              <label className="form-label">
+                Plantilla
+              </label>
+              <select
+                {...register('plantillaId')}
+                className="form-select"
+              >
+                <option value="">-- Ninguna --</option>
+                {PLANTILLA_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Descripción */}
+            <div className="form-group">
+              <label className="form-label">
+                <FileText style={{ width: '14px', height: '14px' }} />
+                Descripción
+              </label>
+              <textarea
+                {...register("descripcion", {
+                  maxLength: { value: 500, message: "Máximo 500 caracteres" },
+                })}
+                rows={3}
+                className={`form-textarea ${errors.descripcion ? 'error' : ''}`}
+                placeholder="Descripción opcional del producto..."
+              />
+              {errors.descripcion && (
+                <div className="form-error">
+                  <AlertCircle style={{ width: '14px', height: '14px' }} />
+                  <span>
+                    {errors.descripcion.message}
                   </span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Sección: Imagen */}
-          <div className="bg-gray-500/5 rounded-md p-5 border border-gray-500/20">
-            <h3 className="text-sm font-medium text-gray-800/80 mb-4 flex items-center">
-              <UploadCloud className="w-4 h-4 text-gray-700/70 mr-2" />
-              Imagen del Producto
+          {/* ── Precios ── */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <DollarSign style={{ width: '16px', height: '16px' }} />
+              Precios
             </h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {/* Drop zone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-800/80 mb-2.5">
-                  Subir Imagen *
+
+            <div className="form-grid cols-3">
+              {/* Precio Lista */}
+              <div className="form-group">
+                <label className="form-label">
+                   <DollarSign style={{ width: '14px', height: '14px' }} />
+                  Precio de Lista 
                 </label>
-                <div
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setDragOver(true);
-                  }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border border-dashed rounded-md p-6 text-center cursor-pointer transition bg-white flex flex-col items-center justify-center gap-2 ${
-                    dragOver
-                      ? 'border-gray-500/70 bg-gray-500/5'
-                      : errors.imagenProducto
-                        ? 'border-red-400/60 bg-red-50/30'
-                        : 'border-gray-400/50 hover:border-gray-500/70'
-                  }`}
-                >
-                  <UploadCloud className="w-10 h-10 text-gray-600/60" />
-                  <span className="text-sm font-medium text-gray-800/80">
-                    Arrastrá aquí o{' '}
-                    <span className="underline underline-offset-2">seleccioná archivo</span>
-                  </span>
-                  <span className="text-xs text-gray-600/60 font-medium">
-                    PNG, JPG, JPEG (máx. 5MB)
-                  </span>
+                <div className="form-input-with-prefix">
                   <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    className="hidden"
-                    {...register('imagenProducto', { required: 'La imagen es requerida' })}
-                    onChange={handleImageChange}
+                    {...register("precioLista", {
+                      required: "El precio es obligatorio",
+                      min: { value: 0, message: "Debe ser ≥ 0" },
+                    })}
+                    type="number"
+                    step="0.01"
+                    className={`form-input ${errors.precioLista ? 'error' : ''}`}
+                    placeholder="0.00"
                   />
                 </div>
-                {errors.imagenProducto && (
-                  <div className="flex items-center gap-1.5 mt-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-red-500/80" />
-                    <span className="text-red-600/80 text-xs font-medium">
-                      {errors.imagenProducto.message}
+                {errors.precioLista && (
+                  <div className="form-error">
+                    <AlertCircle style={{ width: '14px', height: '14px' }} />
+                    <span>
+                      {errors.precioLista.message}
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Preview */}
-              {preview && (
-                <div>
-                  <div className="flex items-center justify-between mb-2.5">
-                    <label className="block text-sm font-medium text-gray-800/80">
-                      Vista Previa
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPreview(null);
-                        setValue('imagenProducto', null);
-                      }}
-                      className="flex items-center gap-1 text-xs text-gray-600/70 hover:text-red-500 transition"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                      Quitar
-                    </button>
-                  </div>
-                  <div className="border border-gray-500/30 rounded-md p-3 bg-white">
-                    <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded" />
-                  </div>
+              {/* Precio Oferta */}
+              <div className="form-group">
+                <label className="form-label">
+                  <DollarSign style={{ width: '14px', height: '14px' }} />
+                  Precio Oferta
+                </label>
+                <div className="form-input-with-prefix">
+                  <input
+                    {...register("precioOferta", {
+                      min: { value: 0, message: "Debe ser ≥ 0" },
+                    })}
+                    type="number"
+                    step="0.01"
+                    className={`form-input ${errors.precioOferta ? 'error' : ''}`}
+                    placeholder="0.00"
+                  />
                 </div>
-              )}
+                {errors.precioOferta && (
+                  <div className="form-error">
+                    <AlertCircle style={{ width: '14px', height: '14px' }} />
+                    <span>
+                      {errors.precioOferta.message}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Porcentaje Descuento */}
+              <div className="form-group">
+                <label className="form-label">
+                   <Percent style={{ width: '14px', height: '14px' }} />
+                   Descuento
+                </label>
+                <div className="form-input-with-prefix">
+                  <input
+                    {...register("porcentajeDescuento", {
+                      min: { value: 0, message: "Debe ser ≥ 0" },
+                      max: { value: 100, message: "Debe ser ≤ 100" },
+                    })}
+                    type="number"
+                    step="1"
+                    className={`form-input ${errors.porcentajeDescuento ? 'error' : ''}`}
+                    placeholder="0"
+                  />
+                </div>
+                {errors.porcentajeDescuento && (
+                  <div className="form-error">
+                    <AlertCircle style={{ width: '14px', height: '14px' }} />
+                    <span>
+                      {errors.porcentajeDescuento.message}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Botones */}
-          <div className="flex gap-3 pt-4 border-t border-gray-300/70">
+          {/* ── Estado del producto ── */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <ToggleLeft style={{ width: '16px', height: '16px' }} />
+              Estado
+            </h3>
+            <div
+              onClick={() => setValue("productoActivo", !productoActivo)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', cursor: 'pointer', userSelect: 'none' }}
+            >
+              {/* input oculto para react-hook-form */}
+              <input type="checkbox" style={{ display: 'none' }} {...register("productoActivo")} />
+
+              {/* Track */}
+              <div style={{
+                width: '44px',
+                height: '24px',
+                borderRadius: '12px',
+                backgroundColor: productoActivo ? '#1c1c1c' : '#d1d5db',
+                transition: 'background-color 0.25s',
+                position: 'relative',
+                flexShrink: 0,
+              }}>
+                {/* Thumb */}
+                <div style={{
+                  position: 'absolute',
+                  top: '3px',
+                  left: productoActivo ? '23px' : '3px',
+                  width: '18px',
+                  height: '18px',
+                  backgroundColor: 'white',
+                  borderRadius: '50%',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+                  transition: 'left 0.25s',
+                }} />
+              </div>
+
+              {/* Texto */}
+              <span style={{ fontSize: '13px', color: '#1c1c1c', fontWeight: '500' }}>
+                Producto{' '}
+                <span style={{ color: productoActivo ? '#22c55e' : '#9ca3af' }}>
+                  {productoActivo ? 'activo' : 'inactivo'}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          {/* ── Imagen ── */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              <UploadCloud style={{ width: '16px', height: '16px' }} />
+              Imagen del Producto
+            </h3>
+
+            <label
+              className={`file-upload-area ${errors.imagenProducto ? 'error' : ''}`}
+            >
+              <div className="file-upload-content">
+                <UploadCloud className="file-upload-icon" />
+                <span className="file-upload-text">
+                  {preview ? "Cambiar imagen..." : "Seleccionar imagen..."}
+                </span>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                ref={(e) => {
+                  registerRef(e);
+                  fileInputRef.current = e;
+                }}
+                {...registerImageProps}
+                onChange={(e) => {
+                  registerImageProps.onChange?.(e);
+                  handleImageChange(e);
+                }}
+                name="imagenProducto"
+              />
+            </label>
+
+            {errors.imagenProducto && (
+              <div className="form-error" style={{ marginTop: '8px' }}>
+                <AlertCircle style={{ width: '14px', height: '14px' }} />
+                <span>
+                  {errors.imagenProducto.message}
+                </span>
+              </div>
+            )}
+
+            {preview && (
+              <div className="preview-container">
+                <div className="preview-header">
+                  <span className="preview-title">
+                    Vista Previa
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreview(null);
+                      setValue("imagenProducto", null);
+                    }}
+                    className="preview-remove"
+                  >
+                    <X style={{ width: '14px', height: '14px' }} /> Quitar
+                  </button>
+                </div>
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="preview-image"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ── Botones ── */}
+          <div className="form-buttons">
             <button
               type="submit"
               disabled={isPending}
-              className="flex items-center gap-2 bg-gray-800/80 hover:bg-gray-800 text-white text-sm font-medium px-5 py-2.5 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-submit"
             >
               {isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 0.8s linear infinite' }} />
               ) : (
-                <Save className="w-4 h-4" />
+                <Save style={{ width: '16px', height: '16px' }} />
               )}
-              {isPending ? 'Guardando...' : 'Guardar Producto'}
+              {isPending ? "Guardando..." : "Guardar Producto"}
             </button>
             <button
               type="button"
               onClick={() => {
                 reset();
                 setPreview(null);
+                clearProduct();
+                setShowForm(false);
               }}
-              className="px-5 py-2.5 border border-gray-500/30 text-gray-800/80 text-sm font-medium rounded-md hover:bg-gray-500/10 transition"
+              className="btn-cancel"
             >
               Cancelar
             </button>

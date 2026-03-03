@@ -1,74 +1,160 @@
-import { Eye } from 'lucide-react';
-import React from 'react';
+import { Eye, MonitorPlay, SquarePen, Trash, PackageOpen } from "lucide-react";
+import React from "react";
+import {
+  useChangeStateProduct,
+  useDeleteProduct,
+} from "../../hooks/useProducts";
+import Swal from "sweetalert2";
+import { useEditProduct } from "../../store/useEditProduct";
+import '../../css/productos.css';
 
-const RowProducts = ({ product, index }) => {
+const RowProducts = ({ product, index, setShowForm, setShowVideo, setSelectedProduct }) => {
+  const { setProduct } = useEditProduct();
+  //hook para cambiar el estado del producto
+  const { mutate: changeStateProduct } = useChangeStateProduct();
+  //hook para eliminar un producto
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  //handle para cambiar el estado del producto
+  const handleStateChange = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: `¿Deseas ${product.productoActivo ? "desactivar" : "activar"} este producto?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, cambiar estado",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        changeStateProduct(product._id);
+      }
+    });
+  };
+  //handle para eliminar un producto
+  const handleDeleteProduct = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteProduct(product._id);
+      }
+    });
+  };
+  //handle para editar un producto
+  const handleEditProduct = ()=>{
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¿Deseas editar este producto?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, editar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        //aqui guardamos el producto en el estado global para luego mostrar el formulario de edición con los datos cargados
+        setProduct(product);
+        //aqui se podría redirigir a la página de edición o mostrar un modal con el formulario de edición
+        setShowForm(true);
+      }
+    });
+  }
+  //handle para mostrar la previsualización de la plantilla
+  const handleShowVideo = () => {
+    if (setSelectedProduct) setSelectedProduct(product);
+    setShowVideo(true);
+  }
   return (
-    <tr
-      key={product._id}
-      className="border-b border-gray-300/50 last:border-0 hover:bg-gray-500/5 transition"
-    >
+    <tr key={product._id}>
       {/* # */}
-      <td className="px-5 py-3.5 text-xs text-gray-600/60 font-medium">
-        {String(index + 1).padStart(2, '0')}
+      <td className="table-number">
+        {String(index + 1).padStart(2, "0")}
       </td>
 
       {/* Producto (imagen + nombre) */}
-      <td className="px-5 py-3.5">
-        <div className="flex items-center gap-3">
+      <td>
+        <div className="product-info">
           {product.imagenProducto ? (
             <img
               src={product.imagenProducto}
               alt={product.titulo}
-              className="w-10 h-10 object-cover rounded-md border border-gray-500/20 shrink-0"
+              className="product-image"
             />
           ) : (
-            <div className="w-10 h-10 rounded-md border border-gray-500/20 bg-gray-500/10 flex items-center justify-center shrink-0">
-              <PackageOpen className="w-4 h-4 text-gray-400/60" />
+            <div className="product-image-placeholder">
+              <PackageOpen style={{ width: '16px', height: '16px', color: '#999999' }} />
             </div>
           )}
-          <span className="text-sm font-medium text-gray-800/80">{product.titulo}</span>
+          <span className="product-name">
+            {product.titulo}
+          </span>
         </div>
       </td>
 
       {/* Precio actual */}
-      <td className="px-5 py-3.5 text-sm font-medium text-gray-800/80">
-        ${Number(product.precioActual).toLocaleString('es-AR')}
+      <td className="price-cell">
+        ${Number(product.precioLista).toLocaleString("es-AR")}
       </td>
 
       {/* Precio anterior */}
-      <td className="px-5 py-3.5">
-        {product.precioAnterior ? (
-          <span className="text-sm text-gray-500/70 line-through">
-            ${Number(product.precioAnterior).toLocaleString('es-AR')}
-          </span>
-        ) : (
-          <span className="text-xs text-gray-400/50">—</span>
-        )}
+      <td className="price-cell">
+        ${Number(product.precioOferta).toLocaleString("es-AR")}
+      </td>
+
+      <td className="price-cell">
+        <span style={{ fontWeight: 'bold' }}>%</span>
+        {Number(product.porcentajeDescuento).toLocaleString("es-AR")}
+      </td>
+      <td className="price-cell">
+        {product.plantillaId || '-'}
       </td>
 
       {/* Estado */}
-      <td className="px-5 py-3.5">
-        <span
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium ${
-            product.productoActivo
-              ? 'bg-gray-800/5 text-gray-700/70 border border-gray-500/20'
-              : 'bg-red-50/60 text-red-500/80 border border-red-400/20'
-          }`}
+      <td>
+        <button
+          onClick={handleStateChange}
+          className={`status-badge ${product.productoActivo ? 'active' : 'inactive'}`}
         >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              product.productoActivo ? 'bg-gray-600/60' : 'bg-red-400/80'
-            }`}
-          />
-          {product.productoActivo ? 'Activo' : 'Inactivo'}
-        </span>
+          <span className="status-badge-dot" />
+          {product.productoActivo ? "Activo" : "Inactivo"}
+        </button>
       </td>
 
       {/* Acciones */}
-      <td className="px-5 py-3.5">
-        <button className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-500/30 text-gray-800/80 text-xs font-medium rounded-md hover:bg-gray-500/10 transition">
-          Ver video
-        </button>
+      <td>
+        <div className="actions-cell">
+          <button 
+            onClick={handleShowVideo}
+            className="btn-action view"
+            title="Ver plantilla"
+          >
+            <MonitorPlay style={{ width: '16px', height: '16px' }} />
+          </button>
+          <button
+            onClick={handleDeleteProduct}
+            className="btn-action"
+            title="Eliminar"
+          >
+            <Trash style={{ width: '16px', height: '16px' }} />
+          </button>
+          <button 
+            className="btn-action edit"
+            onClick={handleEditProduct}
+            title="Editar"
+          >
+            <SquarePen style={{ width: '16px', height: '16px' }} />
+          </button>
+        </div>
       </td>
     </tr>
   );
