@@ -1,6 +1,5 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import Logo from "./../assets/logo.png";
-import Logo2 from "../../public/logo.png"
 import useAuthStore from "../store/useAuthStore";
 import { toast } from "sonner";
 import "../css/dashboardLayout.css";
@@ -131,7 +130,7 @@ export default function DashboardLayout() {
         <div className="sidebar-logo-section">
           <div className="sidebar-logo-wrapper">
             <div className="sidebar-logo-icon">
-              <img src={Logo2} alt="Logo" className="object-contain" />
+              <img src={Logo} alt="Logo" className="object-contain" />
             </div>
             <div className="sidebar-logo-text">
               <p>Muebles de Pino ML</p>
