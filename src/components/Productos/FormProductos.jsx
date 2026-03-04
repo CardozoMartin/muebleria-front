@@ -61,12 +61,14 @@ const FormProductos = ({ setShowForm }) => {
     }
   }, [product]);
 
-  //imagen requerida solo si es un producto nuevo (no edición)
+  //imagen requerida solo si es un producto nuevo (no edición) y no hay preview
   const { ref: registerRef, ...registerImageProps } = register(
     "imagenProducto",
     {
       validate: (value) => {
-        if (product) return true;
+        // Si estamos editando un producto OR ya hay preview = válido
+        if (product || preview) return true;
+        // Si no hay archivo ni preview, se requiere la imagen
         if (!value || value.length === 0) return "La imagen es requerida";
         return true;
       },
@@ -164,7 +166,20 @@ const FormProductos = ({ setShowForm }) => {
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) setPreview(URL.createObjectURL(file));
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+      // Disparar el evento de cambio en React Hook Form
+      registerImageProps.onChange?.(e);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setPreview(null);
+    setValue("imagenProducto", null);
+    // Resetear el input file para que pueda seleccionar la misma imagen nuevamente
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -498,10 +513,7 @@ const FormProductos = ({ setShowForm }) => {
                   </span>
                   <button
                     type="button"
-                    onClick={() => {
-                      setPreview(null);
-                      setValue("imagenProducto", null);
-                    }}
+                    onClick={handleRemoveImage}
                     className="preview-remove"
                   >
                     <X style={{ width: '14px', height: '14px' }} /> Quitar
