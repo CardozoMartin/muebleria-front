@@ -489,7 +489,6 @@ const FormProductos = ({ setShowForm }) => {
                 }}
                 {...registerImageProps}
                 onChange={(e) => {
-                  registerImageProps.onChange?.(e);
                   handleImageChange(e);
                 }}
                 name="imagenProducto"
