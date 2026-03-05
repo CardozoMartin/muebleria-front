@@ -2,7 +2,7 @@
 import logo from './../../assets/logo.png';
 import comedor from './../../assets/comedor.png';
 import fondorayos from './../../assets/fondorayos.png';
-import './cybermonday.css';
+import './CyberMonday.css';
 
 /*
  * CyberMonday — optimizado para televisores de 32" o más.
