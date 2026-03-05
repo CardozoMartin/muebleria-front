@@ -16,7 +16,6 @@ export default function CyberMonday({
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
-  categoria = "Living & Comedor",
 }) {
   const [mounted, setMounted] = useState(false);
   const [scale, setScale] = useState(1);
@@ -94,8 +93,6 @@ export default function CyberMonday({
             {/* Columna info */}
             <div className="cm-right">
               <div className={`cm-box ${mounted ? 'on' : ''}`}>
-
-                <div className={`cm-categoria ${mounted ? 'on' : ''}`}>{categoria}</div>
 
                 <div
                   className={`cm-titulo ${mounted ? 'on' : ''}`}

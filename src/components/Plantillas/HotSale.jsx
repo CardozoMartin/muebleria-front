@@ -16,7 +16,6 @@ export default function HotSale({
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
-  categoria = "Living & Comedor",
 }) {
   const [mounted, setMounted] = useState(false);
   const [scale, setScale] = useState(1);
@@ -84,9 +83,6 @@ export default function HotSale({
               <div className={`hs-img-wrap ${mounted ? 'on' : ''}`}>
                 <img className="hs-img" src={imagenProducto} alt={titulo} />
               </div>
-              <div className={`hs-eyebrow ${mounted ? 'on' : ''}`}>
-                <span className="hs-eyebrow-txt">🔥 {categoria}</span>
-              </div>
               <div className={`hs-tags ${mounted ? 'on' : ''}`}>
                 <span className="hs-tag hs-tag-white">www.mueblesdepinoml.com.ar</span>
               </div>
@@ -107,7 +103,6 @@ export default function HotSale({
                   <div className={`hs-img-titulo ${mounted ? 'on' : ''}`} style={{ '--titulo-scale': titleScale }}>
                     <span className="hs-img-titulo-dest">{titulo}</span>
                   </div>
-                  <div className="hs-subtitulo">{categoria}</div>
                 </div>
 
                 <p className="hs-desc">{descripcion}</p>
