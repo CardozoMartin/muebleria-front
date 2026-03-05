@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import comedor from './../../assets/comedor.png';
-import fondo from './../../assets/fondo1.jpeg';
+import fondo from './../../assets/fondo2.png';
 import logo from './../../assets/logo.png';
 
 export default function MegaSaleTV({
