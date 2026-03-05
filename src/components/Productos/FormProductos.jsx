@@ -23,6 +23,7 @@ import Swal from "sweetalert2";
 
 const FormProductos = ({ setShowForm }) => {
   const [preview, setPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const fileInputRef = useRef(null);
   const { product, clearProduct } = useEditProduct();
@@ -95,8 +96,9 @@ const FormProductos = ({ setShowForm }) => {
     formDataToSend.append("plantillaId", formData.plantillaId || "");
     console.log("valor de plantillaId antes de enviar:", formData.plantillaId);
     // solo adjuntar imagen si se seleccionó un archivo nuevo
-    if (formData.imagenProducto?.[0]) {
-      formDataToSend.append("imagenProducto", formData.imagenProducto[0]);
+    const imageFile = selectedFile ?? fileInputRef.current?.files?.[0];
+    if (imageFile) {
+      formDataToSend.append("imagenProducto", imageFile);
     }
     for (let [key, val] of formDataToSend.entries()) {
   console.log(key, "→", val);
@@ -126,6 +128,7 @@ const FormProductos = ({ setShowForm }) => {
             setShowForm(false);
             reset();
             setPreview(null);
+            setSelectedFile(null);
             clearProduct();
             setTimeout(() => setShowSuccess(false), 3000);
           },
@@ -151,6 +154,7 @@ const FormProductos = ({ setShowForm }) => {
           setShowForm(false);
           reset();
           setPreview(null);
+          setSelectedFile(null);
           clearProduct();
           setTimeout(() => setShowSuccess(false), 3000);
         },
@@ -167,16 +171,15 @@ const FormProductos = ({ setShowForm }) => {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       setPreview(URL.createObjectURL(file));
-      // Disparar el evento de cambio en React Hook Form
-      registerImageProps.onChange?.(e);
     }
   };
 
   const handleRemoveImage = () => {
     setPreview(null);
+    setSelectedFile(null);
     setValue("imagenProducto", null);
-    // Resetear el input file para que pueda seleccionar la misma imagen nuevamente
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -209,6 +212,7 @@ const FormProductos = ({ setShowForm }) => {
             onClick={() => {
               reset();
               setPreview(null);
+              setSelectedFile(null);
               clearProduct();
               setShowForm(false);
             }}
@@ -546,6 +550,7 @@ const FormProductos = ({ setShowForm }) => {
               onClick={() => {
                 reset();
                 setPreview(null);
+                setSelectedFile(null);
                 clearProduct();
                 setShowForm(false);
               }}
