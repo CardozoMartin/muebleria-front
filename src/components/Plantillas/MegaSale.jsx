@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import fondo from "./../../assets/fondo1.jpeg";
-import logo from "./../../assets/logo.png";
+import { useEffect, useState } from 'react';
 import comedor from './../../assets/comedor.png';
+import fondo from './../../assets/fondo1.jpeg';
+import logo from './../../assets/logo.png';
 
 /**
  * MegaSale — plantilla publicitaria OPTIMIZADA para Smart TV
@@ -16,24 +16,26 @@ import comedor from './../../assets/comedor.png';
  *  - box-shadow estático en badge/descuento en vez de animado
  */
 export default function MegaSale({
-  titulo = "Juego de Comedor",
-  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
+  titulo = 'Juego de Comedor',
+  descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
   imagenProducto = comedor,
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
-  categoria = "Living & Comedor",
+  categoria = 'Living & Comedor',
 }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const t1 = setTimeout(() => setMounted(false), 0);
     const t2 = setTimeout(() => setMounted(true), 80);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [titulo, imagenProducto]);
 
-  const formatPrecio = (n) =>
-    n ? `$ ${Number(n).toLocaleString("es-AR")}` : null;
+  const formatPrecio = (n) => (n ? `$ ${Number(n).toLocaleString('es-AR')}` : null);
 
   const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
 
@@ -392,14 +394,13 @@ export default function MegaSale({
       `}</style>
 
       <div className="mw">
-
         {mounted && <div className="flash" />}
 
         {/* FONDO */}
-        <img className={`mw-bg ${mounted ? "on" : ""}`} src={fondo} alt="" aria-hidden="true" />
+        <img className={`mw-bg ${mounted ? 'on' : ''}`} src={fondo} alt="" aria-hidden="true" />
 
         {/* LOGO */}
-        <div className={`mw-logo ${mounted ? "on" : ""}`}>
+        <div className={`mw-logo ${mounted ? 'on' : ''}`}>
           <div className="mw-logo-circle">
             <div className="mw-logo-inner">
               <img src={logo} alt="Logo" />
@@ -409,42 +410,47 @@ export default function MegaSale({
 
         {/* BADGE MEGA OFERTA */}
         <div className="mw-badge-top">
-          <span className="mw-dot-blink" />
-          ⚡ MEGA OFERTA
+          <span className="mw-dot-blink" />⚡ MEGA OFERTA
         </div>
 
         {/* IMAGEN DEL PRODUCTO */}
-        <div className={`mw-img-wrap ${mounted ? "on" : ""}`}>
-          {imagenProducto && (
-            <img className="mw-img" src={imagenProducto} alt={titulo} />
-          )}
+        <div className={`mw-img-wrap ${mounted ? 'on' : ''}`}>
+          {imagenProducto && <img className="mw-img" src={imagenProducto} alt={titulo} />}
         </div>
 
         {/* LAYOUT */}
         <div className="mw-layout">
           <div />
           <div className="mw-right">
-
             {/* CONTENIDO DINÁMICO */}
-            <div className={`mw-content ${mounted ? "on" : ""}`}>
-
+            <div className={`mw-content ${mounted ? 'on' : ''}`}>
               <div className="mw-deco">
                 <span className="mw-deco-txt">{categoria}</span>
               </div>
 
-              <div className="mw-nombre" style={{ marginTop: "1.5vh", '--titulo-scale': titleScale }}>
+              <div
+                className="mw-nombre"
+                style={{ marginTop: '1.5vh', '--titulo-scale': titleScale }}
+              >
                 <span className="mw-nombre-dest">{titulo}</span>
               </div>
 
               {descripcion && (
-                <p className="mw-desc" style={{ marginTop: "1vh" }}>
+                <p className="mw-desc" style={{ marginTop: '1vh' }}>
                   {descripcion}
                 </p>
               )}
 
-              <div className="mw-price-block" style={{ marginTop: "6vh" }}>
+              <div className="mw-price-block" style={{ marginTop: '6vh' }}>
                 {precioLista > 0 && (
-                  <div style={{ display:"flex", alignItems:"center", gap:"20px", marginBottom:"6px" }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      marginBottom: '6px',
+                    }}
+                  >
                     <div>
                       <div className="mw-price-label">Precio anterior</div>
                       <div className="mw-price-old">{formatPrecio(precioLista)}</div>
@@ -458,25 +464,29 @@ export default function MegaSale({
                   <div className="mw-price-new">{formatPrecio(precioOferta)}</div>
                 </div>
               </div>
-
             </div>
 
             {/* WhatsApp */}
             <div className={`mw-whatsapp ${mounted ? 'on' : ''}`}>
-              <svg className="mw-whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              <svg
+                className="mw-whatsapp-icon"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
               </svg>
               <span>381 2108473</span>
             </div>
 
             {/* WEBSITE - Tags mejorados */}
-            <div className={`mw-tags ${mounted ? "on" : ""}`} style={{ marginTop: "auto", paddingBottom: "2.5vh", gap: "12px" }}>
+            <div
+              className={`mw-tags ${mounted ? 'on' : ''}`}
+              style={{ marginTop: 'auto', paddingBottom: '2.5vh', gap: '12px' }}
+            >
               <span className="mw-tag">🌐 www.mueblesdepinoml.com</span>
             </div>
-
           </div>
         </div>
-
       </div>
     </>
   );
