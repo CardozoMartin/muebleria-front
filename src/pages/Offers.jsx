@@ -29,7 +29,9 @@ export default function Offers() {
 
 console.log("categorias:", Object.keys(productosPorCategoria));
 
-  const categorias = Object.keys(productosPorCategoria);
+  const categorias = Object.keys(productosPorCategoria).sort((a, b) =>
+    a.localeCompare(b, 'es', { sensitivity: 'base' })
+  );
 
   const productosCategoria = categoriaActiva
     ? productosPorCategoria[categoriaActiva] ?? []
@@ -39,6 +41,89 @@ console.log("categorias:", Object.keys(productosPorCategoria));
     setCategoriaActiva(categoria);
     setSlideshowAbierto(true);
   };
+
+  // Configuración local de iconos (copiada de Reproductor.jsx para evitar export)
+  const CATEGORIA_CONFIG = {
+    living: {
+      label: "Living",
+      icon: (
+        <svg viewBox="0 0 80 80" fill="none" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="12" y="38" width="56" height="20" rx="5" fill="white" fillOpacity="0.18" stroke="white" strokeWidth="2.5"/>
+          <rect x="7"  y="32" width="13" height="26" rx="4" fill="white" fillOpacity="0.18" stroke="white" strokeWidth="2.5"/>
+          <rect x="60" y="32" width="13" height="26" rx="4" fill="white" fillOpacity="0.18" stroke="white" strokeWidth="2.5"/>
+          <rect x="18" y="24" width="44" height="16" rx="4" fill="white" fillOpacity="0.22" stroke="white" strokeWidth="2.5"/>
+          <line x1="24" y1="58" x2="24" y2="66" stroke="white" strokeWidth="2.5"/>
+          <line x1="56" y1="58" x2="56" y2="66" stroke="white" strokeWidth="2.5"/>
+        </svg>
+      ),
+    },
+    dormitorio: {
+      label: "Dormitorio",
+      icon: (
+        <svg viewBox="0 0 80 80" fill="none" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="8"  y="42" width="64" height="18" rx="4" fill="white" fillOpacity="0.18" stroke="white" strokeWidth="2.5"/>
+          <rect x="8"  y="28" width="26" height="16" rx="4" fill="white" fillOpacity="0.22" stroke="white" strokeWidth="2.5"/>
+          <path d="M34 42 C34 34 72 34 72 42" fill="white" fillOpacity="0.1" stroke="white" strokeWidth="2.5"/>
+          <line x1="8"  y1="60" x2="8"  y2="68" stroke="white" strokeWidth="2.5"/>
+          <line x1="72" y1="60" x2="72" y2="68" stroke="white" strokeWidth="2.5"/>
+        </svg>
+      ),
+    },
+    cocina: {
+      label: "Cocina",
+      icon: (
+        <svg viewBox="0 0 80 80" fill="none" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+          <ellipse cx="40" cy="56" rx="24" ry="12" fill="white" fillOpacity="0.18" stroke="white" strokeWidth="2.5"/>
+          <path d="M16 56 L16 46 Q16 34 40 34 Q64 34 64 46 L64 56" fill="white" fillOpacity="0.12" stroke="white" strokeWidth="2.5"/>
+          <line x1="10" y1="44" x2="4"  y2="44" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+          <line x1="70" y1="44" x2="76" y2="44" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+          <rect x="32" y="24" width="16" height="12" rx="3" fill="white" fillOpacity="0.22" stroke="white" strokeWidth="2.5"/>
+          <path d="M30 20 Q28 15 30 10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M40 20 Q38 15 40 10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M50 20 Q48 15 50 10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
+      ),
+    },
+    jardin: {
+      label: "Jardín",
+      icon: (
+        <svg viewBox="0 0 80 80" fill="none" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="40" y1="70" x2="40" y2="38" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+          <ellipse cx="40" cy="26" rx="20" ry="18" fill="white" fillOpacity="0.18" stroke="white" strokeWidth="2.5"/>
+          <ellipse cx="25" cy="38" rx="13" ry="10" fill="white" fillOpacity="0.12" stroke="white" strokeWidth="2.5"/>
+          <ellipse cx="55" cy="38" rx="13" ry="10" fill="white" fillOpacity="0.12" stroke="white" strokeWidth="2.5"/>
+          <line x1="24" y1="70" x2="56" y2="70" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+        </svg>
+      ),
+    },
+    varios: {
+      label: "Varios",
+      icon: (
+        <svg viewBox="0 0 80 80" fill="none" className="w-full h-full" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="8"  y="8"  width="28" height="28" rx="4" fill="white" fillOpacity="0.22" stroke="white" strokeWidth="2.5"/>
+          <rect x="44" y="8"  width="28" height="28" rx="4" fill="white" fillOpacity="0.16" stroke="white" strokeWidth="2.5"/>
+          <rect x="8"  y="44" width="28" height="28" rx="4" fill="white" fillOpacity="0.16" stroke="white" strokeWidth="2.5"/>
+          <rect x="44" y="44" width="28" height="28" rx="4" fill="white" fillOpacity="0.22" stroke="white" strokeWidth="2.5"/>
+        </svg>
+      ),
+    },
+  };
+
+  function getCategoriaConfig(nombre) {
+    const key = nombre?.toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "");
+    return (
+      CATEGORIA_CONFIG[key] || {
+        label: nombre,
+        icon: (
+          <svg viewBox="0 0 80 80" fill="none" className="w-full h-full" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="14" y="14" width="52" height="52" rx="5" fill="white" fillOpacity="0.15" stroke="white"/>
+            <line x1="14" y1="40" x2="66" y2="40"/>
+            <line x1="40" y1="14" x2="40" y2="66"/>
+          </svg>
+        ),
+      }
+    );
+  }
 
   if (isLoading) {
     return (
@@ -61,7 +146,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
       {/* Header */}
       <div className="offers-header">
         <div className="offers-title">
-          <h1>OFERTAS</h1>
+          <h1>Vista previa de plantillas</h1>
           <p>
             Reproducir por categoría
           </p>
@@ -69,7 +154,7 @@ console.log("categorias:", Object.keys(productosPorCategoria));
 
         {/* Duración global configurable */}
         <div className="offers-duration-control">
-          <label className="duration-label">Seg. por slide</label>
+          <label className="duration-label">Duracion de cada presentacion</label>
           <input
             type="number"
             min={2}
@@ -100,6 +185,8 @@ console.log("categorias:", Object.keys(productosPorCategoria));
               key={categoria}
               className="offer-card"
             >
+              {/* Icono representativo de la categoría */}
+              <div className="offer-card-icon">{getCategoriaConfig(categoria).icon}</div>
               {/* Nombre categoría + cantidad */}
               <div className="offer-card-header">
                 <h2 className="offer-card-title">{categoria}</h2>

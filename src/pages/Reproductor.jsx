@@ -110,7 +110,7 @@ function getCategoriaConfig(nombre) {
 const TODAS_CATEGORIAS = ["living", "dormitorio", "cocina", "jardin", "varios"];
 
 export default function Reproductor() {
-  const { data: allProducts = [], isLoading, isError } = usetGetAllProducts();
+  const { data: allProducts = [], isLoading, isError } = usetGetAllProducts({ refetchInterval: 30 * 1000, staleTime: 0 });
 
   const [categoriaActiva, setCategoriaActiva] = useState(null);
   const [slideshowAbierto, setSlideshowAbierto] = useState(false);

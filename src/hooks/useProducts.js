@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   cambiarEstadoProducto,
@@ -48,6 +49,8 @@ export const usePostProduct = () => {
     mutationFn: createProduct,
     onSuccess: () => {
       queryCliente.invalidateQueries({ queryKey: ["products"] });
+      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
+      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
       toast.success("Producto creado exitosamente");
     },
     onError: () => {
@@ -62,6 +65,8 @@ export const useChangeStateProduct = () => {
     mutationFn: cambiarEstadoProducto,
     onSuccess: () => {
       queryCliente.invalidateQueries({ queryKey: ["products"] });
+      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
+      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
       toast.success("Estado del producto actualizado");
     },
     onError: () => {
@@ -77,6 +82,8 @@ export const useDeleteProduct = () => {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryCliente.invalidateQueries({ queryKey: ["products"] });
+      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
+      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
       toast.success("Producto eliminado exitosamente");
     },
     onError: () => {
@@ -92,6 +99,8 @@ export const useEditProduct = () => {
     mutationFn: ({ id, data }) => editProduct(id, data),
     onSuccess: () => {
       queryCliente.invalidateQueries({ queryKey: ["products"] });
+      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
+      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
       toast.success("Producto editado exitosamente");
     },
     onError: () => {
@@ -101,11 +110,12 @@ export const useEditProduct = () => {
 };
 
 //hook para obtener productos sin paginacion
-export const usetGetAllProducts = () => {
+export const usetGetAllProducts = (options = {}) => {
   return useQuery({
     queryKey: ["all-products"],
     queryFn: getProductosAll,
     staleTime: 1000 * 60 * 5,
     retry: 3,
+    ...options,
   });
 }

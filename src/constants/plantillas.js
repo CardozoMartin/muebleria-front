@@ -16,14 +16,14 @@ export const PLANTILLAS = [
   },
   {
     id: 'luxeshow',
-    nombre: 'Luxe Show',
+    nombre: 'Super Sale',
     descripcion: 'Clásico · Madera clara · Sereno',
     component: LuxeShow,
     dot: 'bg-amber-700',
   },
   {
     id: 'casaviva',
-    nombre: 'Casa Viva',
+    nombre: 'Oferta Especial',
     descripcion: 'Cinematográfico · Oscuro · Cálido',
     component: CasaViva,
     dot: 'bg-orange-300',

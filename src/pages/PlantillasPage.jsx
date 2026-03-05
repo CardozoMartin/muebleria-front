@@ -8,32 +8,11 @@ import Liquidacion from '../components/Plantillas/Liquidacion';
 
 const PLANTILLAS = [
   {
-    id: 'megasale',
-    nombre: 'Mega Sale',
-    descripcion: 'Energético · Naranja · Impacto',
-    component: MegaSale,
-    dot: 'bg-orange-500',
-  },
-  {
-    id: 'luxeshow',
-    nombre: 'Super Sale',
-    descripcion: 'En tonos azules · Elegante · Sofisticado',
-    component: LuxeShow,
-    dot: 'bg-blue-500',
-  },
-  {
-    id: 'casaviva',
-    nombre: 'Oferta Especial',
-    descripcion: 'En tonos verdes · Natural · Acogedor',
-    component: CasaViva,
-    dot: 'bg-green-500',
-  },
-  {
-    id: 'liquidacion',
-    nombre: 'Liquidación',
-    descripcion: 'Dinámico · Amarillo · Brillante',
-    component: Liquidacion,
-    dot: 'bg-yellow-300',
+    id: 'cybermonday',
+    nombre: 'Cyber Monday',
+    descripcion: 'Dinámico · con tonos morados, lilas y azules · Moderno ',
+    component: CyberMonday,
+    dot: 'bg-purple-600',
   },
   {
     id: 'hotsale',
@@ -43,13 +22,33 @@ const PLANTILLAS = [
     dot: 'bg-red-600',
   },
   {
-    id: 'cybermonday',
-    nombre: 'Cyber Monday',
-    descripcion: 'Dinámico · con tonos morados, lilas y azules · Moderno ',
-    component: CyberMonday,
-    dot: 'bg-purple-600',
+    id: 'liquidacion',
+    nombre: 'Liquidación',
+    descripcion: 'Dinámico · Amarillo · Brillante',
+    component: Liquidacion,
+    dot: 'bg-yellow-300',
   },
-
+  {
+    id: 'megasale',
+    nombre: 'Mega Sale',
+    descripcion: 'Energético · Naranja · Impacto',
+    component: MegaSale,
+    dot: 'bg-orange-500',
+  },
+  {
+    id: 'casaviva',
+    nombre: 'Oferta Especial',
+    descripcion: 'En tonos verdes · Natural · Acogedor',
+    component: CasaViva,
+    dot: 'bg-green-500',
+  },
+  {
+    id: 'luxeshow',
+    nombre: 'Super Sale',
+    descripcion: 'En tonos azules · Elegante · Sofisticado',
+    component: LuxeShow,
+    dot: 'bg-blue-500',
+  },
 ];
 
 // Dimensiones de referencia del template
@@ -171,22 +170,20 @@ export const Plantillas = () => {
   const [abierta, setAbierta] = useState(null);
 
   return (
-    <div className="w-full min-h-screen bg-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-1">Plantillas Publicitarias</h1>
-          <p className="text-gray-500 text-sm">
-            Hacé click en una plantilla para verla en pantalla completa · Optimizadas para 32" o más
-          </p>
-        </div>
+    <div className="flex flex-col gap-8">
+      {/* Header */}
+      <div className="border-l-4 border-red-600 pl-4">
+        <h1 className="text-2xl font-extrabold text-gray-900 tracking-wider uppercase leading-none mb-2">Plantillas Publicitarias</h1>
+        <p className="text-red-600 text-xs font-semibold tracking-[0.2em] uppercase">
+          Hacé click en una plantilla para verla en pantalla completa · Optimizadas para 32" o más
+        </p>
+      </div>
 
-        {/* Grid 3 por fila */}
-        <div className="grid grid-cols-3 gap-6 auto-rows-max">
-          {PLANTILLAS.map((p) => (
-            <MiniCard key={p.id} plantilla={p} onClick={() => setAbierta(p)} />
-          ))}
-        </div>
+      {/* Grid 3 por fila */}
+      <div className="grid grid-cols-3 gap-6 auto-rows-max">
+        {PLANTILLAS.map((p) => (
+          <MiniCard key={p.id} plantilla={p} onClick={() => setAbierta(p)} />
+        ))}
       </div>
 
       {/* Modal fullscreen */}
