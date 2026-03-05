@@ -1,6 +1,6 @@
-import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
+import sharp from 'sharp';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -13,9 +13,7 @@ async function compressImages() {
   }
 
   const files = fs.readdirSync(assetsDir);
-  const imageFiles = files.filter(file => 
-    /\.(png|jpg|jpeg|webp)$/i.test(file)
-  );
+  const imageFiles = files.filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file));
 
   for (const file of imageFiles) {
     const filePath = path.join(assetsDir, file);

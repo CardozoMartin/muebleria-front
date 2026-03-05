@@ -1,14 +1,14 @@
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
-import Logo from "./../assets/logo.png";
-import useAuthStore from "../store/useAuthStore";
-import { toast } from "sonner";
-import "../css/dashboardLayout.css";
-import Swal from "sweetalert2";
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import Swal from 'sweetalert2';
+import '../css/dashboardLayout.css';
+import useAuthStore from '../store/useAuthStore';
+import Logo from './../assets/logo.png';
 
 const navItems = [
   {
-    to: "/products",
-    label: "Productos",
+    to: '/products',
+    label: 'Productos',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path
@@ -29,8 +29,8 @@ const navItems = [
     ),
   },
   {
-    to: "/offers",
-    label: "Vista Previa Categorias",
+    to: '/offers',
+    label: 'Vista Previa Categorias',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path
@@ -53,46 +53,14 @@ const navItems = [
     ),
   },
   {
-    to: "/plantillas",
-    label: "Modelos de Plantillas",
+    to: '/plantillas',
+    label: 'Modelos de Plantillas',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <rect
-          x="3"
-          y="3"
-          width="8"
-          height="8"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          rx="1"
-        />
-        <rect
-          x="13"
-          y="3"
-          width="8"
-          height="8"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          rx="1"
-        />
-        <rect
-          x="3"
-          y="13"
-          width="8"
-          height="8"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          rx="1"
-        />
-        <rect
-          x="13"
-          y="13"
-          width="8"
-          height="8"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          rx="1"
-        />
+        <rect x="3" y="3" width="8" height="8" stroke="currentColor" strokeWidth="1.6" rx="1" />
+        <rect x="13" y="3" width="8" height="8" stroke="currentColor" strokeWidth="1.6" rx="1" />
+        <rect x="3" y="13" width="8" height="8" stroke="currentColor" strokeWidth="1.6" rx="1" />
+        <rect x="13" y="13" width="8" height="8" stroke="currentColor" strokeWidth="1.6" rx="1" />
       </svg>
     ),
   },
@@ -104,24 +72,24 @@ export default function DashboardLayout() {
 
   const handleLogout = () => {
     Swal.fire({
-      title: "¿Cerrar sesión?",
-      text: "¿Estás seguro de que deseas cerrar sesión?",
-      icon: "warning",
+      title: '¿Cerrar sesión?',
+      text: '¿Estás seguro de que deseas cerrar sesión?',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, cerrar sesión",
-      cancelButtonText: "Cancelar",
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cerrar sesión',
+      cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         clearAuth();
-        toast.success("Sesión cerrada exitosamente");
-        navigate("/login");
+        toast.success('Sesión cerrada exitosamente');
+        navigate('/login');
       }
     });
   };
 
-  console.log("Usuario autenticado:", user);
+  console.log('Usuario autenticado:', user);
   return (
     <div className="dashboard-layout">
       {/* Sidebar */}
@@ -144,9 +112,7 @@ export default function DashboardLayout() {
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
-              }
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             >
               {item.icon}
               <span>{item.label}</span>
@@ -193,8 +159,7 @@ export default function DashboardLayout() {
         {/* Top bar */}
         <header className="dashboard-header">
           <div className="dashboard-header-title">
-            Bienvenido a{" "}
-            <span className="dashboard-header-accent">Muebles de Pino ML</span>
+            Bienvenido a <span className="dashboard-header-accent">Muebles de Pino ML</span>
           </div>
           <a
             href="/#/inicio"
