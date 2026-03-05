@@ -57,9 +57,6 @@ export default function CyberMonday({
           {mounted && <div className="cm-flash" />}
 
           <img className="cm-fondo-rayos" src={fondorayos} alt="" aria-hidden="true" />
-          <div className="cm-grid" />
-          <div className="cm-glow-left" />
-          <div className="cm-glow-right" />
 
           {/* Banner */}
           <div className={`cm-banner ${mounted ? 'on' : ''}`}>
@@ -109,12 +106,6 @@ export default function CyberMonday({
                     <div className="cm-price-nums">
                       <div className="cm-price-nuevo">{formatPrecio(precioOferta)}</div>
                     </div>
-                    {porcentajeDescuento > 0 && (
-                      <div className="cm-off-badge">
-                        <span className="cm-off-pct">{porcentajeDescuento}%</span>
-                        <span className="cm-off-lbl">OFF</span>
-                      </div>
-                    )}
                   </div>
                 </div>
 
