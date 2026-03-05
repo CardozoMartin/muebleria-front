@@ -83,14 +83,14 @@ export default function MegaSale({
         .mw-layout {
           position: absolute; inset: 0; z-index: 2;
           display: grid;
-          grid-template-columns: 28% 1fr;
+          grid-template-columns: 25% 1fr;
           height: 100%;
         }
         .mw-right {
           display: flex; flex-direction: column;
           justify-content: flex-start;
-          padding: 16vh 6vw 3vh 4vw;
-          gap: 1.8vh;
+          padding: 12vh 4vw 2vh 3vw;
+          gap: 1.5vh;
         }
 
         /* ── LOGO ── */
@@ -128,7 +128,7 @@ export default function MegaSale({
         /* ── IMAGEN DEL PRODUCTO ── */
         .mw-img-wrap {
           position: absolute; right: 0; top: 0;
-          width: 35%; height: 100%;
+          width: 48%; height: 100%;
           z-index: 3;
           display: flex; align-items: center; justify-content: flex-end;
           opacity: 0;
@@ -143,9 +143,9 @@ export default function MegaSale({
           transform: translateX(0) translateZ(0);
         }
         .mw-img {
-          width: 80%;
-          height: 75%;
-          max-height: 90%;
+          width: 90%;
+          height: 85%;
+          max-height: 95%;
           object-fit: contain;
           /* OPTIMIZACIÓN: SIN filter aquí (el filter está en el wrapper, estático) */
           /* SIN scale() en la animación - solo translateY */
@@ -166,15 +166,15 @@ export default function MegaSale({
 
         /* ── BADGE MEGA OFERTA ── */
         .mw-badge-top {
-          position: absolute; top: 5vh; left: 65%; transform: translateX(-50%) translateZ(0);
+          position: absolute; top: 4vh; left: 60%; transform: translateX(-50%) translateZ(0);
           z-index: 10;
           display: inline-flex; align-items: center; gap: 12px;
           background: linear-gradient(135deg, #e63500, #ff8800);
           color: #fff; font-weight: 900;
           font-family: 'Rubik', sans-serif;
-          font-size: clamp(18px,1.6vw,28px);
+          font-size: clamp(22px,2vw,36px);
           letter-spacing: 4px; text-transform: uppercase;
-          padding: 16px 40px; border-radius: 60px;
+          padding: 18px 48px; border-radius: 60px;
           /* OPTIMIZACIÓN: box-shadow estático, sin animación */
           box-shadow: 0 0 50px rgba(230,53,0,.7), 0 0 100px rgba(255,136,0,.5), 0 10px 40px rgba(230,53,0,.6);
           overflow: hidden;
@@ -217,9 +217,9 @@ export default function MegaSale({
         /* ── NOMBRE ── */
         .mw-nombre {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: calc(clamp(36px,5vw,86px) * var(--titulo-scale, 1));
+          font-size: calc(clamp(48px,6.5vw,110px) * var(--titulo-scale, 1));
           color: #1a1a1a;
-          line-height: 0.92; letter-spacing: 1px;
+          line-height: 0.92; letter-spacing: 2px;
           opacity: 0; transform: translateX(-120vw) translateZ(0);
           transition: opacity .6s ease .9s, transform 1.1s cubic-bezier(.22,1.4,.36,1) .9s;
           will-change: transform, opacity;
@@ -235,34 +235,35 @@ export default function MegaSale({
 
         /* ── LÍNEA DECO ── */
         .mw-deco {
-          display:flex; align-items:center; gap:16px;
+          display:flex; align-items:center; gap:12px;
           opacity: 0; transform: translateX(-110vw) translateZ(0);
           transition: opacity .5s ease .5s, transform 1s cubic-bezier(.22,1.5,.36,1) .5s;
           will-change: transform, opacity;
+          margin-top: 0.5vh;
         }
         .mw-content.on .mw-deco { opacity:1; transform:translateX(0) translateZ(0); }
         .mw-deco::before {
-          content:''; width:70px; height:4px;
+          content:''; width:60px; height:3px;
           background: linear-gradient(to right,#e63500,#ff9900);
           border-radius:2px; flex-shrink:0;
           box-shadow: 0 2px 12px rgba(230,53,0,.4);
         }
         .mw-deco-txt {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(12px,1.05vw,17px);
-          font-weight:700; letter-spacing:4px;
-          text-transform:uppercase; color:#666;
+          font-size: clamp(10px,0.85vw,13px);
+          font-weight:600; letter-spacing:3px;
+          text-transform:uppercase; color:#999;
         }
 
         /* ── DESCRIPCIÓN ── */
         .mw-desc {
-          font-size: clamp(15px,1.25vw,21px);
-          color: #111; line-height:1.75; font-weight:600; max-width:600px;
-          padding: 16px 20px;
+          font-size: clamp(18px,1.55vw,26px);
+          color: #111; line-height:1.8; font-weight:600; max-width:700px;
+          padding: 18px 28px;
           /* OPTIMIZACIÓN: color sólido en vez de rgba + backdrop-filter */
-          background: rgba(255,255,255,0.82);
-          border: 1.5px solid rgba(230,53,0,.2);
-          border-radius: 12px;
+          background: rgba(255,255,255,0.88);
+          border: 2px solid rgba(230,53,0,.3);
+          border-radius: 14px;
           /* OPTIMIZACIÓN: backdrop-filter: blur() ELIMINADO - el mayor culpable en TV */
           white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
           opacity: 0; transform: translateX(110vw) translateZ(0);
@@ -274,7 +275,7 @@ export default function MegaSale({
 
         /* ── PRECIO ── */
         .mw-price-block {
-          display:flex; flex-direction:column; align-items:flex-start; gap:8px;
+          display:flex; flex-direction:column; align-items:flex-start; gap:12px;
           opacity: 0; transform: translateX(-110vw) translateZ(0);
           transition: opacity .6s ease 1.9s, transform 1.1s cubic-bezier(.22,1.5,.36,1) 1.9s;
           will-change: transform, opacity;
@@ -282,33 +283,33 @@ export default function MegaSale({
         /* OPTIMIZACIÓN: sin skewX */
         .mw-content.on .mw-price-block { opacity:1; transform:translateX(0) translateZ(0); }
         .mw-price-label {
-          font-size: clamp(14px,1.2vw,18px);
-          font-weight:700; color:#fff; text-transform:uppercase;
-          letter-spacing:1px; margin-bottom:4px;
+          font-size: clamp(16px,1.4vw,22px);
+          font-weight:700; color:#666; text-transform:uppercase;
+          letter-spacing:1px; margin-bottom:2px;
         }
         .mw-price-old {
-          font-size: clamp(30px,4vw,48px);
-          font-weight:700; color:#000; text-decoration:line-through; margin-bottom:6px;
+          font-size: clamp(40px,5.2vw,72px);
+          font-weight:700; color:#000; text-decoration:line-through; margin-bottom:8px;
         }
         .mw-price-new-wrap {
           display: inline-block;
-          padding: 10px 28px 6px;
-          border: 3px solid #fff;
-          border-radius: 16px;
+          padding: 14px 40px 8px;
+          border: 4px solid #fff;
+          border-radius: 20px;
           /* OPTIMIZACIÓN: fondo sólido, sin backdrop-filter */
-          background: rgba(20,10,0,.7);
-          box-shadow: 0 0 24px rgba(255,255,255,.12), inset 0 0 12px rgba(255,255,255,.04);
+          background: rgba(20,10,0,.85);
+          box-shadow: 0 0 30px rgba(255,255,255,.15), inset 0 0 16px rgba(255,255,255,.05);
         }
         .mw-price-new {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(48px,6.5vw,105px);
+          font-size: clamp(64px,8.5vw,140px);
           line-height: 1;
           background: linear-gradient(135deg, #e63500 0%, #ff6600 40%, #ffaa00 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
           /* OPTIMIZACIÓN: drop-shadow estático, sin pricePulse animation */
-          filter: drop-shadow(0 6px 24px rgba(230,80,0,.5));
+          filter: drop-shadow(0 8px 32px rgba(230,80,0,.6));
           will-change: opacity;
           /* OPTIMIZACIÓN: pulse solo con opacity, no scale+filter */
           animation: pricePulse 3s ease-in-out infinite 2.5s;
@@ -322,11 +323,11 @@ export default function MegaSale({
           background: linear-gradient(135deg, #e63500, #ff8800);
           color: white;
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(26px,2.8vw,46px);
+          font-size: clamp(32px,3.8vw,58px);
           letter-spacing: 2px;
-          padding: 10px 24px; border-radius: 12px;
+          padding: 14px 32px; border-radius: 14px;
           /* OPTIMIZACIÓN: box-shadow estático, sin descuentoPulse */
-          box-shadow: 0 0 40px rgba(230,53,0,.6), 0 0 80px rgba(255,136,0,.3), 0 8px 32px rgba(230,53,0,.5);
+          box-shadow: 0 0 50px rgba(230,53,0,.7), 0 0 100px rgba(255,136,0,.4), 0 10px 40px rgba(230,53,0,.6);
           will-change: opacity;
           animation: descuentoPulse 2.4s ease-in-out infinite 3s;
         }
@@ -338,34 +339,38 @@ export default function MegaSale({
 
         /* WhatsApp */
         .mw-whatsapp {
-          display:inline-flex; align-items:center; gap:16px;
-          padding:18px 32px; border-radius:16px;
+          display:inline-flex; align-items:center; gap:20px;
+          padding:24px 40px; border-radius:20px;
           background:#25D366;
           color:#fff;
-          font-size:clamp(18px,1.4vw,24px);
-          font-weight:700;
+          font-size:clamp(24px,1.8vw,36px);
+          font-weight:900;
           letter-spacing:.6px;
-          box-shadow: 0 6px 24px rgba(37,211,102,.35), 0 2px 8px rgba(0,0,0,.1);
+          box-shadow: 0 8px 32px rgba(37,211,102,.45), 0 2px 8px rgba(0,0,0,.15);
           align-self:flex-start;
-          margin-top: 2vh;
-          opacity:0; transform:translateY(40px) translateZ(0);
+          margin-top: 3vh;
+          opacity:0; transform:translateY(50px) translateZ(0);
           transition:opacity 1s ease 2.3s, transform 1s cubic-bezier(.34,1.8,.64,1) 2.3s;
           will-change: transform, opacity;
         }
         /* OPTIMIZACIÓN: sin scale() en la transición de entrada */
         .mw-whatsapp.on { opacity:1; transform:translateY(0) translateZ(0); }
-        .mw-whatsapp-icon { width:clamp(30px,2.2vw,40px); height:clamp(30px,2.2vw,40px); fill:#fff; }
+        .mw-whatsapp-icon { width:clamp(40px,3vw,56px); height:clamp(40px,3vw,56px); fill:#fff; }
 
         /* ── TAGS ── */
-        .mw-tags { display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-start; }
+        .mw-tags { display:flex; gap:16px; flex-wrap:wrap; justify-content:flex-start; }
         .mw-tag {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(13px,1.1vw,20px);
-          font-weight:800; letter-spacing:1.2px;
-          padding: 12px 22px; border-radius:10px; text-transform:uppercase;
+          font-size: clamp(18px,1.5vw,28px);
+          font-weight:900; letter-spacing:1.2px;
+          padding: 16px 32px; border-radius:14px; text-transform:uppercase;
           opacity: 0;
           will-change: transform, opacity;
           transform: translateZ(0);
+          color: #fff;
+          background: linear-gradient(135deg, #0066ff, #0094ff);
+          border: 3px solid #00c8ff;
+          box-shadow: 0 6px 24px rgba(0,136,255,.35);
         }
         /* OPTIMIZACIÓN: translateY solo (sin scale) en tagBounce */
         .mw-tags.on .mw-tag:nth-child(1) { animation: tagBounce .9s cubic-bezier(.34,1.8,.64,1) 2.5s both; }
@@ -464,9 +469,9 @@ export default function MegaSale({
               <span>381 2108473</span>
             </div>
 
-            {/* TAGS fijos */}
-            <div className={`mw-tags ${mounted ? "on" : ""}`} style={{ marginTop: "auto", paddingBottom: "3vh" }}>
-              <span className="mw-tag tag-dark">www.mueblesdepinoml.com</span>
+            {/* WEBSITE - Tags mejorados */}
+            <div className={`mw-tags ${mounted ? "on" : ""}`} style={{ marginTop: "auto", paddingBottom: "2.5vh", gap: "12px" }}>
+              <span className="mw-tag">🌐 www.mueblesdepinoml.com</span>
             </div>
 
           </div>
