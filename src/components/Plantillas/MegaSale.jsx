@@ -97,7 +97,7 @@ export default function MegaSaleTV({
                 <div className={`tv-fila-old ${mounted ? 'on' : ''}`}>
                   {/* Precio viejo — siempre ocupa su espacio, invisible si no existe */}
                   <div className={`tv-p-viejo-wrap ${precioLista > 0 ? 'visible' : ''}`}>
-                    <div className="tv-p-label">Precio Lista</div>
+                    <div className="tv-p-label">Antes</div>
                     <div className="tv-p-old">{fmt(precioLista) ?? '—'}</div>
                   </div>
 
@@ -116,11 +116,6 @@ export default function MegaSaleTV({
                       <div className="tv-p-new">{fmt(precioOferta) ?? ''}</div>
                     </div>
                   </div>
-                  {precioOferta > 0 && (
-                    <div className={`tv-p-new-label ${mounted ? 'visible' : ''}`}>
-                      Precio oferta
-                    </div>
-                  )}
                 </div>
               </div>
 
