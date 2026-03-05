@@ -6,6 +6,11 @@ import HotSale from "../Plantillas/HotSale";
 import CyberMonday from "../Plantillas/CyberMonday";
 import Liquidacion from "../Plantillas/Liquidacion";
 import CasaViva from "../Plantillas/Casaviva";
+import CalidezTV from "../Plantillas/CalidezTV";
+import ImpactoTV from "../Plantillas/ImpactoTV";
+import ImpactoTV2 from "../Plantillas/ImpactoTV2";
+import ModernTV from "../Plantillas/ModernTV";
+import SpotlightTV from "../Plantillas/SpotlightTV";
 
 // import CasaViva from "./Plantillas/CasaViva";
 
@@ -16,6 +21,11 @@ const PLANTILLAS_MAP = {
   liquidacion: Liquidacion,
   hotsale: HotSale,
   cybermonday: CyberMonday,
+  calidez: CalidezTV,
+  impactotv: ImpactoTV,
+  impactotv2: ImpactoTV2,
+  modern: ModernTV,
+  spotlight: SpotlightTV,
 };
 
 
