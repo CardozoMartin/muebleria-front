@@ -4,18 +4,19 @@ import fondo from './../../assets/fondo1.jpeg';
 import logo from './../../assets/logo.png';
 
 /**
- * MegaSale — plantilla publicitaria OPTIMIZADA para Smart TV
+ * MegaSale — VERSIÓN OPTIMIZADA PARA SMART TV / PANTALLA 32"
  *
- * Cambios de performance vs versión original:
- *  - Eliminado backdrop-filter: blur() (mata GPUs débiles)
- *  - drop-shadow estático en wrapper, no en el elemento animado
- *  - will-change + translateZ(0) en elementos animados
- *  - Animaciones loop simplificadas (opacity en vez de scale+filter)
- *  - Reducidas animaciones simultáneas (solo floatImg loop activo)
- *  - Reemplazados scale() en pulse loops por opacity
- *  - box-shadow estático en badge/descuento en vez de animado
+ * Cambios clave vs versión original:
+ * - Layout fijo en px basado en 1280x720 (resolución base de TV 32")
+ * - La imagen del producto ya NO usa position:absolute → no se superpone
+ * - Grid de 3 zonas: [Logo | Contenido texto | Imagen producto]
+ * - Todos los font-size en px fijos escalados para TV (no vw/vh que fallan)
+ * - Scroll eliminado: todo entra en 720px de alto
+ * - WhatsApp y link siempre visibles (sin depender de marginTop:auto)
+ * - backdrop-filter:blur() eliminado (mata GPUs de TV)
+ * - Animaciones simplificadas (solo opacity + translateY/X)
  */
-export default function MegaSale({
+export default function MegaSaleTV({
   titulo = 'Juego de Comedor',
   descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
   imagenProducto = comedor,
@@ -37,454 +38,461 @@ export default function MegaSale({
 
   const formatPrecio = (n) => (n ? `$ ${Number(n).toLocaleString('es-AR')}` : null);
 
-  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
-
   return (
     <>
       <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Montserrat:wght@400;600;700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@700;800;900&family=Montserrat:wght@400;600;700;900&display=swap"
         rel="stylesheet"
       />
       <style>{`
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        .mw {
-          width: 100%; height: 100%;
-          position: relative; overflow: hidden;
+        /*
+          BASE: 1280 × 720px (HD — estándar Smart TV 32")
+          Todo el layout vive en este rectángulo.
+          Si la TV muestra 1920×1080, el navegador escala proporcionalmente.
+        */
+        .tv-root {
+          width: 1280px;
+          height: 720px;
+          position: relative;
+          overflow: hidden;
           font-family: 'Montserrat', sans-serif;
           background: #111;
+          /* Centrar en cualquier viewport */
+          margin: 0 auto;
         }
 
         /* ── FONDO ── */
-        .mw-bg {
+        .tv-bg {
           position: absolute; inset: 0;
           width: 100%; height: 100%;
-          object-fit: cover; object-position: left center;
+          object-fit: cover; object-position: center;
           z-index: 0;
           opacity: 0;
-          /* OPTIMIZACIÓN: scale eliminado del transition - costoso en TV */
           transition: opacity 1.2s ease;
-          /* OPTIMIZACIÓN: promueve a capa GPU propia */
           will-change: opacity;
           transform: translateZ(0);
         }
-        .mw-bg.on { opacity: 1; }
+        .tv-bg.on { opacity: 1; }
 
-        /* ── FLASH ── */
+        /* Overlay para que el texto sea legible sobre el fondo */
+        .tv-overlay {
+          position: absolute; inset: 0; z-index: 1;
+          background: linear-gradient(
+            to right,
+            rgba(255,255,255,0.92) 0%,
+            rgba(255,255,255,0.88) 55%,
+            rgba(255,255,255,0.1) 100%
+          );
+        }
+
+        /* ── FLASH DE ENTRADA ── */
         .flash {
           position: absolute; inset: 0; z-index: 20;
           background: white; pointer-events: none;
           animation: flashAnim 0.6s ease forwards;
-          /* OPTIMIZACIÓN: capa propia */
           will-change: opacity;
-          transform: translateZ(0);
         }
         @keyframes flashAnim { from { opacity:.7; } to { opacity:0; } }
 
-        /* ── LAYOUT ── */
-        .mw-layout {
+        /* ──────────────────────────────────────────
+           GRID PRINCIPAL — 3 columnas fijas en px
+           [logo 160px] [contenido 660px] [imagen 460px]
+           Total: 1280px exacto
+        ────────────────────────────────────────── */
+        .tv-grid {
           position: absolute; inset: 0; z-index: 2;
           display: grid;
-          grid-template-columns: 25% 1fr;
-          height: 100%;
-        }
-        .mw-right {
-          display: flex; flex-direction: column;
-          justify-content: flex-start;
-          padding: 12vh 4vw 2vh 3vw;
-          gap: 1.5vh;
+          grid-template-columns: 160px 660px 460px;
+          grid-template-rows: 720px;
+          height: 720px;
         }
 
-        /* ── LOGO ── */
-        .mw-logo {
-          position: absolute; top: 50%; left: 2.5vw; z-index: 5;
-          transform: translateY(-50%) translateX(-40px);
+        /* ── COLUMNA IZQUIERDA: LOGO ── */
+        .tv-col-logo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 10px;
+        }
+        .tv-logo-wrap {
           opacity: 0;
+          transform: translateX(-50px) translateZ(0);
           transition: opacity .9s ease .3s, transform .9s cubic-bezier(.34,1.56,.64,1) .3s;
-          /* OPTIMIZACIÓN: capa GPU */
           will-change: transform, opacity;
         }
-        .mw-logo.on { opacity:1; transform:translateY(-50%) translateX(0); }
-        .mw-logo-circle {
-          width: clamp(230px,28vh,360px);
-          height: clamp(230px,28vh,360px);
+        .tv-logo-wrap.on { opacity:1; transform:translateX(0) translateZ(0); }
+        .tv-logo-circle {
+          width: 130px; height: 130px;
           border-radius: 50%;
           background: linear-gradient(135deg, #e63500, #ff8800, #ffcc00);
-          padding: 5px;
-          /* OPTIMIZACIÓN: box-shadow estático, sin animación */
-          box-shadow: 0 0 30px rgba(230,100,0,.5), 0 0 60px rgba(255,136,0,.25);
+          padding: 4px;
+          box-shadow: 0 0 24px rgba(230,100,0,.5);
           display: flex; align-items: center; justify-content: center;
         }
-        .mw-logo-inner {
+        .tv-logo-inner {
           width: 100%; height: 100%;
           border-radius: 50%;
           background: #fff;
           display: flex; align-items: center; justify-content: center;
           overflow: hidden;
         }
-        .mw-logo img {
-          width: 85%; height: 85%;
+        .tv-logo-inner img {
+          width: 82%; height: 82%;
           object-fit: contain;
         }
 
-        /* ── IMAGEN DEL PRODUCTO ── */
-        .mw-img-wrap {
-          position: absolute; right: 0; top: 0;
-          width: 48%; height: 100%;
+        /* ── COLUMNA CENTRAL: TODO EL TEXTO ── */
+        .tv-col-content {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 18px 24px 18px 16px;
+          gap: 10px;
+          position: relative;
           z-index: 3;
-          display: flex; align-items: center; justify-content: flex-end;
-          opacity: 0;
-          transform: translateX(120px) translateZ(0);
-          transition: opacity .9s ease .2s, transform 1.1s cubic-bezier(.34,1.62,.64,1) .2s;
-          will-change: transform, opacity;
-          /* OPTIMIZACIÓN: sombra estática en el WRAPPER, no en el img animado */
-          filter: drop-shadow(0 30px 50px rgba(0,0,0,.45)) drop-shadow(0 0 40px rgba(230,53,0,.25));
-        }
-        .mw-img-wrap.on {
-          opacity: 1;
-          transform: translateX(0) translateZ(0);
-        }
-        .mw-img {
-          width: 90%;
-          height: 85%;
-          max-height: 95%;
-          object-fit: contain;
-          /* OPTIMIZACIÓN: SIN filter aquí (el filter está en el wrapper, estático) */
-          /* SIN scale() en la animación - solo translateY */
-          animation: floatImg 4.5s ease-in-out infinite 1.5s;
-          will-change: transform;
-          transform: translateZ(0);
-        }
-        /* OPTIMIZACIÓN: solo translateY, sin rotate ni scale */
-        @keyframes floatImg {
-          0%,100% { transform: translateY(0) translateZ(0); }
-          50%      { transform: translateY(-18px) translateZ(0); }
         }
 
-        /* ── CONTENIDO ── */
-        .mw-content {
-          display: flex; flex-direction: column; gap: 2vh;
-        }
-
-        /* ── BADGE MEGA OFERTA ── */
-        .mw-badge-top {
-          position: absolute; top: 4vh; left: 60%; transform: translateX(-50%) translateZ(0);
-          z-index: 10;
-          display: inline-flex; align-items: center; gap: 12px;
+        /* Badge MEGA OFERTA — dentro del flujo, no absolute */
+        .tv-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          align-self: flex-start;
           background: linear-gradient(135deg, #e63500, #ff8800);
-          color: #fff; font-weight: 900;
+          color: #fff;
           font-family: 'Rubik', sans-serif;
-          font-size: clamp(22px,2vw,36px);
-          letter-spacing: 4px; text-transform: uppercase;
-          padding: 18px 48px; border-radius: 60px;
-          /* OPTIMIZACIÓN: box-shadow estático, sin animación */
-          box-shadow: 0 0 50px rgba(230,53,0,.7), 0 0 100px rgba(255,136,0,.5), 0 10px 40px rgba(230,53,0,.6);
-          overflow: hidden;
+          font-size: 20px;
+          font-weight: 900;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          padding: 10px 28px;
+          border-radius: 40px;
+          box-shadow: 0 0 30px rgba(230,53,0,.6), 0 6px 20px rgba(230,53,0,.4);
+          opacity: 0;
+          transform: translateY(-30px) translateZ(0);
+          transition: opacity .7s ease .4s, transform .8s cubic-bezier(.34,1.56,.64,1) .4s;
           will-change: transform, opacity;
-          animation: mwBadgeBounce 1.8s cubic-bezier(.34,.85,.64,1) .5s backwards;
-          /* OPTIMIZACIÓN: badge-pulse eliminado - era scale + box-shadow animados juntos */
+          overflow: hidden;
         }
-        @keyframes mwBadgeBounce {
-          0%   { opacity:0; transform:translateX(-50%) translateY(-120px) translateZ(0); }
-          20%  { opacity:1; transform:translateX(-50%) translateY(10px) translateZ(0); }
-          50%  { transform:translateX(-50%) translateY(-12px) translateZ(0); }
-          75%  { transform:translateX(-50%) translateY(3px) translateZ(0); }
-          100% { opacity:1; transform:translateX(-50%) translateY(0) translateZ(0); }
-        }
-        /* OPTIMIZACIÓN: shine simplificado - solo opacity en vez de left sliding */
-        .mw-badge-top::before {
-          content:''; position:absolute; inset:0;
-          background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.25) 0%, transparent 60%);
-          pointer-events:none;
-        }
-        .mw-badge-top::after {
+        .tv-badge.on { opacity:1; transform:translateY(0) translateZ(0); }
+        .tv-badge::after {
           content:''; position:absolute; top:0; left:-100%; width:60%; height:100%;
-          background: linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+          background: linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
           animation: shine 4s infinite 3s;
           will-change: transform;
         }
-        /* OPTIMIZACIÓN: shine con transform en vez de left (GPU-friendly) */
         @keyframes shine {
           0%   { transform: translateX(0); opacity: 1; }
           60%, 100% { transform: translateX(430%); opacity: 0; }
         }
-        .mw-dot-blink {
-          width:12px; height:12px; background:#fff; border-radius:50%;
-          /* OPTIMIZACIÓN: opacity only, sin otras propiedades */
+        .tv-dot {
+          width: 10px; height: 10px; background:#fff; border-radius:50%;
           animation: blink 1.2s infinite;
           will-change: opacity;
+          flex-shrink: 0;
         }
         @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.1;} }
 
-        /* ── NOMBRE ── */
-        .mw-nombre {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: calc(clamp(48px,6.5vw,110px) * var(--titulo-scale, 1));
-          color: #1a1a1a;
-          line-height: 0.92; letter-spacing: 2px;
-          opacity: 0; transform: translateX(-120vw) translateZ(0);
-          transition: opacity .6s ease .9s, transform 1.1s cubic-bezier(.22,1.4,.36,1) .9s;
+        /* Categoría */
+        .tv-categoria {
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          color: #888;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          opacity: 0;
+          transform: translateX(-40px) translateZ(0);
+          transition: opacity .5s ease .6s, transform .7s ease .6s;
           will-change: transform, opacity;
         }
-        /* OPTIMIZACIÓN: sin rotate ni skewX en la animación */
-        .mw-content.on .mw-nombre { opacity:1; transform:translateX(0) translateZ(0); }
-        .mw-nombre-dest {
+        .tv-categoria.on { opacity:1; transform:translateX(0) translateZ(0); }
+        .tv-categoria::before {
+          content:'';
+          width: 40px; height: 3px;
+          background: linear-gradient(to right, #e63500, #ff9900);
+          border-radius: 2px;
+          flex-shrink: 0;
+        }
+
+        /* Título */
+        .tv-titulo {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 72px;
+          line-height: 0.9;
+          letter-spacing: 2px;
           color: #e63500;
-          display: inline-block;
-          /* OPTIMIZACIÓN: text-shadow estático, sin glow animado */
-          text-shadow: 0 4px 20px rgba(230,53,0,.3);
-        }
-
-        /* ── LÍNEA DECO ── */
-        .mw-deco {
-          display:flex; align-items:center; gap:12px;
-          opacity: 0; transform: translateX(-110vw) translateZ(0);
-          transition: opacity .5s ease .5s, transform 1s cubic-bezier(.22,1.5,.36,1) .5s;
+          text-shadow: 0 4px 16px rgba(230,53,0,.25);
+          opacity: 0;
+          transform: translateX(-60px) translateZ(0);
+          transition: opacity .6s ease .8s, transform .9s cubic-bezier(.22,1.4,.36,1) .8s;
           will-change: transform, opacity;
-          margin-top: 0.5vh;
+          /* Fuerza wrapping en títulos largos */
+          word-break: break-word;
+          max-width: 100%;
         }
-        .mw-content.on .mw-deco { opacity:1; transform:translateX(0) translateZ(0); }
-        .mw-deco::before {
-          content:''; width:60px; height:3px;
-          background: linear-gradient(to right,#e63500,#ff9900);
-          border-radius:2px; flex-shrink:0;
-          box-shadow: 0 2px 12px rgba(230,53,0,.4);
-        }
-        .mw-deco-txt {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(10px,0.85vw,13px);
-          font-weight:600; letter-spacing:3px;
-          text-transform:uppercase; color:#999;
-        }
+        .tv-titulo.on { opacity:1; transform:translateX(0) translateZ(0); }
 
-        /* ── DESCRIPCIÓN ── */
-        .mw-desc {
-          font-size: clamp(18px,1.55vw,26px);
-          color: #111; line-height:1.8; font-weight:600; max-width:700px;
-          padding: 18px 28px;
-          /* OPTIMIZACIÓN: color sólido en vez de rgba + backdrop-filter */
-          background: rgba(255,255,255,0.88);
-          border: 2px solid rgba(230,53,0,.3);
-          border-radius: 14px;
-          /* OPTIMIZACIÓN: backdrop-filter: blur() ELIMINADO - el mayor culpable en TV */
-          white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
-          opacity: 0; transform: translateX(110vw) translateZ(0);
-          transition: opacity .6s ease 1.4s, transform 1s cubic-bezier(.22,1.4,.36,1) 1.4s;
+        /* Descripción */
+        .tv-desc {
+          font-size: 17px;
+          font-weight: 600;
+          color: #222;
+          line-height: 1.6;
+          background: rgba(255,255,255,0.85);
+          border: 2px solid rgba(230,53,0,.25);
+          border-radius: 12px;
+          padding: 12px 18px;
+          max-width: 100%;
+          /* Limitar a 3 líneas para que no desborde */
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          opacity: 0;
+          transform: translateX(40px) translateZ(0);
+          transition: opacity .6s ease 1.1s, transform .9s ease 1.1s;
           will-change: transform, opacity;
         }
-        /* OPTIMIZACIÓN: sin skewX */
-        .mw-content.on .mw-desc { opacity:1; transform:translateX(0) translateZ(0); }
+        .tv-desc.on { opacity:1; transform:translateX(0) translateZ(0); }
 
-        /* ── PRECIO ── */
-        .mw-price-block {
-          display:flex; flex-direction:column; align-items:flex-start; gap:12px;
-          opacity: 0; transform: translateX(-110vw) translateZ(0);
-          transition: opacity .6s ease 1.9s, transform 1.1s cubic-bezier(.22,1.5,.36,1) 1.9s;
+        /* Bloque de precios */
+        .tv-precios {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex-wrap: nowrap;
+          opacity: 0;
+          transform: translateY(20px) translateZ(0);
+          transition: opacity .6s ease 1.4s, transform .8s ease 1.4s;
           will-change: transform, opacity;
         }
-        /* OPTIMIZACIÓN: sin skewX */
-        .mw-content.on .mw-price-block { opacity:1; transform:translateX(0) translateZ(0); }
-        .mw-price-label {
-          font-size: clamp(16px,1.4vw,22px);
-          font-weight:700; color:#666; text-transform:uppercase;
-          letter-spacing:1px; margin-bottom:2px;
+        .tv-precios.on { opacity:1; transform:translateY(0) translateZ(0); }
+
+        .tv-precio-viejo-wrap {
+          display: flex;
+          flex-direction: column;
         }
-        .mw-price-old {
-          font-size: clamp(40px,5.2vw,72px);
-          font-weight:700; color:#000; text-decoration:line-through; margin-bottom:8px;
+        .tv-precio-label {
+          font-size: 13px;
+          font-weight: 700;
+          color: #666;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 2px;
         }
-        .mw-price-new-wrap {
-          display: inline-block;
-          padding: 14px 40px 8px;
-          border: 4px solid #fff;
-          border-radius: 20px;
-          /* OPTIMIZACIÓN: fondo sólido, sin backdrop-filter */
-          background: rgba(20,10,0,.85);
-          box-shadow: 0 0 30px rgba(255,255,255,.15), inset 0 0 16px rgba(255,255,255,.05);
+        .tv-precio-viejo {
+          font-size: 38px;
+          font-weight: 700;
+          color: #333;
+          text-decoration: line-through;
+          line-height: 1;
         }
-        .mw-price-new {
+
+        .tv-descuento {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #e63500, #ff8800);
+          color: white;
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(64px,8.5vw,140px);
+          font-size: 42px;
+          letter-spacing: 2px;
+          padding: 10px 22px;
+          border-radius: 12px;
+          box-shadow: 0 0 30px rgba(230,53,0,.55), 0 6px 20px rgba(230,53,0,.4);
+          animation: descPulse 2.4s ease-in-out infinite 3s;
+          will-change: opacity;
+          flex-shrink: 0;
+        }
+        @keyframes descPulse {
+          0%,100% { opacity:1; }
+          50% { opacity:.78; }
+        }
+
+        .tv-precio-nuevo-wrap {
+          background: rgba(20,10,0,.88);
+          border: 3px solid #fff;
+          border-radius: 16px;
+          padding: 10px 28px 6px;
+          box-shadow: 0 0 24px rgba(255,255,255,.12);
+          flex-shrink: 0;
+        }
+        .tv-precio-nuevo {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 86px;
           line-height: 1;
           background: linear-gradient(135deg, #e63500 0%, #ff6600 40%, #ffaa00 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          /* OPTIMIZACIÓN: drop-shadow estático, sin pricePulse animation */
-          filter: drop-shadow(0 8px 32px rgba(230,80,0,.6));
-          will-change: opacity;
-          /* OPTIMIZACIÓN: pulse solo con opacity, no scale+filter */
+          filter: drop-shadow(0 6px 20px rgba(230,80,0,.5));
           animation: pricePulse 3s ease-in-out infinite 2.5s;
-        }
-        @keyframes pricePulse {
-          0%,100% { opacity: 1; }
-          50%      { opacity: 0.82; }
-        }
-        .mw-descuento {
-          display: inline-flex; align-items:center; justify-content:center;
-          background: linear-gradient(135deg, #e63500, #ff8800);
-          color: white;
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(32px,3.8vw,58px);
-          letter-spacing: 2px;
-          padding: 14px 32px; border-radius: 14px;
-          /* OPTIMIZACIÓN: box-shadow estático, sin descuentoPulse */
-          box-shadow: 0 0 50px rgba(230,53,0,.7), 0 0 100px rgba(255,136,0,.4), 0 10px 40px rgba(230,53,0,.6);
           will-change: opacity;
-          animation: descuentoPulse 2.4s ease-in-out infinite 3s;
         }
-        /* OPTIMIZACIÓN: solo opacity, sin scale */
-        @keyframes descuentoPulse {
-          0%,100% { opacity: 1; }
-          50%      { opacity: 0.78; }
-        }
+        @keyframes pricePulse { 0%,100%{opacity:1;} 50%{opacity:.82;} }
 
-        /* WhatsApp */
-        .mw-whatsapp {
-          display:inline-flex; align-items:center; gap:20px;
-          padding:24px 40px; border-radius:20px;
-          background:#25D366;
-          color:#fff;
-          font-size:clamp(24px,1.8vw,36px);
-          font-weight:900;
-          letter-spacing:.6px;
-          box-shadow: 0 8px 32px rgba(37,211,102,.45), 0 2px 8px rgba(0,0,0,.15);
-          align-self:flex-start;
-          margin-top: 3vh;
-          opacity:0; transform:translateY(50px) translateZ(0);
-          transition:opacity 1s ease 2.3s, transform 1s cubic-bezier(.34,1.8,.64,1) 2.3s;
-          will-change: transform, opacity;
-        }
-        /* OPTIMIZACIÓN: sin scale() en la transición de entrada */
-        .mw-whatsapp.on { opacity:1; transform:translateY(0) translateZ(0); }
-        .mw-whatsapp-icon { width:clamp(40px,3vw,56px); height:clamp(40px,3vw,56px); fill:#fff; }
-
-        /* ── TAGS ── */
-        .mw-tags { display:flex; gap:16px; flex-wrap:wrap; justify-content:flex-start; }
-        .mw-tag {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(18px,1.5vw,28px);
-          font-weight:900; letter-spacing:1.2px;
-          padding: 16px 32px; border-radius:14px; text-transform:uppercase;
+        /* WhatsApp + Link — fila horizontal */
+        .tv-footer {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex-wrap: nowrap;
           opacity: 0;
+          transform: translateY(20px) translateZ(0);
+          transition: opacity .8s ease 1.9s, transform .8s ease 1.9s;
           will-change: transform, opacity;
-          transform: translateZ(0);
+        }
+        .tv-footer.on { opacity:1; transform:translateY(0) translateZ(0); }
+
+        .tv-whatsapp {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 24px;
+          border-radius: 14px;
+          background: #25D366;
           color: #fff;
+          font-size: 22px;
+          font-weight: 900;
+          letter-spacing: .4px;
+          box-shadow: 0 6px 24px rgba(37,211,102,.4);
+          flex-shrink: 0;
+        }
+        .tv-whatsapp svg {
+          width: 28px; height: 28px; fill: #fff; flex-shrink: 0;
+        }
+
+        .tv-web {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 24px;
+          border-radius: 14px;
           background: linear-gradient(135deg, #0066ff, #0094ff);
-          border: 3px solid #00c8ff;
-          box-shadow: 0 6px 24px rgba(0,136,255,.35);
+          border: 2px solid #00c8ff;
+          color: #fff;
+          font-size: 19px;
+          font-weight: 900;
+          letter-spacing: .5px;
+          box-shadow: 0 6px 20px rgba(0,136,255,.35);
+          white-space: nowrap;
         }
-        /* OPTIMIZACIÓN: translateY solo (sin scale) en tagBounce */
-        .mw-tags.on .mw-tag:nth-child(1) { animation: tagBounce .9s cubic-bezier(.34,1.8,.64,1) 2.5s both; }
-        .mw-tags.on .mw-tag:nth-child(2) { animation: tagBounce .9s cubic-bezier(.34,1.8,.64,1) 2.7s both; }
-        .mw-tags.on .mw-tag:nth-child(3) { animation: tagBounce .9s cubic-bezier(.34,1.8,.64,1) 2.9s both; }
-        @keyframes tagBounce {
-          0%   { opacity:0; transform: translateY(80px) translateZ(0); }
-          65%  { transform: translateY(-8px) translateZ(0); }
-          100% { opacity:1; transform: translateY(0) translateZ(0); }
+
+        /* ── COLUMNA DERECHA: IMAGEN DEL PRODUCTO ── */
+        .tv-col-img {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          z-index: 3;
+          /* sombra en el wrapper, no en img animada */
+          filter: drop-shadow(0 20px 40px rgba(0,0,0,.4)) drop-shadow(0 0 30px rgba(230,53,0,.2));
+          opacity: 0;
+          transform: translateX(80px) translateZ(0);
+          transition: opacity .9s ease .2s, transform 1s cubic-bezier(.34,1.4,.64,1) .2s;
+          will-change: transform, opacity;
         }
-        .tag-dark  {
-          /* OPTIMIZACIÓN: background sólido oscuro, sin backdrop-filter */
-          background: rgba(20,20,40,.92);
-          color:#00e5ff; border:2px solid #00e5ff66;
-          box-shadow: 0 4px 16px rgba(0,229,255,.2);
+        .tv-col-img.on {
+          opacity:1;
+          transform: translateX(0) translateZ(0);
         }
-        .tag-green { background:rgba(232,245,233,.95); color:#2e7d32; border:2px solid #a5d6a7; box-shadow: 0 4px 16px rgba(46,125,50,.15); }
-        .tag-orange{ background:rgba(255,243,224,.95); color:#e65100; border:2px solid #ffcc80; box-shadow: 0 4px 16px rgba(230,81,0,.15); }
+        .tv-col-img img {
+          width: 100%;
+          height: 100%;
+          max-height: 680px;
+          object-fit: contain;
+          /* float solo translateY — sin scale ni rotate */
+          animation: floatImg 4.5s ease-in-out infinite 1.5s;
+          will-change: transform;
+          transform: translateZ(0);
+        }
+        @keyframes floatImg {
+          0%,100% { transform: translateY(0) translateZ(0); }
+          50%      { transform: translateY(-14px) translateZ(0); }
+        }
+
+        /* ── STAR CLIP (opcional, pásalo como clase al badge si querés) ── */
+        .clip-star {
+          clip-path: polygon(
+            50% 0%, 61% 35%, 98% 35%, 68% 57%,
+            79% 91%, 50% 70%, 21% 91%, 32% 57%,
+            2% 35%, 39% 35%
+          );
+        }
       `}</style>
 
-      <div className="mw">
+      <div className="tv-root">
         {mounted && <div className="flash" />}
 
         {/* FONDO */}
-        <img className={`mw-bg ${mounted ? 'on' : ''}`} src={fondo} alt="" aria-hidden="true" />
+        <img className={`tv-bg ${mounted ? 'on' : ''}`} src={fondo} alt="" aria-hidden="true" />
+        <div className="tv-overlay" />
 
-        {/* LOGO */}
-        <div className={`mw-logo ${mounted ? 'on' : ''}`}>
-          <div className="mw-logo-circle">
-            <div className="mw-logo-inner">
-              <img src={logo} alt="Logo" />
-            </div>
-          </div>
-        </div>
-
-        {/* BADGE MEGA OFERTA */}
-        <div className="mw-badge-top">
-          <span className="mw-dot-blink" />⚡ MEGA OFERTA
-        </div>
-
-        {/* IMAGEN DEL PRODUCTO */}
-        <div className={`mw-img-wrap ${mounted ? 'on' : ''}`}>
-          {imagenProducto && <img className="mw-img" src={imagenProducto} alt={titulo} />}
-        </div>
-
-        {/* LAYOUT */}
-        <div className="mw-layout">
-          <div />
-          <div className="mw-right">
-            {/* CONTENIDO DINÁMICO */}
-            <div className={`mw-content ${mounted ? 'on' : ''}`}>
-              <div className="mw-deco">
-                <span className="mw-deco-txt">{categoria}</span>
-              </div>
-
-              <div
-                className="mw-nombre"
-                style={{ marginTop: '1.5vh', '--titulo-scale': titleScale }}
-              >
-                <span className="mw-nombre-dest">{titulo}</span>
-              </div>
-
-              {descripcion && (
-                <p className="mw-desc" style={{ marginTop: '1vh' }}>
-                  {descripcion}
-                </p>
-              )}
-
-              <div className="mw-price-block" style={{ marginTop: '6vh' }}>
-                {precioLista > 0 && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '20px',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <div>
-                      <div className="mw-price-label">Precio anterior</div>
-                      <div className="mw-price-old">{formatPrecio(precioLista)}</div>
-                    </div>
-                    {porcentajeDescuento > 0 && (
-                      <div className="mw-descuento">{porcentajeDescuento}% OFF</div>
-                    )}
-                  </div>
-                )}
-                <div className="mw-price-new-wrap">
-                  <div className="mw-price-new">{formatPrecio(precioOferta)}</div>
+        {/* GRID PRINCIPAL */}
+        <div className="tv-grid">
+          {/* ── COL 1: LOGO ── */}
+          <div className="tv-col-logo">
+            <div className={`tv-logo-wrap ${mounted ? 'on' : ''}`}>
+              <div className="tv-logo-circle">
+                <div className="tv-logo-inner">
+                  <img src={logo} alt="Logo" />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* WhatsApp */}
-            <div className={`mw-whatsapp ${mounted ? 'on' : ''}`}>
-              <svg
-                className="mw-whatsapp-icon"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-              </svg>
-              <span>381 2108473</span>
+          {/* ── COL 2: CONTENIDO ── */}
+          <div className="tv-col-content">
+            {/* Badge */}
+            <div className={`tv-badge ${mounted ? 'on' : ''}`}>
+              <span className="tv-dot" />⚡ MEGA OFERTA
             </div>
 
-            {/* WEBSITE - Tags mejorados */}
-            <div
-              className={`mw-tags ${mounted ? 'on' : ''}`}
-              style={{ marginTop: 'auto', paddingBottom: '2.5vh', gap: '12px' }}
-            >
-              <span className="mw-tag">🌐 www.mueblesdepinoml.com</span>
+            {/* Categoría */}
+            <div className={`tv-categoria ${mounted ? 'on' : ''}`}>{categoria}</div>
+
+            {/* Título */}
+            <div className={`tv-titulo ${mounted ? 'on' : ''}`}>{titulo}</div>
+
+            {/* Descripción */}
+            {descripcion && <p className={`tv-desc ${mounted ? 'on' : ''}`}>{descripcion}</p>}
+
+            {/* Precios */}
+            <div className={`tv-precios ${mounted ? 'on' : ''}`}>
+              {precioLista > 0 && (
+                <div className="tv-precio-viejo-wrap">
+                  <div className="tv-precio-label">Precio anterior</div>
+                  <div className="tv-precio-viejo">{formatPrecio(precioLista)}</div>
+                </div>
+              )}
+              {porcentajeDescuento > 0 && (
+                <div className="tv-descuento">{porcentajeDescuento}% OFF</div>
+              )}
+              <div className="tv-precio-nuevo-wrap">
+                <div className="tv-precio-nuevo">{formatPrecio(precioOferta)}</div>
+              </div>
             </div>
+
+            {/* Footer: WhatsApp + Web */}
+            <div className={`tv-footer ${mounted ? 'on' : ''}`}>
+              <div className="tv-whatsapp">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                </svg>
+                381 2108473
+              </div>
+              <div className="tv-web">🌐 www.mueblesdepinoml.com</div>
+            </div>
+          </div>
+
+          {/* ── COL 3: IMAGEN PRODUCTO ── */}
+          <div className={`tv-col-img ${mounted ? 'on' : ''}`}>
+            {imagenProducto && <img src={imagenProducto} alt={titulo} />}
           </div>
         </div>
       </div>
