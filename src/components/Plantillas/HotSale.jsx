@@ -43,7 +43,7 @@ const HotSale = ({
   const imgSize = isTall ? IMG_TALL : IMG_FULL;
   // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
   // así que sumamos un offset extra para que quede centrada bajo el reflector
-  const imgLeft = Math.round(880 - imgSize / 2) + (isTall ? 25 : 0);
+  const imgLeft = Math.round(830 - imgSize / 2) + (isTall ? 25 : 0);
   const imgTop = Math.round(305 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
@@ -195,7 +195,7 @@ const HotSale = ({
                 animation: "slideDown 0.5s ease-out 0.1s both",
               }}
             >
-              {porcentajeDescuento}% 
+              {porcentajeDescuento}%
             </div>
           )}
 
@@ -203,45 +203,45 @@ const HotSale = ({
               PRECIO DE LISTA tachado — debajo de la estrella
           ══════════════════════════════════════════ */}
           {precioLista > 0 && (
-  <div
-    style={{
-      position: "absolute",
-      left: 70,
-      top: 470,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: 4,
-      pointerEvents: "none",
-      animation: "slideUp 0.5s ease-out 1.0s both",
-    }}
-  >
-    <div
-      style={{
-        fontFamily: "'Rubik', sans-serif",
-        fontSize: 20,
-        color: "rgb(249, 240, 240)",
-        letterSpacing: 1.5,
-        textTransform: "uppercase",
-      }}
-    >
-      ANTES
-    </div>
+            <div
+              style={{
+                position: "absolute",
+                left: 70,
+                top: 470,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 4,
+                pointerEvents: "none",
+                animation: "slideUp 0.5s ease-out 1.0s both",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "'Rubik', sans-serif",
+                  fontSize: 20,
+                  color: "rgb(249, 240, 240)",
+                  letterSpacing: 1.5,
+                  textTransform: "uppercase",
+                }}
+              >
+                ANTES
+              </div>
 
-    <div
-      style={{
-        fontFamily: "'Rubik', sans-serif",
-        fontSize: 24,
-        color: "rgb(249, 240, 240)",
-        textDecoration: "line-through",
-        lineHeight: 1,
-        letterSpacing: 1,
-      }}
-    >
-      {fmt(precioLista)}
-    </div>
-  </div>
-)}
+              <div
+                style={{
+                  fontFamily: "'Rubik', sans-serif",
+                  fontSize: 24,
+                  color: "rgb(249, 240, 240)",
+                  textDecoration: "line-through",
+                  lineHeight: 1,
+                  letterSpacing: 1,
+                }}
+              >
+                {fmt(precioLista)}
+              </div>
+            </div>
+          )}
 
           {/* ══════════════════════════════════════════
               NOMBRE DEL PRODUCTO — debajo del título MEGA OFERTA
