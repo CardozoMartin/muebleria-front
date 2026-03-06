@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import logo from './../../assets/logo.png';
 import comedor from './../../assets/comedor.png';
-import fireBg from './../../assets/fire-png.webp';
+import hotsaleBg from './../../assets/hotsale.png';
 import './Hotsale.css';
 
 /*
@@ -53,11 +53,8 @@ export default function HotSale({
         {/* Escena fija 1280x720, escalada uniformemente */}
         <div className="hs-scene" style={{ transform: `scale(${scale})` }}>
 
-          {/* FONDOS */}
-          <div className="hs-bg" />
-          <div className="hs-heat-lines" />
-          <div className="hs-lava-right" />
-          <div className="hs-glow-top" />
+          {/* FONDO */}
+          <img className="hs-bg" src={hotsaleBg} alt="" aria-hidden="true" />
 
           {/* LOGO */}
           <div className={`hs-logo ${mounted ? 'on' : ''}`}>
@@ -70,31 +67,23 @@ export default function HotSale({
             <span className="hs-banner-txt"><span>HOT</span> SALE</span>
           </div>
 
-          {/* LINEA VERTICAL */}
-          <div className="hs-vline" />
+          {/* LINEA VERTICAL eliminada */}
 
           {/* LAYOUT */}
           <div className="hs-layout">
 
             {/* IZQUIERDA - IMAGEN */}
             <div className="hs-left">
-              <div className="hs-img-glow" />
-              <div className="hs-floor" />
               <div className={`hs-img-wrap ${mounted ? 'on' : ''}`}>
                 <img className="hs-img" src={imagenProducto} alt={titulo} />
               </div>
               <div className={`hs-tags ${mounted ? 'on' : ''}`}>
                 <span className="hs-tag hs-tag-white">www.mueblesdepinoml.com.ar</span>
               </div>
-              <div className="hs-corner hs-corner-tl" />
-              <div className="hs-corner hs-corner-tr" />
-              <div className="hs-corner hs-corner-bl" />
-              <div className="hs-corner hs-corner-br" />
             </div>
 
             {/* DERECHA - CONTENIDO */}
             <div className="hs-right">
-              <img className="hs-fire-bg" src={fireBg} alt="" aria-hidden="true" />
               <div className="hs-content idle">
 
                 <div className="hs-slogan">Precios que arden!</div>
