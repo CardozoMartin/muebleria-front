@@ -9,10 +9,12 @@ const FlashSale = ({
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
+  preview = false,
 }) => {
   const BASE_W = 1200;
   const BASE_H = 600;
   const [scale, setScale] = useState(1);
+  const effectiveScale = preview ? 1 : scale;
 
   useEffect(() => {
     const calc = () => setScale(Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H));
@@ -54,8 +56,8 @@ const FlashSale = ({
 
       <div
         style={{
-          width: '100vw',
-          height: '100vh',
+          width: preview ? BASE_W : '100vw',
+          height: preview ? BASE_H : '100vh',
           background: '#fff',
           display: 'flex',
           alignItems: 'center',
@@ -69,7 +71,7 @@ const FlashSale = ({
             width: BASE_W,
             height: BASE_H,
             flexShrink: 0,
-            transform: `scale(${scale})`,
+            transform: `scale(${effectiveScale})`,
             transformOrigin: 'center center',
           }}
         >

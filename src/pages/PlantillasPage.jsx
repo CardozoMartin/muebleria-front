@@ -44,9 +44,9 @@ const PLANTILLAS = [
   },
 ];
 
-// Dimensiones de referencia del template
-const TMPL_W = 1280;
-const TMPL_H = 720;
+// Dimensiones de referencia del template (coinciden con BASE_W/BASE_H de los componentes)
+const TMPL_W = 1200;
+const TMPL_H = 600;
 
 function MiniCard({ plantilla, onClick }) {
   const wrapRef = useRef(null);
@@ -96,7 +96,7 @@ function MiniCard({ plantilla, onClick }) {
             pointerEvents: 'none',
           }}
         >
-          <Comp key={plantilla.id} />
+          <Comp key={plantilla.id} preview />
         </div>
 
         {/* Hover hint */}

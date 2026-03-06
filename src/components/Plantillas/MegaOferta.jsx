@@ -9,10 +9,12 @@ const Megaoferta = ({
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
+  preview = false,
 }) => {
   const BASE_W = 1200;
   const BASE_H = 600;
   const [scale, setScale] = useState(1);
+  const effectiveScale = preview ? 1 : scale;
 
   useEffect(() => {
     const calc = () => setScale(Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H));
@@ -55,8 +57,8 @@ const Megaoferta = ({
       {/* Pantalla completa → centra la escena */}
       <div
         style={{
-          width: '100vw',
-          height: '100vh',
+          width: preview ? BASE_W : '100vw',
+          height: preview ? BASE_H : '100vh',
           background: '#000',
           display: 'flex',
           alignItems: 'center',
@@ -71,7 +73,7 @@ const Megaoferta = ({
             width: BASE_W,
             height: BASE_H,
             flexShrink: 0,
-            transform: `scale(${scale})`,
+            transform: `scale(${effectiveScale})`,
             transformOrigin: 'center center',
           }}
         >
@@ -194,7 +196,7 @@ const Megaoferta = ({
             style={{
               position: 'absolute',
               left: 890,
-              top: unaLinea ? 195 : 180,
+              top: unaLinea ? 200 : 190,
               transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
@@ -249,10 +251,9 @@ const Megaoferta = ({
               alt={nombreProducto ?? ''}
               style={{
                 position: 'absolute',
-                left: 70,
+                left: 20,
                 top: 40,
-                transform: 'translateX(-50%)',
-                width: 570,
+                width: 530,
                 height: 530,
                 objectFit: 'contain',
                 animation: 'floatProd 4s ease-in-out infinite, glowProd 4s ease-in-out infinite',
