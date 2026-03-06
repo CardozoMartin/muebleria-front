@@ -29,7 +29,7 @@ const FeriaDescuentos = ({
   // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
   const unaLinea = len <= 14;
   const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
-  const descUnaLinea = descripcion.length <= 50;
+  const descUnaLinea = descripcion.length <= 35;
 
   // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
   // Centro deseado: x≈298, y≈305 (zona del reflector)
@@ -39,7 +39,7 @@ const FeriaDescuentos = ({
   const imgSize = isTall ? IMG_TALL : IMG_FULL;
   // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
   // así que sumamos un offset extra para que quede centrada bajo el reflector
-  const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
+  const imgLeft = Math.round(860 - imgSize / 2) + (isTall ? 25 : 0);
   const imgTop  = Math.round(305 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
@@ -57,9 +57,17 @@ const FeriaDescuentos = ({
       0%,100% { opacity:1; }
       50%      { opacity:0.82; }
     }
+    @keyframes priceColorShift {
+      0%,100% { color: #fff898; }
+      50%      { color: #7de8ff; }
+    }
     @keyframes slideDown {
       from { opacity:0; transform: translateY(-22px); }
       to   { opacity:1; transform: translateY(0);     }
+    }
+    @keyframes slideDownRotated {
+      from { opacity:0; transform: rotate(-4deg) translateY(-22px); }
+      to   { opacity:1; transform: rotate(-4deg) translateY(0);     }
     }
     @keyframes slideRight {
       from { opacity:0; transform: translateX(-28px) translateX(0); }
@@ -144,8 +152,8 @@ const FeriaDescuentos = ({
           <div
             style={{
               position: 'absolute',
-              left: 728,
-              top: 500,
+              left: 358,
+              top: 490,
               transform: 'translate(-50%, -50%)',
               textAlign: 'center',
               lineHeight: 1,
@@ -158,12 +166,18 @@ const FeriaDescuentos = ({
             <div
               style={{
                 fontFamily: "'Rubik', sans-serif",
-                fontWeight: 900,
-                fontSize: porcentajeDescuento > 0 ? 46 : 52,
-                color: '#050303',
+                fontWeight: 1000,
+                fontSize: porcentajeDescuento > 0 ? 66 : 52,
+                color: '#fff898',
+                textShadow: `
+    -3px -3px 0 #352020,
+     3px -3px 0 #352020,
+    -3px  3px 0 #352020,
+     3px  3px 0 #4a2c1a
+  `,
                 letterSpacing: -1,
                 lineHeight: 0.95,
-                animation: 'pricePulse 2.5s ease-in-out 1.8s infinite',
+                animation: 'pricePulse 2.5s ease-in-out 1.8s infinite, priceColorShift 2.5s ease-in-out 1.8s infinite',
               }}
             >
               {fmt(precioOferta)}
@@ -177,22 +191,22 @@ const FeriaDescuentos = ({
             <div
               style={{
                 position: 'absolute',
-                left: 63,
-                top: 22,
+                left: 400,
+                top: 52,
                 transform: 'rotate(-4deg)',
                 zIndex: 2,
                 fontFamily: "'Rubik', sans-serif",
                 fontWeight: 900,
-                fontSize: 33,
-                color: '#ffffff',
+                fontSize: 53,
+                color: '#808ae4',
                 letterSpacing: -1,
                 lineHeight: 1,
-                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+
                 pointerEvents: 'none',
-                animation: 'slideDown 0.5s ease-out 0.1s both',
+                animation: 'slideDownRotated 0.5s ease-out 0.1s both',
               }}
             >
-              {porcentajeDescuento}% OFF
+              {porcentajeDescuento}%
             </div>
           )}
 
@@ -203,8 +217,8 @@ const FeriaDescuentos = ({
             <div
               style={{
                 position: 'absolute',
-                left: 620,
-                top: 420,
+                left: 210,
+                top: 410,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
@@ -215,7 +229,7 @@ const FeriaDescuentos = ({
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
+                  fontSize: 34,
                   color: 'rgb(255, 255, 255)',
                   letterSpacing: 1.5,
                   textTransform: 'uppercase',
@@ -226,7 +240,7 @@ const FeriaDescuentos = ({
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
+                  fontSize: 34,
                   color: 'rgb(255, 255, 255)',
                   textDecoration: 'line-through',
                   lineHeight: 1,
@@ -244,8 +258,8 @@ const FeriaDescuentos = ({
           <div
             style={{
               position: 'absolute',
-              left: 890,
-              top: unaLinea ? 200 : 190,
+              left: 360,
+              top: unaLinea ? 230 : 190,
               transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
@@ -256,10 +270,7 @@ const FeriaDescuentos = ({
               width: 380,
               lineHeight: 1.05,
               pointerEvents: 'none',
-              background: 'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              color: 'rgb(255, 255, 255)',
               filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
               animation: 'slideLeftTitle 0.55s ease-out 0.5s both',
             }}
@@ -274,11 +285,11 @@ const FeriaDescuentos = ({
             <div
               style={{
                 position: 'absolute',
-                left: 650,
-                top: 330,
+                left: 120,
+                top: 340,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
-                fontSize: descUnaLinea ? 18 : 14,
+                fontSize: descUnaLinea ? 20 : 16,
                 fontWeight: 400,
                 color: 'rgb(255, 255, 255)',
                 lineHeight: 1.6,
