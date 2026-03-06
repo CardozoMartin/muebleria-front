@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useImageCache } from '../../hooks/useImageCache';
 
 import CalidezTV from '../Plantillas/CalidezTV';
 import CasaViva from '../Plantillas/Casaviva';
@@ -51,6 +52,8 @@ export default function SlideShowPlayer({
   const [pausado, setPausado] = useState(false);
   const timeoutRef = useRef(null);
   const intervalRef = useRef(null);
+  const { preloadImages } = useImageCache();
+  const cacheadoRef = useRef(false);
 
   const productoActual = productos[indiceActual];
   const PlantillaComponente = productoActual
@@ -61,6 +64,34 @@ export default function SlideShowPlayer({
     setIndiceActual(indice);
     setProgreso(0);
   };
+
+  // Precarga todas las imágenes cuando los productos cambian
+  useEffect(() => {
+    if (productos.length === 0 || cacheadoRef.current) return;
+
+    const imagenesAprecargar = productos
+      .map((p) => p.imagenProducto)
+      .filter(Boolean);
+
+    if (imagenesAprecargar.length > 0) {
+      preloadImages(imagenesAprecargar).then(() => {
+        cacheadoRef.current = true;
+        console.log(`✓ Precargadas ${imagenesAprecargar.length} imágenes`);
+      });
+    }
+  }, [productos, preloadImages]);
+
+  // Pre-cargar la siguiente imagen para transiciones smooth
+  useEffect(() => {
+    if (productos.length <= 1) return;
+
+    const nextIndice = (indiceActual + 1) % productos.length;
+    const nextProducto = productos[nextIndice];
+
+    if (nextProducto?.imagenProducto) {
+      preloadImages([nextProducto.imagenProducto]).catch(() => {});
+    }
+  }, [indiceActual, productos, preloadImages]);
 
   // Loop principal
   useEffect(() => {
