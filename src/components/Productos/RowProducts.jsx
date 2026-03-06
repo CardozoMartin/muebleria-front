@@ -7,6 +7,7 @@ import {
 import Swal from "sweetalert2";
 import { useEditProduct } from "../../store/useEditProduct";
 import '../../css/productos.css';
+import { PLANTILLAS } from '../../constants/plantillas';
 
 const RowProducts = ({ product, index, setShowForm, setShowVideo, setSelectedProduct }) => {
   const { setProduct } = useEditProduct();
@@ -116,7 +117,7 @@ const RowProducts = ({ product, index, setShowForm, setShowVideo, setSelectedPro
         {Number(product.porcentajeDescuento).toLocaleString("es-AR")}
       </td>
       <td className="price-cell">
-        {product.plantillaId || '-'}
+        {PLANTILLAS.find(p => p.id === product.plantillaId)?.nombre || product.plantillaId || '-'}
       </td>
 
       {/* Estado */}

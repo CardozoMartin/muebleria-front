@@ -11,12 +11,12 @@ import PlantillaCanva6 from '../Plantillas/MegaSale';
 
 
 const PLANTILLAS_MAP = {
-  canva:              PlantillaCanva,
-  canva2:             PlantillaCanva2,
-  canva3:             PlantillaCanva3,
-  blackfriday:        PlantillaCanva4,
-  feriadedescuentos:  PlantillaCanva5,
-  megasale:           PlantillaCanva6,
+  MegaOferta:              PlantillaCanva,
+  FlashSale:             PlantillaCanva2,
+  HotSale:             PlantillaCanva3,
+  BlackFriday:        PlantillaCanva4,
+  FeriaDescuentos:  PlantillaCanva5,
+  MegaSale:           PlantillaCanva6,
 };
 
 export default function SlideShowPlayer({
