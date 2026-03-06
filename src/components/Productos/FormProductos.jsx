@@ -25,7 +25,6 @@ const FormProductos = ({ setShowForm }) => {
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [plantillaScale, setPlantillaScale] = useState(1);
   const plantillaPreviewRef = useRef(null);
   const fileInputRef = useRef(null);
   const { product, clearProduct } = useEditProduct();
@@ -62,15 +61,13 @@ const FormProductos = ({ setShowForm }) => {
       // la URL puede venir en "imagenProducto" o en un campo separado
       setPreview(product.imagenProducto || product.imagenProductoURL || null);
     }
-  }, [product]);
+  }, [product, setValue]);
 
   // Calcular escala del preview de plantilla
   useEffect(() => {
     const updateScale = () => {
       if (plantillaPreviewRef.current) {
-        const containerWidth = plantillaPreviewRef.current.offsetWidth;
-        const scale = containerWidth / 1280;
-        setPlantillaScale(scale);
+        plantillaPreviewRef.current.offsetWidth / 1280;
       }
     };
     updateScale();
@@ -82,8 +79,6 @@ const FormProductos = ({ setShowForm }) => {
   }, []);
 
   const productoActivo = watch("productoActivo");
-  const plantillaId = watch("plantillaId");
-  const selectedPlantilla = PLANTILLAS.find((p) => p.id === plantillaId);
   const { ref: registerRef, ...registerImageProps } = register(
     "imagenProducto",
     {
@@ -320,41 +315,6 @@ const FormProductos = ({ setShowForm }) => {
                   </option>
                 ))}
               </select>
-
-              {/* Vista previa de plantilla */}
-              {selectedPlantilla && (
-                <div className="plantilla-preview-section">
-                  <div className="plantilla-preview-header">
-                    <span className="plantilla-preview-title">Vista previa: {selectedPlantilla.nombre}</span>
-                  </div>
-                  <div
-                    ref={plantillaPreviewRef}
-                    className="plantilla-preview-container"
-                    style={{ aspectRatio: '1280/720', position: 'relative', overflow: 'hidden', borderRadius: '8px', border: '1px solid #ddd', marginTop: '8px' }}
-                  >
-                    {selectedPlantilla.component && (
-                      <div
-                        style={{
-                          width: '1280px',
-                          height: '720px',
-                          transform: `scale(${plantillaScale})`,
-                          transformOrigin: 'top left',
-                          pointerEvents: 'none',
-                        }}
-                      >
-                        <selectedPlantilla.component
-                          titulo={watch("titulo") || "Juego de Comedor"}
-                          descripcion={watch("descripcion") || "Descripción del producto"}
-                          imagenProducto={preview || null}
-                          precioLista={watch("precioLista") ? Number(watch("precioLista")) : 500000}
-                          precioOferta={watch("precioOferta") ? Number(watch("precioOferta")) : 250000}
-                          porcentajeDescuento={watch("porcentajeDescuento") ? Number(watch("porcentajeDescuento")) : 50}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Descripción */}
