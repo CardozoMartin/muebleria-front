@@ -22,7 +22,10 @@ const Megaoferta = ({
   }, []);
 
   const fmt = (n) => (n ? `$${Number(n).toLocaleString('es-AR')}` : '');
-  const nombreSize = nombreProducto.length > 26 ? 22 : nombreProducto.length > 16 ? 28 : 34;
+  const len = nombreProducto.length;
+  // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
+  const unaLinea = len <= 14;
+  const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -126,13 +129,14 @@ const Megaoferta = ({
             <div
               style={{
                 position: 'absolute',
-                left: 69,
+                left: 63,
                 top: 22,
                 transform: 'rotate(-4deg)',
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 42,
+                fontFamily: "'Rubik', sans-serif",
+                fontWeight: 900,
+                fontSize: 33,
                 color: '#ffffff',
-                letterSpacing: 3,
+                letterSpacing: -1,
                 lineHeight: 1,
                 textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                 pointerEvents: 'none',
@@ -190,16 +194,22 @@ const Megaoferta = ({
             style={{
               position: 'absolute',
               left: 890,
-              top: 180,
+              top: unaLinea ? 195 : 180,
               transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
-              fontSize: nombreSize + 14,
-              color: '#f5c800',
+              fontSize: nombreFontSize,
               letterSpacing: -1,
-              textShadow: '0 3px 18px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7)',
-              whiteSpace: 'nowrap',
+              whiteSpace: unaLinea ? 'nowrap' : 'normal',
+              textAlign: 'center',
+              width: 380,
+              lineHeight: 1.05,
               pointerEvents: 'none',
+              background: 'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
             }}
           >
             {nombreProducto}
@@ -213,7 +223,7 @@ const Megaoferta = ({
               style={{
                 position: 'absolute',
                 left: 650,
-                top: 300,
+                top: 330,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: 14,
