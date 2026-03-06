@@ -49,7 +49,14 @@ export default function SlideShowPlayer({
     const imagenesProducto = productos.map((p) => p.imagenProducto).filter(Boolean);
 
     // Las rutas de fondo se precargan pero no bloquean si fallan
-    const fondosCanva = [];
+    const fondosCanva = [
+      '../../assets/canva/blackfriday.png',
+      '../../assets/canva/feriadedescuentos.png',
+      '../../assets/canva/flashsale.png',
+      '../../assets/canva/hotsale.png',
+      '../../assets/canva/megasale.png',
+      '../../assets/canva/megaoferta.png'
+    ];
 
     const precargarTodo = async () => {
       // Precargar fondos primero (son las más pesadas)
