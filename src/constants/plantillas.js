@@ -1,17 +1,17 @@
-import MegaSale from '../components/Plantillas/MegaSale';
-import LuxeShow from '../components/Plantillas/LuxeShow';
-import HotSale from '../components/Plantillas/HotSale';
-import CyberMonday from '../components/Plantillas/CyberMonday';
-import Liquidacion from '../components/Plantillas/Liquidacion';
-import CasaViva from '../components/Plantillas/Casaviva';
 import CalidezTV from '../components/Plantillas/CalidezTV';
+import CasaViva from '../components/Plantillas/Casaviva';
+import CyberMonday from '../components/Plantillas/CyberMonday';
+import HotSale from '../components/Plantillas/HotSale';
 import ImpactoTV from '../components/Plantillas/ImpactoTV';
 import ImpactoTV2 from '../components/Plantillas/ImpactoTV2';
+import Liquidacion from '../components/Plantillas/Liquidacion';
+import LuxeShow from '../components/Plantillas/LuxeShow';
+import MegaSale from '../components/Plantillas/MegaSale';
 import ModernTV from '../components/Plantillas/ModernTV';
-import SpotlightTV from '../components/Plantillas/SpotlightTV';
 import PlantillaCanva from '../components/Plantillas/PlantillaCanva';
 import PlantillaCanva2 from '../components/Plantillas/PlantillaCanva2';
 import PlantillaCanva3 from '../components/Plantillas/PlantillaCanva3';
+import SpotlightTV from '../components/Plantillas/SpotlightTV';
 
 // central list of available templates; used in PlantillasPage and product form
 export const PLANTILLAS = [
@@ -50,7 +50,7 @@ export const PLANTILLAS = [
     component: HotSale,
     dot: 'bg-red-500',
   },
-    {
+  {
     id: 'cybermonday',
     nombre: 'Cyber Monday',
     descripcion: 'Dinámico · Rojo · Fuego',
