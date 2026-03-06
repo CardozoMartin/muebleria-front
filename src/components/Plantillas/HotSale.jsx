@@ -148,8 +148,8 @@ const HotSale = ({
           <div
             style={{
               position: "absolute",
-              left: 380,
-              top: 530,
+              left: 350,
+              top: 510,
               transform: "translate(-50%, -50%)",
               textAlign: "center",
               lineHeight: 1,
@@ -181,22 +181,21 @@ const HotSale = ({
             <div
               style={{
                 position: "absolute",
-                left: 125,
-                top: 445,
+                left: 310,
+                top: 60,
                 transform: "rotate(-4deg)",
                 zIndex: 2,
                 fontFamily: "'Rubik', sans-serif",
                 fontWeight: 900,
-                fontSize: 33,
+                fontSize: 40,
                 color: "#ffffff",
                 letterSpacing: -1,
                 lineHeight: 1,
-                textShadow: "0 2px 10px rgba(0,0,0,0.5)",
                 pointerEvents: "none",
                 animation: "slideDown 0.5s ease-out 0.1s both",
               }}
             >
-              {porcentajeDescuento}% OFF
+              {porcentajeDescuento}% 
             </div>
           )}
 
@@ -204,43 +203,45 @@ const HotSale = ({
               PRECIO DE LISTA tachado — debajo de la estrella
           ══════════════════════════════════════════ */}
           {precioLista > 0 && (
-            <div
-              style={{
-                position: "absolute",
-                left: 310,
-                top: 440,
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                pointerEvents: "none",
-                animation: "slideUp 0.5s ease-out 1.0s both",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
-                  color: "rgb(13, 12, 12)",
-                  letterSpacing: 1.5,
-                  textTransform: "uppercase",
-                }}
-              >
-                ANTES
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
-                  color: "rgb(10, 10, 10)",
-                  textDecoration: "line-through",
-                  lineHeight: 1,
-                  letterSpacing: 1,
-                }}
-              >
-                {fmt(precioLista)}
-              </div>
-            </div>
-          )}
+  <div
+    style={{
+      position: "absolute",
+      left: 70,
+      top: 470,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 4,
+      pointerEvents: "none",
+      animation: "slideUp 0.5s ease-out 1.0s both",
+    }}
+  >
+    <div
+      style={{
+        fontFamily: "'Rubik', sans-serif",
+        fontSize: 20,
+        color: "rgb(249, 240, 240)",
+        letterSpacing: 1.5,
+        textTransform: "uppercase",
+      }}
+    >
+      ANTES
+    </div>
+
+    <div
+      style={{
+        fontFamily: "'Rubik', sans-serif",
+        fontSize: 24,
+        color: "rgb(249, 240, 240)",
+        textDecoration: "line-through",
+        lineHeight: 1,
+        letterSpacing: 1,
+      }}
+    >
+      {fmt(precioLista)}
+    </div>
+  </div>
+)}
 
           {/* ══════════════════════════════════════════
               NOMBRE DEL PRODUCTO — debajo del título MEGA OFERTA
@@ -249,7 +250,7 @@ const HotSale = ({
             style={{
               position: "absolute",
               left: 330,
-              top: unaLinea ? 130 : 140,
+              top: unaLinea ? 200 : 210,
               transform: "translateX(-50%)",
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
@@ -289,7 +290,7 @@ const HotSale = ({
               style={{
                 position: "absolute",
                 left: 80,
-                top: 280,
+                top: 350,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: descUnaLinea ? 20 : 16,
