@@ -1,93 +1,46 @@
 import React, { useEffect, useRef, useState } from 'react';
-import LuxeShow from '../components/Plantillas/LuxeShow';
-import MegaSale from '../components/Plantillas/MegaSale';
-import HotSale from '../components/Plantillas/HotSale';
-import CyberMonday from '../components/Plantillas/CyberMonday';
-import CasaViva from '../components/Plantillas/Casaviva';
-import Liquidacion from '../components/Plantillas/Liquidacion';
-import CalidezTV from '../components/Plantillas/CalidezTV';
-import ImpactoTV from '../components/Plantillas/ImpactoTV';
-import ImpactoTV2 from '../components/Plantillas/ImpactoTV2';
-import ModernTV from '../components/Plantillas/ModernTV';
-import SpotlightTV from '../components/Plantillas/SpotlightTV';
+import PlantillaCanva from '../components/Plantillas/MegaOferta';
+import PlantillaCanva2 from '../components/Plantillas/FlashSale';
+import PlantillaCanva3 from '../components/Plantillas/HotSale';
+import PlantillaCanva4 from '../components/Plantillas/BlackFriday';
+import PlantillaCanva5 from '../components/Plantillas/FeriaDescuentos';
+
 
 const PLANTILLAS = [
   {
-    id: 'cybermonday',
-    nombre: 'Cyber Monday',
-    descripcion: 'Dinámico · con tonos morados, lilas y azules · Moderno ',
-    component: CyberMonday,
+    id: 'megaoferta',
+    nombre: 'Mega Oferta',
+    descripcion: 'Dinámico · con tonos rojos, amarillos y azules · Moderno ',
+    component: PlantillaCanva,
     dot: 'bg-purple-600',
+  },
+  {
+    id: 'flashsale',
+    nombre: 'Flash Sale',
+    descripcion: 'Llamativo · con tonos amarillos y rojos · Dinámico',
+    component: PlantillaCanva2,
+    dot: 'bg-red-600',
   },
   {
     id: 'hotsale',
     nombre: 'Hot Sale',
-    descripcion: 'Dinámico · con tonos rojos, naranjas y amarillos · Llamativo ',
-    component: HotSale,
-    dot: 'bg-red-600',
-  },
-  {
-    id: 'liquidacion',
-    nombre: 'Liquidación',
-    descripcion: 'Dinámico · Amarillo · Brillante',
-    component: Liquidacion,
+    descripcion: 'Dinámico · con tonos rojos · Llamativo ',
+    component: PlantillaCanva3,
     dot: 'bg-yellow-300',
   },
   {
-    id: 'megasale',
-    nombre: 'Mega Sale',
-    descripcion: 'Energético · Naranja · Impacto',
-    component: MegaSale,
-    dot: 'bg-orange-500',
+    id: 'blackfriday',
+    nombre: 'Black Friday',
+    descripcion: 'Impactante · con contrastes entre blanco, negro y amarillo · Dinámico',
+    component: PlantillaCanva4,
+    dot: 'bg-gray-800',
   },
   {
-    id: 'casaviva',
-    nombre: 'Oferta Especial',
-    descripcion: 'En tonos verdes · Natural · Acogedor',
-    component: CasaViva,
-    dot: 'bg-green-500',
-  },
-  {
-    id: 'luxeshow',
-    nombre: 'Super Sale',
-    descripcion: 'En tonos azules · Elegante · Sofisticado',
-    component: LuxeShow,
-    dot: 'bg-blue-500',
-  },
-  {
-    id: 'calidez',
-    nombre: 'Calidez TV',
-    descripcion: 'Cálido · Crema · Hogareño',
-    component: CalidezTV,
-    dot: 'bg-amber-600',
-  },
-  {
-    id: 'impactotv',
-    nombre: 'Impacto TV',
-    descripcion: 'Impactante · Negro · Dinámico',
-    component: ImpactoTV,
-    dot: 'bg-gray-900',
-  },
-  {
-    id: 'impactotv2',
-    nombre: 'Impacto TV 2',
-    descripcion: 'Impactante · Negro · Moderno',
-    component: ImpactoTV2,
-    dot: 'bg-slate-700',
-  },
-  {
-    id: 'modern',
-    nombre: 'Modern TV',
-    descripcion: 'Limpio · Blanco · Minimalista',
-    component: ModernTV,
-    dot: 'bg-white',
-  },
-  {
-    id: 'spotlight',
-    nombre: 'Spotlight TV',
-    descripcion: 'Elegante · Oro · Premium',
-    component: SpotlightTV,
-    dot: 'bg-yellow-600',
+    id: 'feriadedescuentos',
+    nombre: 'Feria de Descuentos',
+    descripcion: 'Alegre · con colores fuertes y vibrantes · Moderno',
+    component: PlantillaCanva5,
+    dot: 'bg-blue-600',
   },
 ];
 

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import plantilla from '../../assets/canva/1.png';
+import plantilla from '../../assets/canva/megaoferta.png';
+import comedorDefault from '../../assets/comedor.png';
 
-const PlantillaCanva = ({
+const Megaoferta = ({
   nombreProducto = 'Juego de Comedor',
-  imagenProducto = null,
+  descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
+  imagenProducto = comedorDefault,
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
@@ -125,20 +127,30 @@ const PlantillaCanva = ({
             >
               {fmt(precioOferta)}
             </div>
-            {porcentajeDescuento > 0 && (
-              <div
-                style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: 20,
-                  color: '#6b2800',
-                  letterSpacing: 3,
-                  lineHeight: 1.1,
-                }}
-              >
-                {porcentajeDescuento}% OFF
-              </div>
-            )}
           </div>
+
+          {/* ══════════════════════════════════════════
+              % DESCUENTO — sobre la etiqueta roja de la imagen
+          ══════════════════════════════════════════ */}
+          {porcentajeDescuento > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                left: 69,
+                top: 22,
+                transform: 'rotate(-4deg)',
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 42,
+                color: '#ffffff',
+                letterSpacing: 3,
+                lineHeight: 1,
+                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+                pointerEvents: 'none',
+              }}
+            >
+              {porcentajeDescuento}% OFF
+            </div>
+          )}
 
           {/* ══════════════════════════════════════════
               PRECIO DE LISTA tachado — debajo de la estrella
@@ -162,7 +174,7 @@ const PlantillaCanva = ({
                   marginBottom: 2,
                 }}
               >
-                Precio de lista
+                ANTES
               </div>
               <div
                 style={{
@@ -202,6 +214,28 @@ const PlantillaCanva = ({
           </div>
 
           {/* ══════════════════════════════════════════
+              DESCRIPCIÓN — zona central-derecha
+          ══════════════════════════════════════════ */}
+          {descripcion && (
+            <div
+              style={{
+                position: 'absolute',
+                left: 640,
+                top: 310,
+                width: 490,
+                fontFamily: "'Rubik', sans-serif",
+                fontSize: 14,
+                fontWeight: 400,
+                color: 'rgba(255,255,255,0.78)',
+                lineHeight: 1.6,
+                pointerEvents: 'none',
+              }}
+            >
+              {descripcion}
+            </div>
+          )}
+
+          {/* ══════════════════════════════════════════
               IMAGEN DEL PRODUCTO — centrada en zona izquierda
               bajo el reflector (el haz de luz apunta a x≈295, y≈300)
               Animación: flota suavemente
@@ -209,7 +243,7 @@ const PlantillaCanva = ({
           {imagenProducto && (
             <img
               src={imagenProducto}
-              alt={nombreProducto}
+              alt={nombreProducto ?? ''}
               style={{
                 position: 'absolute',
                 left: 105,
@@ -229,4 +263,4 @@ const PlantillaCanva = ({
   );
 };
 
-export default PlantillaCanva;
+export default Megaoferta;

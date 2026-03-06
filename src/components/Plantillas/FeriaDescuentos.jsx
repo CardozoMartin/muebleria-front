@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import plantilla from '../../assets/canva/5.png';
+import plantilla from '../../assets/canva/feriadedescuentos.png';
+import comedorDefault from '../../assets/comedor.png';
 
-const PlantillaCanva2 = ({
+const FeriaDescuentos = ({
   nombreProducto = 'Juego de Comedor',
-  imagenProducto = null,
+  descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
+  imagenProducto = comedorDefault,
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
@@ -20,27 +22,33 @@ const PlantillaCanva2 = ({
   }, []);
 
   const fmt = (n) => (n ? `$${Number(n).toLocaleString('es-AR')}` : '');
-  const nombreSize = nombreProducto.length > 26 ? 22 : nombreProducto.length > 16 ? 27 : 33;
+  const nombreSize = nombreProducto.length > 26 ? 24 : nombreProducto.length > 16 ? 30 : 38;
 
   const css = `
-    @keyframes floatProd {
-      0%,100% { transform: translateX(-50%) translateY(0px); }
-      50%      { transform: translateX(-50%) translateY(-12px); }
+    @keyframes floatProd3 {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-13px); }
     }
-    @keyframes glowBF {
-      0%,100% { filter: drop-shadow(0 8px 24px rgba(0,0,0,0.18)); }
-      50%      { filter: drop-shadow(0 16px 36px rgba(0,0,0,0.12))
-                         drop-shadow(0 0 28px rgba(240,200,0,0.22)); }
+    @keyframes glowProd3 {
+      0%,100% { filter: drop-shadow(0 10px 30px rgba(66,133,244,0.25)); }
+      50%      { filter: drop-shadow(0 20px 44px rgba(66,133,244,0.18))
+                         drop-shadow(0  0px 28px rgba(66,133,244,0.22)); }
     }
-    @keyframes badgePop {
+    @keyframes pricePulse3 {
       0%,100% { transform: scale(1); }
-      50%      { transform: scale(1.04); }
+      50%      { transform: scale(1.03); }
+    }
+    @keyframes slideIn3 {
+      from { opacity:0; transform: translateX(-24px); }
+      to   { opacity:1; transform: translateX(0); }
     }
   `;
 
-  /* Zona izquierda disponible: x 0–560, toda la altura 0–600
-     Blob amarillo difuso ≈ centro x:310, y:260
-     Imagen: centrada en x:290, top:50 — grande para llenar el haz                */
+  /* Layout analizado sobre 1200×600:
+     División blanco/azul ≈ x:560 (el gran círculo arranca ahí)
+     Zona izquierda disponible: 0–560
+     Imagen: centrada en x≈310, flota sobre la división
+     Nombre + precios: columna izquierda, y 340–540                  */
 
   return (
     <>
@@ -54,7 +62,7 @@ const PlantillaCanva2 = ({
         style={{
           width: '100vw',
           height: '100vh',
-          background: '#fff',
+          background: '#f0f4ff',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -87,21 +95,21 @@ const PlantillaCanva2 = ({
           />
 
           {/* ══ IMAGEN DEL PRODUCTO
-              Centrada sobre el blob amarillo difuso, zona izquierda
-              x≈290, top:30, grande                                    */}
+              Centrada en x≈310, montada entre las dos zonas
+              top:30 para que sea grande y protagonista              */}
           {imagenProducto && (
             <img
               src={imagenProducto}
               alt={nombreProducto}
               style={{
                 position: 'absolute',
-                left: 390,
-                top: 130,
+                left: 30,
+                top: 28,
                 transform: 'translateX(-50%)',
-                width: 480,
-                height: 410,
+                width: 600,
+                height: 520,
                 objectFit: 'contain',
-                animation: 'floatProd 4s ease-in-out infinite, glowBF 4s ease-in-out infinite',
+                animation: 'floatProd3 4s ease-in-out infinite, glowProd3 4s ease-in-out infinite',
                 pointerEvents: 'none',
                 zIndex: 2,
               }}
@@ -109,20 +117,21 @@ const PlantillaCanva2 = ({
           )}
 
           {/* ══ NOMBRE DEL PRODUCTO
-              Bajo la imagen, izquierda, texto oscuro sobre blanco       */}
+              Bajo la imagen, texto oscuro sobre el blanco           */}
           <div
             style={{
               position: 'absolute',
-              left: 244,
-              top: 48,
+              left: 164,
+              top: 558,
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: nombreSize,
-              color: '#111',
-              letterSpacing: 3,
+              color: '#1a2e6e',
+              letterSpacing: 4,
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              maxWidth: 520,
+              maxWidth: 500,
+              animation: 'slideIn3 0.6s ease both',
               pointerEvents: 'none',
               zIndex: 2,
             }}
@@ -130,33 +139,29 @@ const PlantillaCanva2 = ({
             {nombreProducto}
           </div>
 
-          {/* ══ PRECIO OFERTA — estilo negro/amarillo acorde a la plantilla */}
+          {/* ══ PRECIO OFERTA — azul sólido, tipografía grande       */}
           {precioOferta > 0 && (
             <div
               style={{
                 position: 'absolute',
-                left: 184,
-                top: 488,
-                display: 'inline-flex',
+                left: 604,
+                top: 410,
+                display: 'flex',
                 alignItems: 'center',
-                gap: 12,
+                gap: 14,
                 zIndex: 2,
                 pointerEvents: 'none',
               }}
             >
-              {/* Bloque precio */}
+              {/* Precio principal */}
               <div
                 style={{
-                  background: '#f5c800',
-                  borderRadius: 8,
-                  padding: '6px 20px 4px',
                   fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: 54,
-                  color: '#111',
+                  fontSize: 42,
+                  color: '#fbfbfc',
                   letterSpacing: 2,
                   lineHeight: 1,
-                  boxShadow: '0 4px 18px rgba(200,160,0,0.35)',
-                  animation: 'badgePop 3s ease-in-out infinite',
+                  animation: 'pricePulse3 3s ease-in-out infinite',
                 }}
               >
                 {fmt(precioOferta)}
@@ -166,15 +171,15 @@ const PlantillaCanva2 = ({
               {porcentajeDescuento > 0 && (
                 <div
                   style={{
-                    background: '#111',
-                    color: '#f5c800',
+                    background: '#2563eb',
+                    color: '#fff',
                     fontFamily: "'Bebas Neue', sans-serif",
-                    fontSize: 28,
+                    fontSize: 26,
                     letterSpacing: 2,
                     padding: '8px 14px 6px',
-                    borderRadius: 8,
+                    borderRadius: 10,
                     lineHeight: 1,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+                    boxShadow: '0 4px 16px rgba(37,99,235,0.4)',
                   }}
                 >
                   {porcentajeDescuento}%<br />
@@ -184,25 +189,25 @@ const PlantillaCanva2 = ({
             </div>
           )}
 
-          {/* ══ PRECIO DE LISTA tachado — debajo del precio oferta */}
+          {/* ══ PRECIO DE LISTA tachado — discreto, bajo el precio oferta */}
           {precioLista > 0 && (
             <div
               style={{
                 position: 'absolute',
-                left: 250,
-                top: 562,
-                pointerEvents: 'none',
-                zIndex: 2,
+                left: 648,
+                top: 380,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 8,
+                pointerEvents: 'none',
+                zIndex: 2,
               }}
             >
               <span
                 style={{
                   fontFamily: "'Rubik', sans-serif",
                   fontSize: 11,
-                  color: '#888',
+                  color: '#94a3b8',
                   letterSpacing: 1.5,
                   textTransform: 'uppercase',
                 }}
@@ -213,7 +218,7 @@ const PlantillaCanva2 = ({
                 style={{
                   fontFamily: "'Bebas Neue', sans-serif",
                   fontSize: 22,
-                  color: '#999',
+                  color: '#94a3b8',
                   textDecoration: 'line-through',
                   letterSpacing: 1,
                   lineHeight: 1,
@@ -229,4 +234,4 @@ const PlantillaCanva2 = ({
   );
 };
 
-export default PlantillaCanva2;
+export default FeriaDescuentos;
