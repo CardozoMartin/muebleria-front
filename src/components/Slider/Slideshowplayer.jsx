@@ -11,6 +11,9 @@ import ImpactoTV from "../Plantillas/ImpactoTV";
 import ImpactoTV2 from "../Plantillas/ImpactoTV2";
 import ModernTV from "../Plantillas/ModernTV";
 import SpotlightTV from "../Plantillas/SpotlightTV";
+import PlantillaCanva from "../Plantillas/PlantillaCanva";
+import PlantillaCanva2 from "../Plantillas/PlantillaCanva2";
+import PlantillaCanva3 from "../Plantillas/PlantillaCanva3";
 
 // import CasaViva from "./Plantillas/CasaViva";
 
@@ -26,6 +29,9 @@ const PLANTILLAS_MAP = {
   impactotv2: ImpactoTV2,
   modern: ModernTV,
   spotlight: SpotlightTV,
+  canva: PlantillaCanva,
+  canva2: PlantillaCanva2,
+  canva3: PlantillaCanva3,
 };
 
 

@@ -9,6 +9,9 @@ import ImpactoTV from '../components/Plantillas/ImpactoTV';
 import ImpactoTV2 from '../components/Plantillas/ImpactoTV2';
 import ModernTV from '../components/Plantillas/ModernTV';
 import SpotlightTV from '../components/Plantillas/SpotlightTV';
+import PlantillaCanva from '../components/Plantillas/PlantillaCanva';
+import PlantillaCanva2 from '../components/Plantillas/PlantillaCanva2';
+import PlantillaCanva3 from '../components/Plantillas/PlantillaCanva3';
 
 // central list of available templates; used in PlantillasPage and product form
 export const PLANTILLAS = [
@@ -88,6 +91,27 @@ export const PLANTILLAS = [
     descripcion: 'Elegante · Oro · Premium',
     component: SpotlightTV,
     dot: 'bg-yellow-600',
+  },
+  {
+    id: 'canva',
+    nombre: 'Plantilla Canva',
+    descripcion: 'Personalizado · Diseño Canva · Premium',
+    component: PlantillaCanva,
+    dot: 'bg-purple-500',
+  },
+  {
+    id: 'canva2',
+    nombre: 'Plantilla Canva 2',
+    descripcion: 'Personalizado · Diseño Canva · Premium',
+    component: PlantillaCanva2,
+    dot: 'bg-purple-600',
+  },
+  {
+    id: 'canva3',
+    nombre: 'Plantilla Canva 3',
+    descripcion: 'Personalizado · Diseño Canva · Premium',
+    component: PlantillaCanva3,
+    dot: 'bg-purple-700',
   },
 ];
 
