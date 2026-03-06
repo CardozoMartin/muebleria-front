@@ -1,8 +1,8 @@
-﻿import React, { useEffect, useState } from 'react';
-import logo from './../../assets/logo.png';
+﻿import { useEffect, useState } from 'react';
 import comedor from './../../assets/comedor.png';
 import fondorayos from './../../assets/fondorayos.png';
-import './cybermonday.css';
+import logo from './../../assets/logo.png';
+import './CyberMonday.css';
 
 /*
  * CyberMonday — optimizado para televisores de 32" o más.
@@ -10,8 +10,8 @@ import './cybermonday.css';
  * Un scale() uniforme adapta la escena a cualquier resolución de TV.
  */
 export default function CyberMonday({
-  titulo = "Juego de Comedor",
-  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
+  titulo = 'Juego de Comedor',
+  descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
   imagenProducto = comedor,
   precioLista = 500000,
   precioOferta = 250000,
@@ -22,8 +22,7 @@ export default function CyberMonday({
 
   /* Escala uniforme: 1280×720 → tamaño real del TV */
   useEffect(() => {
-    const calc = () =>
-      setScale(Math.min(window.innerWidth / 1280, window.innerHeight / 720));
+    const calc = () => setScale(Math.min(window.innerWidth / 1280, window.innerHeight / 720));
     calc();
     window.addEventListener('resize', calc);
     return () => window.removeEventListener('resize', calc);
@@ -33,11 +32,13 @@ export default function CyberMonday({
   useEffect(() => {
     const t1 = setTimeout(() => setMounted(false), 0);
     const t2 = setTimeout(() => setMounted(true), 80);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [titulo, imagenProducto]);
 
-  const formatPrecio = (n) =>
-    n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
+  const formatPrecio = (n) => (n ? `$ ${Number(n).toLocaleString('es-AR')}` : null);
 
   /* Escala del título: base 42px definida en CSS, ajuste JS por longitud */
   const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
@@ -53,13 +54,9 @@ export default function CyberMonday({
       <div className="cm-viewport">
         {/* Escena fija 1280×720, escalada uniformemente */}
         <div className="cm-scene" style={{ transform: `scale(${scale})` }}>
-
           {mounted && <div className="cm-flash" />}
 
           <img className="cm-fondo-rayos" src={fondorayos} alt="" aria-hidden="true" />
-          <div className="cm-grid" />
-          <div className="cm-glow-left" />
-          <div className="cm-glow-right" />
 
           {/* Banner */}
           <div className={`cm-banner ${mounted ? 'on' : ''}`}>
@@ -73,7 +70,6 @@ export default function CyberMonday({
 
           {/* Layout dos columnas */}
           <div className="cm-layout">
-
             {/* Columna imagen */}
             <div className="cm-left">
               {porcentajeDescuento > 0 && (
@@ -93,7 +89,6 @@ export default function CyberMonday({
             {/* Columna info */}
             <div className="cm-right">
               <div className={`cm-box ${mounted ? 'on' : ''}`}>
-
                 <div
                   className={`cm-titulo ${mounted ? 'on' : ''}`}
                   style={{ '--titulo-scale': titleScale }}
@@ -111,20 +106,14 @@ export default function CyberMonday({
                     <div className="cm-price-nums">
                       <div className="cm-price-nuevo">{formatPrecio(precioOferta)}</div>
                     </div>
-                    {porcentajeDescuento > 0 && (
-                      <div className="cm-off-badge">
-                        <span className="cm-off-pct">{porcentajeDescuento}%</span>
-                        <span className="cm-off-lbl">OFF</span>
-                      </div>
-                    )}
                   </div>
                 </div>
 
                 <div className={`cm-cuotas ${mounted ? 'on' : ''}`}>
                   Consultar medios de Pago — <strong>Sujeto a Stock</strong>
                 </div>
-
-              </div>{/* /cm-box */}
+              </div>
+              {/* /cm-box */}
 
               <div className={`cm-whatsapp ${mounted ? 'on' : ''}`}>
                 <svg className="cm-wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -136,12 +125,12 @@ export default function CyberMonday({
               <div className={`cm-tags ${mounted ? 'on' : ''}`}>
                 <span className="cm-tag cm-tag-green">www.mueblesdepinoml.com.ar</span>
               </div>
-
             </div>
           </div>
-
-        </div>{/* /cm-scene */}
-      </div>{/* /cm-viewport */}
+        </div>
+        {/* /cm-scene */}
+      </div>
+      {/* /cm-viewport */}
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import logo from './../../assets/logo.png';
 import comedor from './../../assets/comedor.png';
+import luxe from './../../assets/luxe.png';
 import './luxeshow.css';
 
 export default function LuxeShow({
@@ -44,29 +45,8 @@ export default function LuxeShow({
         <div className="az-scene" style={{ transform: `scale(${scale})` }}>
           {mounted && <div className="az-flash" />}
 
-          {/* Fondo */}
-          <div className="az-bg" />
-          <div className="az-grain" />
-          <div className="az-diag-lines" />
-          <div className="az-dots" />
-
-          {/* Blobs */}
-          <div className="az-blob-right" />
-          <div className="az-blob-left" />
-          <div className="az-orb-top" />
-
-          {/* Arcos */}
-          <div className="az-arc" />
-          <div className="az-arc2" />
-
-          {/* Línea vertical */}
-          <div className="az-vline" />
-
-          {/* Chispas */}
-          <div className="az-spark az-spark-1" style={{ color: '#00AAFF' }}>✦</div>
-          <div className="az-spark az-spark-2" style={{ color: '#0057FF' }}>◆</div>
-          <div className="az-spark az-spark-3" style={{ color: '#00AAFF' }}>✦</div>
-          <div className="az-spark az-spark-4" style={{ color: '#0057FF' }}>◆</div>
+          {/* Fondo: imagen */}
+          <img className={`az-bg ${mounted ? 'on' : ''}`} src={luxe} alt="" aria-hidden />
 
           {/* Logo */}
           <div className={`az-logo ${mounted ? 'on' : ''}`}>
@@ -77,12 +57,6 @@ export default function LuxeShow({
 
             {/* ══ IZQUIERDA: imagen ══ */}
             <div className="az-left">
-              <div className="az-ring az-ring-1" style={{ borderColor: '#0057FF' }} />
-              <div className="az-ring az-ring-2" style={{ borderColor: '#00AAFF' }} />
-              <div
-                className="az-img-glow"
-                style={{ background: 'radial-gradient(ellipse, rgba(0,170,255,.8) 0%, rgba(0,87,255,.4) 50%, transparent 70%)' }}
-              />
               <div
                 className="az-floor"
                 style={{ background: 'radial-gradient(ellipse, rgba(0,87,255,.18) 0%, transparent 70%)' }}
@@ -92,7 +66,7 @@ export default function LuxeShow({
                   className="az-img"
                   src={imagenProducto}
                   alt={titulo}
-                  style={{ filter: 'drop-shadow(0 28px 56px rgba(0,87,255,.25)) drop-shadow(0 0 60px rgba(0,170,255,.15))' }}
+                  style={{ filter: 'drop-shadow(0 28px 40px rgba(0,87,255,.20))' }}
                 />
               </div>
 
