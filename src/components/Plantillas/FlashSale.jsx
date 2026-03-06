@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import plantilla from '../../assets/canva/megasale.png';
+import plantilla from '../../assets/canva/flashsale.png';
 import comedorDefault from '../../assets/comedor.png';
 
-const MegaSale = ({
+const FlashSale = ({
   nombreProducto = 'Juego de Comedor',
   descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
   imagenProducto = comedorDefault,
@@ -324,4 +324,4 @@ const MegaSale = ({
   );
 };
 
-export default MegaSale;
+export default FlashSale;

@@ -1,135 +1,327 @@
-﻿import React, { useEffect, useState } from 'react';
-import logo from './../../assets/logo.png';
-import comedor from './../../assets/comedor.png';
-import hotsaleBg from './../../assets/hotsale.png';
-import './Hotsale.css';
+import React, { useEffect, useState } from 'react';
+import plantilla from '../../assets/canva/hotsale.png';
+import comedorDefault from '../../assets/comedor.png';
 
-/*
- * HotSale — optimizado para televisores de 32" o mas.
- * Estilos en Hotsale.css (canvas fijo 1280x720, sin clamp/vw/vh).
- * Un scale() uniforme adapta la escena a cualquier resolucion de TV.
- */
-export default function HotSale({
-  titulo = "Juego de Comedor",
-  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
-  imagenProducto = comedor,
+const HotSale = ({
+  nombreProducto = 'Juego de Comedor',
+  descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
+  imagenProducto = comedorDefault,
   precioLista = 500000,
   precioOferta = 250000,
   porcentajeDescuento = 50,
-}) {
-  const [mounted, setMounted] = useState(false);
+  preview = false,
+}) => {
+  const BASE_W = 1200;
+  const BASE_H = 600;
   const [scale, setScale] = useState(1);
+  const [imgRatio, setImgRatio] = useState(1); // naturalH / naturalW
+  const effectiveScale = preview ? 1 : scale;
 
-  /* Escala uniforme: 1280x720 -> tamano real del TV */
   useEffect(() => {
-    const calc = () =>
-      setScale(Math.min(window.innerWidth / 1280, window.innerHeight / 720));
+    const calc = () => setScale(Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H));
     calc();
     window.addEventListener('resize', calc);
     return () => window.removeEventListener('resize', calc);
   }, []);
 
-  /* Animar entrada al cambiar producto */
-  useEffect(() => {
-    const t1 = setTimeout(() => setMounted(false), 0);
-    const t2 = setTimeout(() => setMounted(true), 80);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [titulo, imagenProducto]);
+  const fmt = (n) => (n ? `$${Number(n).toLocaleString('es-AR')}` : '');
+  const len = nombreProducto.length;
+  // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
+  const unaLinea = len <= 14;
+  const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
+  const descUnaLinea = descripcion.length <= 50;
 
-  const formatPrecio = (n) =>
-    n ? `$ ${Number(n).toLocaleString('es-AR')}` : null;
+  // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
+  // Centro deseado: x≈298, y≈305 (zona del reflector)
+  const IMG_FULL = 440;
+  const IMG_TALL = 460; // imagen alta → más chica
+  const isTall  = imgRatio > 1.3;
+  const imgSize = isTall ? IMG_TALL : IMG_FULL;
+  // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
+  // así que sumamos un offset extra para que quede centrada bajo el reflector
+  const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
+  const imgTop  = Math.round(305 - imgSize / 2);
 
-  const titleScale = Math.min(1, Math.max(0.45, 1 - Math.max(0, titulo.length - 14) * 0.04));
+  /* ─── keyframes inyectados una sola vez ─── */
+  const css = `
+    @keyframes floatProd {
+      0%,100% { transform: translateY(0px);  }
+      50%      { transform: translateY(-14px); }
+    }
+    @keyframes glowProd {
+      0%,100% { filter: drop-shadow(0 10px 28px rgba(0,0,0,0.55)); }
+      50%      { filter: drop-shadow(0 18px 38px rgba(0,0,0,0.35))
+                         drop-shadow(0  0px 24px rgba(180,220,255,0.18)); }
+    }
+    @keyframes pricePulse {
+      0%,100% { opacity:1; }
+      50%      { opacity:0.82; }
+    }
+    @keyframes slideDown {
+      from { opacity:0; transform: translateY(-22px); }
+      to   { opacity:1; transform: translateY(0);     }
+    }
+    @keyframes slideRight {
+      from { opacity:0; transform: translateX(-28px) translateX(0); }
+      to   { opacity:1; transform: translateX(0);                   }
+    }
+    @keyframes slideLeft {
+      from { opacity:0; transform: translateX(28px); }
+      to   { opacity:1; transform: translateX(0);    }
+    }
+    @keyframes slideLeftTitle {
+      from { opacity:0; transform: translateX(calc(-50% + 28px)); }
+      to   { opacity:1; transform: translateX(-50%);              }
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform: translateY(22px); }
+      to   { opacity:1; transform: translateY(0);    }
+    }
+    @keyframes popIn {
+      from { opacity:0; transform: translate(-50%,-50%) scale(0.75); }
+      to   { opacity:1; transform: translate(-50%,-50%) scale(1);    }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+    @keyframes imgEnter {
+      from { opacity:0; transform: translateY(18px); }
+      to   { opacity:1; transform: translateY(0);    }
+    }
+  `;
 
   return (
     <>
       <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@700;800;900&family=Montserrat:wght@400;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@700;900&display=swap"
         rel="stylesheet"
       />
+      <style>{css}</style>
 
-      {/* Viewport: llena toda la pantalla del TV */}
-      <div className="hs-viewport">
-        {/* Escena fija 1280x720, escalada uniformemente */}
-        <div className="hs-scene" style={{ transform: `scale(${scale})` }}>
-
+      {/* Pantalla completa → centra la escena */}
+      <div
+        style={{
+          width: preview ? BASE_W : '100vw',
+          height: preview ? BASE_H : '100vh',
+          background: '#000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Escena fija 1200 × 600 */}
+        <div
+          style={{
+            position: 'relative',
+            width: BASE_W,
+            height: BASE_H,
+            flexShrink: 0,
+            transform: `scale(${effectiveScale})`,
+            transformOrigin: 'center center',
+          }}
+        >
           {/* FONDO */}
-          <img className="hs-bg" src={hotsaleBg} alt="" aria-hidden="true" />
+          <img
+            src={plantilla}
+            alt=""
+            aria-hidden
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              display: 'block',
+            }}
+          />
 
-          {/* LOGO */}
-          <div className={`hs-logo ${mounted ? 'on' : ''}`}>
-            <img src={logo} alt="Logo" />
-          </div>
-
-          {/* BANDA HOT SALE */}
-          <div className={`hs-banner ${mounted ? 'on' : ''}`}>
-            <span className="hs-banner-fire">🔥</span>
-            <span className="hs-banner-txt"><span>HOT</span> SALE</span>
-          </div>
-
-          {/* LINEA VERTICAL eliminada */}
-
-          {/* LAYOUT */}
-          <div className="hs-layout">
-
-            {/* IZQUIERDA - IMAGEN */}
-            <div className="hs-left">
-              <div className={`hs-img-wrap ${mounted ? 'on' : ''}`}>
-                <img className="hs-img" src={imagenProducto} alt={titulo} />
-              </div>
-              <div className={`hs-tags ${mounted ? 'on' : ''}`}>
-                <span className="hs-tag hs-tag-white">www.mueblesdepinoml.com.ar</span>
-              </div>
-            </div>
-
-            {/* DERECHA - CONTENIDO */}
-            <div className="hs-right">
-              <div className="hs-content idle">
-
-                <div className="hs-slogan">Precios que arden!</div>
-
-                <div className="hs-titulo-group">
-                  <div className={`hs-img-titulo ${mounted ? 'on' : ''}`} style={{ '--titulo-scale': titleScale }}>
-                    <span className="hs-img-titulo-dest">{titulo}</span>
-                  </div>
-                </div>
-
-                <p className="hs-desc">{descripcion}</p>
-
-                <div className="hs-price-block">
-                  <div className="hs-price-row">
-                    <div className="hs-price-nums">
-                      {formatPrecio(precioLista) && (
-                        <div className="hs-price-antes">Antes: {formatPrecio(precioLista)}</div>
-                      )}
-                      <div className="hs-price-nuevo">{formatPrecio(precioOferta)}</div>
-                    </div>
-                    {porcentajeDescuento > 0 && (
-                      <div className="hs-off-badge">
-                        <span className="hs-off-pct">{porcentajeDescuento}%</span>
-                        <span className="hs-off-lbl">OFF</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="hs-cuotas">
-                    Sujeto a stock — <strong>Consultar medios de pago</strong>
-                  </div>
-                </div>
-
-                {/* WhatsApp */}
-                <div className="hs-whatsapp">
-                  <svg className="hs-wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                  </svg>
-                  <span>381 2108473</span>
-                </div>
-
-              </div>
+          {/* ══════════════════════════════════════════
+              ESTRELLA — precio oferta adentro
+              Centro de la estrella en la plantilla ≈ x:155, y:128
+          ══════════════════════════════════════════ */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 728,
+              top: 500,
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center',
+              lineHeight: 1,
+              pointerEvents: 'none',
+              animation: 'popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both',
+            }}
+          >
+            {/* Precio oferta — grande y llamativo */}
+            
+            <div
+              style={{
+                fontFamily: "'Rubik', sans-serif",
+                fontWeight: 900,
+                fontSize: porcentajeDescuento > 0 ? 46 : 52,
+                color: '#050303',
+                letterSpacing: -1,
+                lineHeight: 0.95,
+                animation: 'pricePulse 2.5s ease-in-out 1.8s infinite',
+              }}
+            >
+              {fmt(precioOferta)}
             </div>
           </div>
 
-        </div>{/* /hs-scene */}
-      </div>{/* /hs-viewport */}
+          {/* ══════════════════════════════════════════
+              % DESCUENTO — sobre la etiqueta roja de la imagen
+          ══════════════════════════════════════════ */}
+          {porcentajeDescuento > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                left: 63,
+                top: 22,
+                transform: 'rotate(-4deg)',
+                zIndex: 2,
+                fontFamily: "'Rubik', sans-serif",
+                fontWeight: 900,
+                fontSize: 33,
+                color: '#ffffff',
+                letterSpacing: -1,
+                lineHeight: 1,
+                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+                pointerEvents: 'none',
+                animation: 'slideDown 0.5s ease-out 0.1s both',
+              }}
+            >
+              {porcentajeDescuento}% OFF
+            </div>
+          )}
+
+          {/* ══════════════════════════════════════════
+              PRECIO DE LISTA tachado — debajo de la estrella
+          ══════════════════════════════════════════ */}
+          {precioLista > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                left: 620,
+                top: 420,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                pointerEvents: 'none',
+                animation: 'slideUp 0.5s ease-out 1.0s both',
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "'Rubik', sans-serif",
+                  fontSize: 24,
+                  color: 'rgb(255, 255, 255)',
+                  letterSpacing: 1.5,
+                  textTransform: 'uppercase',
+                }}
+              >
+                ANTES
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Rubik', sans-serif",
+                  fontSize: 24,
+                  color: 'rgb(255, 255, 255)',
+                  textDecoration: 'line-through',
+                  lineHeight: 1,
+                  letterSpacing: 1,
+                }}
+              >
+                {fmt(precioLista)}
+              </div>
+            </div>
+          )}
+
+          {/* ══════════════════════════════════════════
+              NOMBRE DEL PRODUCTO — debajo del título MEGA OFERTA
+          ══════════════════════════════════════════ */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 890,
+              top: unaLinea ? 200 : 190,
+              transform: 'translateX(-50%)',
+              fontFamily: "'Rubik', sans-serif",
+              fontWeight: 900,
+              fontSize: nombreFontSize,
+              letterSpacing: -1,
+              whiteSpace: unaLinea ? 'nowrap' : 'normal',
+              textAlign: 'center',
+              width: 380,
+              lineHeight: 1.05,
+              pointerEvents: 'none',
+              background: 'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
+              animation: 'slideLeftTitle 0.55s ease-out 0.5s both',
+            }}
+          >
+            {nombreProducto}
+          </div>
+
+          {/* ══════════════════════════════════════════
+              DESCRIPCIÓN — zona central-derecha
+          ══════════════════════════════════════════ */}
+          {descripcion && (
+            <div
+              style={{
+                position: 'absolute',
+                left: 650,
+                top: 330,
+                width: 490,
+                fontFamily: "'Rubik', sans-serif",
+                fontSize: descUnaLinea ? 18 : 14,
+                fontWeight: 400,
+                color: 'rgb(255, 255, 255)',
+                lineHeight: 1.6,
+                whiteSpace: descUnaLinea ? 'nowrap' : 'normal',
+                textAlign: 'center',
+                pointerEvents: 'none',
+                animation: 'fadeIn 0.6s ease-out 0.75s both',
+              }}
+            >
+              {descripcion}
+            </div>
+          )}
+
+          {/* ══════════════════════════════════════════
+              IMAGEN DEL PRODUCTO — centrada en zona izquierda
+              bajo el reflector (el haz de luz apunta a x≈295, y≈300)
+              Animación: flota suavemente
+          ══════════════════════════════════════════ */}
+          {imagenProducto && (
+            <img
+              src={imagenProducto}
+              alt={nombreProducto ?? ''}
+              onLoad={(e) => {
+                const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+                setImgRatio(w > 0 ? h / w : 1);
+              }}
+              style={{
+                position: 'absolute',
+                left: imgLeft,
+                top: imgTop,
+                width: imgSize,
+                height: imgSize,
+                objectFit: 'contain',
+                zIndex: 1,
+                animation: 'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+        </div>
+      </div>
     </>
   );
-}
+};
+
+export default HotSale;
