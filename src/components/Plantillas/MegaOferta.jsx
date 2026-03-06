@@ -94,8 +94,8 @@ const Megaoferta = ({
           <div
             style={{
               position: 'absolute',
-              left: 123,
-              top: 114,
+              left: 728,
+              top: 500,
               transform: 'translate(-50%, -50%)',
               textAlign: 'center',
               lineHeight: 1,
@@ -103,24 +103,14 @@ const Megaoferta = ({
             }}
           >
             {/* Precio oferta — grande y llamativo */}
+            
             <div
               style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 13,
-                color: '#1a0800',
-                letterSpacing: 2,
-                textTransform: 'uppercase',
-                marginBottom: 1,
-              }}
-            >
-              Oferta
-            </div>
-            <div
-              style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: porcentajeDescuento > 0 ? 30 : 36,
-                color: '#1a0800',
-                letterSpacing: 1,
+                fontFamily: "'Rubik', sans-serif",
+                fontWeight: 900,
+                fontSize: porcentajeDescuento > 0 ? 46 : 52,
+                color: '#050303',
+                letterSpacing: -1,
                 lineHeight: 0.95,
                 animation: 'pricePulse 2.5s ease-in-out infinite',
               }}
@@ -159,28 +149,30 @@ const Megaoferta = ({
             <div
               style={{
                 position: 'absolute',
-                left: 44,
-                top: 222,
+                left: 620,
+                top: 420,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
                 pointerEvents: 'none',
               }}
             >
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 11,
-                  color: 'rgba(255,255,255,0.6)',
+                  fontSize: 24,
+                  color: 'rgb(255, 255, 255)',
                   letterSpacing: 1.5,
                   textTransform: 'uppercase',
-                  marginBottom: 2,
                 }}
               >
                 ANTES
               </div>
               <div
                 style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontFamily: "'Rubik', sans-serif",
                   fontSize: 24,
-                  color: 'rgba(255,255,255,0.55)',
+                  color: 'rgb(255, 255, 255)',
                   textDecoration: 'line-through',
                   lineHeight: 1,
                   letterSpacing: 1,
@@ -192,20 +184,20 @@ const Megaoferta = ({
           )}
 
           {/* ══════════════════════════════════════════
-              NOMBRE DEL PRODUCTO — arriba de la imagen, zona central izquierda
-              Imagen centrada en x≈295 (mitad del lado izq. de la plantilla)
+              NOMBRE DEL PRODUCTO — debajo del título MEGA OFERTA
           ══════════════════════════════════════════ */}
           <div
             style={{
               position: 'absolute',
-              left: 365,
-              top: 140,
+              left: 890,
+              top: 180,
               transform: 'translateX(-50%)',
-              fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: nombreSize,
-              color: '#fff',
-              letterSpacing: 4,
-              textShadow: '0 2px 16px rgba(0,0,0,0.95), 0 0 40px rgba(0,0,0,0.7)',
+              fontFamily: "'Rubik', sans-serif",
+              fontWeight: 900,
+              fontSize: nombreSize + 14,
+              color: '#f5c800',
+              letterSpacing: -1,
+              textShadow: '0 3px 18px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7)',
               whiteSpace: 'nowrap',
               pointerEvents: 'none',
             }}
@@ -220,14 +212,15 @@ const Megaoferta = ({
             <div
               style={{
                 position: 'absolute',
-                left: 640,
-                top: 310,
+                left: 650,
+                top: 300,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: 14,
                 fontWeight: 400,
-                color: 'rgba(255,255,255,0.78)',
+                color: 'rgb(255, 255, 255)',
                 lineHeight: 1.6,
+                textAlign: 'center',
                 pointerEvents: 'none',
               }}
             >
@@ -246,8 +239,8 @@ const Megaoferta = ({
               alt={nombreProducto ?? ''}
               style={{
                 position: 'absolute',
-                left: 105,
-                top: 136,
+                left: 70,
+                top: 40,
                 transform: 'translateX(-50%)',
                 width: 570,
                 height: 530,
