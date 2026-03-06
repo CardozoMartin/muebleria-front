@@ -289,7 +289,7 @@ const HotSale = ({
               style={{
                 position: "absolute",
                 left: 80,
-                top: 300,
+                top: 280,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: descUnaLinea ? 20 : 16,
