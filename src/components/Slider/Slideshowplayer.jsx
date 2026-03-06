@@ -7,14 +7,16 @@ import PlantillaCanva2 from '../Plantillas/FlashSale';
 import PlantillaCanva3 from '../Plantillas/HotSale';
 import PlantillaCanva4 from '../Plantillas/BlackFriday';
 import PlantillaCanva5 from '../Plantillas/FeriaDescuentos';
+import PlantillaCanva6 from '../Plantillas/MegaSale';
 
 
 const PLANTILLAS_MAP = {
-  canva: PlantillaCanva,
-  canva2: PlantillaCanva2,
-  canva3: PlantillaCanva3,
-  canva4: PlantillaCanva4,
-  canva5: PlantillaCanva5,
+  canva:              PlantillaCanva,
+  canva2:             PlantillaCanva2,
+  canva3:             PlantillaCanva3,
+  blackfriday:        PlantillaCanva4,
+  feriadedescuentos:  PlantillaCanva5,
+  megasale:           PlantillaCanva6,
 };
 
 export default function SlideShowPlayer({
