@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useImageCache } from '../../hooks/useImageCache';
 
-
 import PlantillaCanva from '../Plantillas/MegaOferta';
 import PlantillaCanva2 from '../Plantillas/FlashSale';
 import PlantillaCanva3 from '../Plantillas/HotSale';
@@ -9,14 +8,14 @@ import PlantillaCanva4 from '../Plantillas/BlackFriday';
 import PlantillaCanva5 from '../Plantillas/FeriaDescuentos';
 import PlantillaCanva6 from '../Plantillas/MegaSale';
 
-
+// Las claves deben coincidir exactamente con el campo plantillaId guardado en la BD
 const PLANTILLAS_MAP = {
-  MegaOferta:              PlantillaCanva,
-  FlashSale:             PlantillaCanva2,
-  HotSale:             PlantillaCanva3,
-  BlackFriday:        PlantillaCanva4,
-  FeriaDescuentos:  PlantillaCanva5,
-  MegaSale:           PlantillaCanva6,
+  canva:             PlantillaCanva,
+  canva2:            PlantillaCanva2,
+  canva3:            PlantillaCanva3,
+  blackfriday:       PlantillaCanva4,
+  feriadedescuentos: PlantillaCanva5,
+  megasale:          PlantillaCanva6,
 };
 
 export default function SlideShowPlayer({
@@ -49,13 +48,8 @@ export default function SlideShowPlayer({
 
     const imagenesProducto = productos.map((p) => p.imagenProducto).filter(Boolean);
 
-    // Las imágenes de fondo de Canva se precargan también como Image()
-    // para que el browser las tenga en cache HTTP antes de que las plantillas las pidan
-    const fondosCanva = [
-      '/src/assets/canva/1.png',
-      '/src/assets/canva/5.png',
-      '/src/assets/canva/6.png',
-    ];
+    // Las rutas de fondo se precargan pero no bloquean si fallan
+    const fondosCanva = [];
 
     const precargarTodo = async () => {
       // Precargar fondos primero (son las más pesadas)
@@ -193,7 +187,7 @@ export default function SlideShowPlayer({
       {/* ── SLIDES PRE-RENDERIZADOS — todos montados, solo uno visible ── */}
       <div className="flex-1 relative overflow-hidden">
         {productos.map((producto, i) => {
-          const Plantilla = PLANTILLAS_MAP[producto.plantillaId] ?? PLANTILLAS_MAP['megasale'];
+          const Plantilla = PLANTILLAS_MAP[producto.plantillaId] ?? PlantillaCanva;
           const esActivo = i === indiceActual;
 
           return (

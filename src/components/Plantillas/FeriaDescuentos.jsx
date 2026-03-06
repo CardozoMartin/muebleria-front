@@ -152,7 +152,7 @@ const FeriaDescuentos = ({
           <div
             style={{
               position: 'absolute',
-              left: 358,
+              left: 388,
               top: 490,
               transform: 'translate(-50%, -50%)',
               textAlign: 'center',
@@ -217,7 +217,7 @@ const FeriaDescuentos = ({
             <div
               style={{
                 position: 'absolute',
-                left: 210,
+                left: 240,
                 top: 410,
                 display: 'flex',
                 alignItems: 'center',
@@ -258,7 +258,7 @@ const FeriaDescuentos = ({
           <div
             style={{
               position: 'absolute',
-              left: 360,
+              left: 380,
               top: unaLinea ? 230 : 190,
               transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
@@ -285,8 +285,8 @@ const FeriaDescuentos = ({
             <div
               style={{
                 position: 'absolute',
-                left: 120,
-                top: 340,
+                left: 140,
+                top: 330,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: descUnaLinea ? 20 : 16,
