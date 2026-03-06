@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 /**
  * Hook para cachear imágenes en memoria y en IndexedDB
@@ -106,10 +106,13 @@ export const useImageCache = () => {
   }, []);
 
   // Precarga múltiples imágenes en paralelo
-  const preloadImages = useCallback(async (urls) => {
-    const validUrls = urls.filter(Boolean);
-    return Promise.allSettled(validUrls.map(cacheImage));
-  }, [cacheImage]);
+  const preloadImages = useCallback(
+    async (urls) => {
+      const validUrls = urls.filter(Boolean);
+      return Promise.allSettled(validUrls.map(cacheImage));
+    },
+    [cacheImage]
+  );
 
   // Limpiar URLs de blob cuando se desmonte
   useEffect(() => {
