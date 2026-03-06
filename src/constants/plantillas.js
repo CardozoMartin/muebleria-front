@@ -12,21 +12,21 @@ export const PLANTILLAS = [
 
   {
     id: 'canva',
-    nombre: 'Plantilla Canva',
+    nombre: 'Mega Oferta',
     descripcion: 'Personalizado · Diseño Canva · Premium',
     component: PlantillaCanva,
     dot: 'bg-purple-500',
   },
   {
     id: 'canva2',
-    nombre: 'Plantilla Canva 2',
+    nombre: 'Flash Sale',
     descripcion: 'Personalizado · Diseño Canva · Premium',
     component: PlantillaCanva2,
     dot: 'bg-purple-600',
   },
   {
     id: 'canva3',
-    nombre: 'Plantilla Canva 3',
+    nombre: 'Hot Sale',
     descripcion: 'Personalizado · Diseño Canva · Premium',
     component: PlantillaCanva3,
     dot: 'bg-purple-700',
