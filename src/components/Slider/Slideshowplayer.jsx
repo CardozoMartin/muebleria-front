@@ -16,8 +16,6 @@ import PlantillaCanva2 from '../Plantillas/PlantillaCanva2';
 import PlantillaCanva3 from '../Plantillas/PlantillaCanva3';
 import SpotlightTV from '../Plantillas/SpotlightTV';
 
-// import CasaViva from "./Plantillas/CasaViva";
-
 const PLANTILLAS_MAP = {
   megasale: MegaSale,
   luxeshow: LuxeShow,
@@ -35,12 +33,6 @@ const PLANTILLAS_MAP = {
   canva3: PlantillaCanva3,
 };
 
-/**
- * SlideShowPlayer
- * @param {Object[]} productos - productos filtrados por categoría, cada uno con plantillaId
- * @param {number} duracionSegundos - duración por slide (default 8s)
- * @param {Function} onClose - callback para cerrar el modal
- */
 export default function SlideShowPlayer({
   productos = [],
   duracionSegundos = 8,
@@ -50,61 +42,68 @@ export default function SlideShowPlayer({
   const [indiceActual, setIndiceActual] = useState(0);
   const [progreso, setProgreso] = useState(0);
   const [pausado, setPausado] = useState(false);
+  const [listoParaReproducir, setListoParaReproducir] = useState(false);
+
   const timeoutRef = useRef(null);
   const intervalRef = useRef(null);
   const { preloadImages } = useImageCache();
-  const cacheadoRef = useRef(false);
 
-  const productoActual = productos[indiceActual];
-  const PlantillaComponente = productoActual
-    ? (PLANTILLAS_MAP[productoActual.plantillaId] ?? PLANTILLAS_MAP['megasale'])
-    : null;
+  // ── Pre-renderizar TODAS las plantillas al montar ──────────────────────
+  // Las plantillas nunca se desmontan — se muestran/ocultan con CSS visibility.
+  // Esto evita re-montajes y re-fetches de imágenes en cada rotación.
 
   const avanzar = (indice) => {
     setIndiceActual(indice);
     setProgreso(0);
   };
 
-  // Precarga todas las imágenes cuando los productos cambian
+  // Precarga de TODAS las imágenes (producto + fondos de plantilla) antes de arrancar
   useEffect(() => {
-    if (productos.length === 0 || cacheadoRef.current) return;
+    if (productos.length === 0) return;
 
-    const imagenesAprecargar = productos
-      .map((p) => p.imagenProducto)
-      .filter(Boolean);
+    const imagenesProducto = productos.map((p) => p.imagenProducto).filter(Boolean);
 
-    if (imagenesAprecargar.length > 0) {
-      preloadImages(imagenesAprecargar).then(() => {
-        cacheadoRef.current = true;
-        console.log(`✓ Precargadas ${imagenesAprecargar.length} imágenes`);
-      });
-    }
+    // Las imágenes de fondo de Canva se precargan también como Image()
+    // para que el browser las tenga en cache HTTP antes de que las plantillas las pidan
+    const fondosCanva = [
+      '/src/assets/canva/1.png',
+      '/src/assets/canva/5.png',
+      '/src/assets/canva/6.png',
+    ];
+
+    const precargarTodo = async () => {
+      // Precargar fondos primero (son las más pesadas)
+      await Promise.allSettled(
+        fondosCanva.map(
+          (src) =>
+            new Promise((res) => {
+              const img = new Image();
+              img.onload = res;
+              img.onerror = res; // no bloquear si falla
+              img.src = src;
+            })
+        )
+      );
+
+      // Luego imágenes de productos
+      await preloadImages(imagenesProducto).catch(() => {});
+
+      setListoParaReproducir(true);
+    };
+
+    precargarTodo();
   }, [productos, preloadImages]);
 
-  // Pre-cargar la siguiente imagen para transiciones smooth
+  // Loop principal — solo corre cuando está listo
   useEffect(() => {
-    if (productos.length <= 1) return;
-
-    const nextIndice = (indiceActual + 1) % productos.length;
-    const nextProducto = productos[nextIndice];
-
-    if (nextProducto?.imagenProducto) {
-      preloadImages([nextProducto.imagenProducto]).catch(() => {});
-    }
-  }, [indiceActual, productos, preloadImages]);
-
-  // Loop principal
-  useEffect(() => {
-    if (!productos.length || pausado) return;
+    if (!listoParaReproducir || !productos.length || pausado) return;
 
     const duracionMs = duracionSegundos * 1000;
 
-    // Barra de progreso cada 50ms
     intervalRef.current = setInterval(() => {
       setProgreso((prev) => Math.min(prev + (50 / duracionMs) * 100, 100));
     }, 50);
 
-    // Avance al siguiente slide
     timeoutRef.current = setTimeout(() => {
       setIndiceActual((prev) => (prev + 1) % productos.length);
       setProgreso(0);
@@ -114,9 +113,9 @@ export default function SlideShowPlayer({
       clearTimeout(timeoutRef.current);
       clearInterval(intervalRef.current);
     };
-  }, [indiceActual, pausado, productos, duracionSegundos]);
+  }, [indiceActual, pausado, productos, duracionSegundos, listoParaReproducir]);
 
-  // Pantalla completa al montar, salir al cerrar (siempre)
+  // Pantalla completa
   useEffect(() => {
     const el = document.documentElement;
     const requestFS =
@@ -138,15 +137,11 @@ export default function SlideShowPlayer({
     };
   }, []);
 
-  // Cerrar con ESC, botón Atrás del navegador/TV y teclas de mando
+  // Teclado / mando TV
   useEffect(() => {
-    // pushState + popstate solo en tvMode
-    if (tvMode) {
-      history.pushState({ slideshow: true }, '');
-    }
+    if (tvMode) history.pushState({ slideshow: true }, '');
 
     const handleKey = (e) => {
-      // ESC + teclas de "Atrás" de Smart TV (LG: 461, Samsung Tizen: 10009)
       const backKeys = ['Escape', 'GoBack', 'BrowserBack'];
       const backCodes = [461, 10009, 10182];
       if (backKeys.includes(e.key) || backCodes.includes(e.keyCode)) {
@@ -169,12 +164,30 @@ export default function SlideShowPlayer({
     };
   }, [indiceActual, productos.length, onClose, tvMode]);
 
-  if (!productoActual) return null;
+  if (!productos.length) return null;
+
+  // ── Pantalla de carga mientras se precargan las imágenes ──────────────
+  if (!listoParaReproducir) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center gap-6">
+        <div className="flex gap-3">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              style={{ animationDelay: `${i * 0.15}s` }}
+              className="w-4 h-4 rounded-full bg-red-600 animate-bounce"
+            />
+          ))}
+        </div>
+        <p className="text-white/50 text-sm tracking-widest uppercase font-medium">
+          Preparando imágenes...
+        </p>
+      </div>
+    );
+  }
 
   return (
-    // Overlay fullscreen
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
-      {/* Botón cerrar — siempre visible, fuera del HUD, solo en !tvMode */}
       {!tvMode && (
         <button
           onClick={onClose}
@@ -191,21 +204,46 @@ export default function SlideShowPlayer({
         </button>
       )}
 
-      {/* Slide actual — ocupa todo */}
+      {/* ── SLIDES PRE-RENDERIZADOS — todos montados, solo uno visible ── */}
       <div className="flex-1 relative overflow-hidden">
-        <PlantillaComponente
-          titulo={productoActual.titulo}
-          descripcion={productoActual.descripcion}
-          imagenProducto={productoActual.imagenProducto}
-          precioLista={productoActual.precioLista}
-          precioOferta={productoActual.precioOferta}
-          porcentajeDescuento={productoActual.porcentajeDescuento}
-          categoria={productoActual.categoria}
-        />
+        {productos.map((producto, i) => {
+          const Plantilla = PLANTILLAS_MAP[producto.plantillaId] ?? PLANTILLAS_MAP['megasale'];
+          const esActivo = i === indiceActual;
 
-        {/* HUD — controles superpuestos */}
+          return (
+            <div
+              key={`slide-${producto.id ?? i}`}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                // Visibilidad pura por CSS — el DOM nunca se desmonta
+                opacity: esActivo ? 1 : 0,
+                // Solo el activo recibe eventos y captura GPU
+                visibility: esActivo ? 'visible' : 'hidden',
+                // Transición suave entre slides
+                transition: esActivo ? 'opacity 0.4s ease' : 'none',
+                // El slide inactivo no consume layer de compositing
+                willChange: esActivo ? 'opacity' : 'auto',
+              }}
+              aria-hidden={!esActivo}
+            >
+              <Plantilla
+                titulo={producto.titulo}
+                nombreProducto={producto.titulo}
+                descripcion={producto.descripcion}
+                imagenProducto={producto.imagenProducto}
+                precioLista={producto.precioLista}
+                precioOferta={producto.precioOferta}
+                porcentajeDescuento={producto.porcentajeDescuento}
+                categoria={producto.categoria}
+              />
+            </div>
+          );
+        })}
+
+        {/* HUD superpuesto */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Barra de progreso arriba */}
+          {/* Barras de progreso */}
           <div className="absolute top-0 left-0 right-0 flex gap-1 p-3">
             {productos.map((_, i) => (
               <div key={i} className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
@@ -219,7 +257,7 @@ export default function SlideShowPlayer({
             ))}
           </div>
 
-          {/* Info top-right */}
+          {/* Contador top-right */}
           <div className="absolute top-6 right-6 flex items-center gap-3 pointer-events-auto">
             <span className="text-white/60 text-xs font-mono">
               {indiceActual + 1} / {productos.length}
@@ -230,11 +268,11 @@ export default function SlideShowPlayer({
                 className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur flex items-center justify-center transition"
               >
                 {pausado ? (
-                  <svg className="w-3.5 h-3.5 text-white fill-white" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 ) : (
-                  <svg className="w-3.5 h-3.5 text-white fill-white" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
                     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                   </svg>
                 )}
@@ -242,49 +280,48 @@ export default function SlideShowPlayer({
             )}
           </div>
 
-          {/* Navegación lateral — solo en modo administrador */}
+          {/* Navegación lateral — solo admin */}
           {!tvMode && (
-            <button
-              onClick={() => avanzar((indiceActual - 1 + productos.length) % productos.length)}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur flex items-center justify-center transition pointer-events-auto"
-            >
-              <svg
-                className="w-4 h-4 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <>
+              <button
+                onClick={() => avanzar((indiceActual - 1 + productos.length) % productos.length)}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur flex items-center justify-center transition pointer-events-auto"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-          )}
-          {!tvMode && (
-            <button
-              onClick={() => avanzar((indiceActual + 1) % productos.length)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur flex items-center justify-center transition pointer-events-auto"
-            >
-              <svg
-                className="w-4 h-4 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={() => avanzar((indiceActual + 1) % productos.length)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur flex items-center justify-center transition pointer-events-auto"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </>
           )}
 
-          {/* Indicador pausa */}
           {pausado && (
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-white/10 backdrop-blur rounded-full text-white/60 text-xs font-mono">
               PAUSADO · ESPACIO para reanudar
