@@ -14,6 +14,7 @@ const MegaSale = ({
   const BASE_W = 1200;
   const BASE_H = 600;
   const [scale, setScale] = useState(1);
+  const [imgRatio, setImgRatio] = useState(1); // naturalH / naturalW
   const effectiveScale = preview ? 1 : scale;
 
   useEffect(() => {
@@ -28,6 +29,18 @@ const MegaSale = ({
   // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
   const unaLinea = len <= 14;
   const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
+  const descUnaLinea = descripcion.length <= 50;
+
+  // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
+  // Centro deseado: x≈298, y≈305 (zona del reflector)
+  const IMG_FULL = 440;
+  const IMG_TALL = 460; // imagen alta → más chica
+  const isTall  = imgRatio > 1.3;
+  const imgSize = isTall ? IMG_TALL : IMG_FULL;
+  // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
+  // así que sumamos un offset extra para que quede centrada bajo el reflector
+  const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
+  const imgTop  = Math.round(305 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -43,6 +56,38 @@ const MegaSale = ({
     @keyframes pricePulse {
       0%,100% { opacity:1; }
       50%      { opacity:0.82; }
+    }
+    @keyframes slideDown {
+      from { opacity:0; transform: translateY(-22px); }
+      to   { opacity:1; transform: translateY(0);     }
+    }
+    @keyframes slideRight {
+      from { opacity:0; transform: translateX(-28px) translateX(0); }
+      to   { opacity:1; transform: translateX(0);                   }
+    }
+    @keyframes slideLeft {
+      from { opacity:0; transform: translateX(28px); }
+      to   { opacity:1; transform: translateX(0);    }
+    }
+    @keyframes slideLeftTitle {
+      from { opacity:0; transform: translateX(calc(-50% + 28px)); }
+      to   { opacity:1; transform: translateX(-50%);              }
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform: translateY(22px); }
+      to   { opacity:1; transform: translateY(0);    }
+    }
+    @keyframes popIn {
+      from { opacity:0; transform: translate(-50%,-50%) scale(0.75); }
+      to   { opacity:1; transform: translate(-50%,-50%) scale(1);    }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+    @keyframes imgEnter {
+      from { opacity:0; transform: translateY(18px); }
+      to   { opacity:1; transform: translateY(0);    }
     }
   `;
 
@@ -105,6 +150,7 @@ const MegaSale = ({
               textAlign: 'center',
               lineHeight: 1,
               pointerEvents: 'none',
+              animation: 'popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both',
             }}
           >
             {/* Precio oferta — grande y llamativo */}
@@ -117,7 +163,7 @@ const MegaSale = ({
                 color: '#050303',
                 letterSpacing: -1,
                 lineHeight: 0.95,
-                animation: 'pricePulse 2.5s ease-in-out infinite',
+                animation: 'pricePulse 2.5s ease-in-out 1.8s infinite',
               }}
             >
               {fmt(precioOferta)}
@@ -134,6 +180,7 @@ const MegaSale = ({
                 left: 63,
                 top: 22,
                 transform: 'rotate(-4deg)',
+                zIndex: 2,
                 fontFamily: "'Rubik', sans-serif",
                 fontWeight: 900,
                 fontSize: 33,
@@ -142,6 +189,7 @@ const MegaSale = ({
                 lineHeight: 1,
                 textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                 pointerEvents: 'none',
+                animation: 'slideDown 0.5s ease-out 0.1s both',
               }}
             >
               {porcentajeDescuento}% OFF
@@ -161,6 +209,7 @@ const MegaSale = ({
                 alignItems: 'center',
                 gap: 8,
                 pointerEvents: 'none',
+                animation: 'slideUp 0.5s ease-out 1.0s both',
               }}
             >
               <div
@@ -212,6 +261,7 @@ const MegaSale = ({
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
               filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
+              animation: 'slideLeftTitle 0.55s ease-out 0.5s both',
             }}
           >
             {nombreProducto}
@@ -228,12 +278,14 @@ const MegaSale = ({
                 top: 330,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
-                fontSize: 14,
+                fontSize: descUnaLinea ? 18 : 14,
                 fontWeight: 400,
                 color: 'rgb(255, 255, 255)',
                 lineHeight: 1.6,
+                whiteSpace: descUnaLinea ? 'nowrap' : 'normal',
                 textAlign: 'center',
                 pointerEvents: 'none',
+                animation: 'fadeIn 0.6s ease-out 0.75s both',
               }}
             >
               {descripcion}
@@ -249,14 +301,19 @@ const MegaSale = ({
             <img
               src={imagenProducto}
               alt={nombreProducto ?? ''}
+              onLoad={(e) => {
+                const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+                setImgRatio(w > 0 ? h / w : 1);
+              }}
               style={{
                 position: 'absolute',
-                left: 20,
-                top: 40,
-                width: 530,
-                height: 530,
+                left: imgLeft,
+                top: imgTop,
+                width: imgSize,
+                height: imgSize,
                 objectFit: 'contain',
-                animation: 'floatProd 4s ease-in-out infinite, glowProd 4s ease-in-out infinite',
+                zIndex: 1,
+                animation: 'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
                 pointerEvents: 'none',
               }}
             />

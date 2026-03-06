@@ -57,6 +57,38 @@ const Megaoferta = ({
       0%,100% { opacity:1; }
       50%      { opacity:0.82; }
     }
+    @keyframes slideDown {
+      from { opacity:0; transform: translateY(-22px); }
+      to   { opacity:1; transform: translateY(0);     }
+    }
+    @keyframes slideRight {
+      from { opacity:0; transform: translateX(-28px) translateX(0); }
+      to   { opacity:1; transform: translateX(0);                   }
+    }
+    @keyframes slideLeft {
+      from { opacity:0; transform: translateX(28px); }
+      to   { opacity:1; transform: translateX(0);    }
+    }
+    @keyframes slideLeftTitle {
+      from { opacity:0; transform: translateX(calc(-50% + 28px)); }
+      to   { opacity:1; transform: translateX(-50%);              }
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform: translateY(22px); }
+      to   { opacity:1; transform: translateY(0);    }
+    }
+    @keyframes popIn {
+      from { opacity:0; transform: translate(-50%,-50%) scale(0.75); }
+      to   { opacity:1; transform: translate(-50%,-50%) scale(1);    }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+    @keyframes imgEnter {
+      from { opacity:0; transform: translateY(18px); }
+      to   { opacity:1; transform: translateY(0);    }
+    }
   `;
 
   return (
@@ -118,6 +150,7 @@ const Megaoferta = ({
               textAlign: 'center',
               lineHeight: 1,
               pointerEvents: 'none',
+              animation: 'popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both',
             }}
           >
             {/* Precio oferta — grande y llamativo */}
@@ -130,7 +163,7 @@ const Megaoferta = ({
                 color: '#050303',
                 letterSpacing: -1,
                 lineHeight: 0.95,
-                animation: 'pricePulse 2.5s ease-in-out infinite',
+                animation: 'pricePulse 2.5s ease-in-out 1.8s infinite',
               }}
             >
               {fmt(precioOferta)}
@@ -156,6 +189,7 @@ const Megaoferta = ({
                 lineHeight: 1,
                 textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                 pointerEvents: 'none',
+                animation: 'slideDown 0.5s ease-out 0.1s both',
               }}
             >
               {porcentajeDescuento}% OFF
@@ -175,6 +209,7 @@ const Megaoferta = ({
                 alignItems: 'center',
                 gap: 8,
                 pointerEvents: 'none',
+                animation: 'slideUp 0.5s ease-out 1.0s both',
               }}
             >
               <div
@@ -226,6 +261,7 @@ const Megaoferta = ({
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
               filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
+              animation: 'slideLeftTitle 0.55s ease-out 0.5s both',
             }}
           >
             {nombreProducto}
@@ -249,6 +285,7 @@ const Megaoferta = ({
                 whiteSpace: descUnaLinea ? 'nowrap' : 'normal',
                 textAlign: 'center',
                 pointerEvents: 'none',
+                animation: 'fadeIn 0.6s ease-out 0.75s both',
               }}
             >
               {descripcion}
@@ -276,7 +313,7 @@ const Megaoferta = ({
                 height: imgSize,
                 objectFit: 'contain',
                 zIndex: 1,
-                animation: 'floatProd 4s ease-in-out infinite, glowProd 4s ease-in-out infinite',
+                animation: 'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
                 pointerEvents: 'none',
               }}
             />
