@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import plantilla from '../../assets/canva/flashsale.png';
-import comedorDefault from '../../assets/comedor.png';
+import React, { useEffect, useState } from "react";
+import plantilla from "../../assets/canva/flashsale.png";
+import comedorDefault from "../../assets/comedor.png";
 
 const FlashSale = ({
-  nombreProducto = 'Juego de Comedor',
-  descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
+  nombreProducto = "Juego de Comedor",
+  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
   imagenProducto = comedorDefault,
   precioLista = 500000,
   precioOferta = 250000,
@@ -18,29 +18,33 @@ const FlashSale = ({
   const effectiveScale = preview ? 1 : scale;
 
   useEffect(() => {
-    const calc = () => setScale(Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H));
+    const calc = () =>
+      setScale(
+        Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H),
+      );
     calc();
-    window.addEventListener('resize', calc);
-    return () => window.removeEventListener('resize', calc);
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
   }, []);
 
-  const fmt = (n) => (n ? `$${Number(n).toLocaleString('es-AR')}` : '');
+  const fmt = (n) => (n ? `$${Number(n).toLocaleString("es-AR")}` : "");
   const len = nombreProducto.length;
   // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
   const unaLinea = len <= 14;
-  const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
-  const descUnaLinea = descripcion.length <= 50;
+  const nombreFontSize =
+    len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
+  const descUnaLinea = descripcion.length <= 40;
 
   // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
   // Centro deseado: x≈298, y≈305 (zona del reflector)
   const IMG_FULL = 440;
   const IMG_TALL = 460; // imagen alta → más chica
-  const isTall  = imgRatio > 1.3;
+  const isTall = imgRatio > 1.3;
   const imgSize = isTall ? IMG_TALL : IMG_FULL;
   // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
   // así que sumamos un offset extra para que quede centrada bajo el reflector
   const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
-  const imgTop  = Math.round(305 - imgSize / 2);
+  const imgTop = Math.round(305 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -102,24 +106,24 @@ const FlashSale = ({
       {/* Pantalla completa → centra la escena */}
       <div
         style={{
-          width: preview ? BASE_W : '100vw',
-          height: preview ? BASE_H : '100vh',
-          background: '#000',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
+          width: preview ? BASE_W : "100vw",
+          height: preview ? BASE_H : "100vh",
+          background: "#000",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
         }}
       >
         {/* Escena fija 1200 × 600 */}
         <div
           style={{
-            position: 'relative',
+            position: "relative",
             width: BASE_W,
             height: BASE_H,
             flexShrink: 0,
             transform: `scale(${effectiveScale})`,
-            transformOrigin: 'center center',
+            transformOrigin: "center center",
           }}
         >
           {/* FONDO */}
@@ -128,42 +132,48 @@ const FlashSale = ({
             alt=""
             aria-hidden
             style={{
-              position: 'absolute',
+              position: "absolute",
               inset: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              display: 'block',
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
             }}
           />
 
           {/* ══════════════════════════════════════════
-              ESTRELLA — precio oferta adentro
+              Precio oferta adentro
               Centro de la estrella en la plantilla ≈ x:155, y:128
           ══════════════════════════════════════════ */}
           <div
             style={{
-              position: 'absolute',
-              left: 728,
-              top: 500,
-              transform: 'translate(-50%, -50%)',
-              textAlign: 'center',
+              position: "absolute",
+              left: 960,
+              top: 468,
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
               lineHeight: 1,
-              pointerEvents: 'none',
-              animation: 'popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both',
+              pointerEvents: "none",
+              animation: "popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both",
             }}
           >
             {/* Precio oferta — grande y llamativo */}
-            
+
             <div
               style={{
                 fontFamily: "'Rubik', sans-serif",
-                fontWeight: 900,
-                fontSize: porcentajeDescuento > 0 ? 46 : 52,
-                color: '#050303',
+                fontWeight: 980,
+                fontSize: porcentajeDescuento > 0 ? 60 : 52,
+                color: "#faa60a",
                 letterSpacing: -1,
                 lineHeight: 0.95,
-                animation: 'pricePulse 2.5s ease-in-out 1.8s infinite',
+                animation: "pricePulse 2.5s ease-in-out 1.8s infinite",
+                textShadow: `
+                      -2px -2px 0 #000000,
+                      2px -2px 0 #010101,
+                      -2px  2px 0 #000000,
+                      1px  1px 0 #ffffff
+                    `,
               }}
             >
               {fmt(precioOferta)}
@@ -176,23 +186,28 @@ const FlashSale = ({
           {porcentajeDescuento > 0 && (
             <div
               style={{
-                position: 'absolute',
-                left: 63,
-                top: 22,
-                transform: 'rotate(-4deg)',
+                position: "absolute",
+                left: 685,
+                top: 455,
+                transform: "rotate(-4deg)",
                 zIndex: 2,
                 fontFamily: "'Rubik', sans-serif",
                 fontWeight: 900,
                 fontSize: 33,
-                color: '#ffffff',
+                color: "#ffffff",
                 letterSpacing: -1,
                 lineHeight: 1,
-                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-                pointerEvents: 'none',
-                animation: 'slideDown 0.5s ease-out 0.1s both',
+                pointerEvents: "none",
+                animation: "slideDown 0.5s ease-out 0.1s both",
+                textShadow: `
+                      -2px -2px 0 #000000,
+                      2px -2px 0 #010101,
+                      -2px  2px 0 #000000,
+                      2px  2px 0 #3768bc
+                    `,
               }}
             >
-              {porcentajeDescuento}% OFF
+              {porcentajeDescuento}%
             </div>
           )}
 
@@ -202,23 +217,22 @@ const FlashSale = ({
           {precioLista > 0 && (
             <div
               style={{
-                position: 'absolute',
-                left: 620,
-                top: 420,
-                display: 'flex',
-                alignItems: 'center',
+                position: "absolute",
+                left: 675,
+                top: 360,
+                display: "flex",
+                alignItems: "center",
                 gap: 8,
-                pointerEvents: 'none',
-                animation: 'slideUp 0.5s ease-out 1.0s both',
+                pointerEvents: "none",
+                animation: "slideUp 0.5s ease-out 1.0s both",
               }}
             >
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
                   fontSize: 24,
-                  color: 'rgb(255, 255, 255)',
+                  color: "rgb(0, 0, 0)",
                   letterSpacing: 1.5,
-                  textTransform: 'uppercase',
                 }}
               >
                 ANTES
@@ -226,11 +240,11 @@ const FlashSale = ({
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
-                  color: 'rgb(255, 255, 255)',
-                  textDecoration: 'line-through',
+                  fontSize: 30,
+                  color: "rgb(0, 0, 0)",
+                  textDecoration: "line-through",
                   lineHeight: 1,
-                  letterSpacing: 1,
+                  letterSpacing: 1.5,
                 }}
               >
                 {fmt(precioLista)}
@@ -243,25 +257,27 @@ const FlashSale = ({
           ══════════════════════════════════════════ */}
           <div
             style={{
-              position: 'absolute',
+              position: "absolute",
               left: 890,
-              top: unaLinea ? 200 : 190,
-              transform: 'translateX(-50%)',
+              top: unaLinea ? 140 : 135,
+              transform: "translateX(-50%)",
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
               fontSize: nombreFontSize,
               letterSpacing: -1,
-              whiteSpace: unaLinea ? 'nowrap' : 'normal',
-              textAlign: 'center',
+              whiteSpace: unaLinea ? "nowrap" : "normal",
+              textAlign: "center",
               width: 380,
               lineHeight: 1.05,
-              pointerEvents: 'none',
-              background: 'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
-              animation: 'slideLeftTitle 0.55s ease-out 0.5s both',
+              pointerEvents: "none",
+              color: "rgb(56, 131, 235)",
+              textShadow: `
+                      -3px -3px 0 #000000,
+                      3px -3px 0 #010101,
+                      -3px  3px 0 #000000,
+                      3px  3px 0 #000000
+                    `,
+              animation: "slideLeftTitle 0.55s ease-out 0.5s both",
             }}
           >
             {nombreProducto}
@@ -273,19 +289,29 @@ const FlashSale = ({
           {descripcion && (
             <div
               style={{
-                position: 'absolute',
+                position: "absolute",
                 left: 650,
-                top: 330,
+                top: 255,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: descUnaLinea ? 18 : 14,
-                fontWeight: 400,
-                color: 'rgb(255, 255, 255)',
-                lineHeight: 1.6,
-                whiteSpace: descUnaLinea ? 'nowrap' : 'normal',
-                textAlign: 'center',
-                pointerEvents: 'none',
-                animation: 'fadeIn 0.6s ease-out 0.75s both',
+                fontWeight: 500,
+                color: "#000",
+                lineHeight: 1.5,
+                whiteSpace: descUnaLinea ? "nowrap" : "normal",
+                textAlign: "center",
+                pointerEvents: "none",
+                animation: "fadeIn 0.6s ease-out 0.75s both",
+
+                /* recuadro */
+                background: "#fbfbfbb6",
+                padding: "10px 18px",
+                borderRadius: "10px",
+                border: "2px solid #FB8C00",
+
+                /* opcional para mejorar lectura */
+                boxSizing: "border-box",
+                borderbox: preview ? "1px dashed red" : "2px solid #FB8C00",
               }}
             >
               {descripcion}
@@ -300,21 +326,22 @@ const FlashSale = ({
           {imagenProducto && (
             <img
               src={imagenProducto}
-              alt={nombreProducto ?? ''}
+              alt={nombreProducto ?? ""}
               onLoad={(e) => {
                 const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
                 setImgRatio(w > 0 ? h / w : 1);
               }}
               style={{
-                position: 'absolute',
+                position: "absolute",
                 left: imgLeft,
                 top: imgTop,
                 width: imgSize,
                 height: imgSize,
-                objectFit: 'contain',
+                objectFit: "contain",
                 zIndex: 1,
-                animation: 'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
-                pointerEvents: 'none',
+                animation:
+                  "imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite",
+                pointerEvents: "none",
               }}
             />
           )}
