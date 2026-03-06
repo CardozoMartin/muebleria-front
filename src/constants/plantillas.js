@@ -1,118 +1,57 @@
-import CalidezTV from '../components/Plantillas/CalidezTV';
-import CasaViva from '../components/Plantillas/Casaviva';
-import CyberMonday from '../components/Plantillas/CyberMonday';
-import HotSale from '../components/Plantillas/HotSale';
-import ImpactoTV from '../components/Plantillas/ImpactoTV';
-import ImpactoTV2 from '../components/Plantillas/ImpactoTV2';
-import Liquidacion from '../components/Plantillas/Liquidacion';
-import LuxeShow from '../components/Plantillas/LuxeShow';
-import MegaSale from '../components/Plantillas/MegaSale';
-import ModernTV from '../components/Plantillas/ModernTV';
-import PlantillaCanva from '../components/Plantillas/PlantillaCanva';
-import PlantillaCanva2 from '../components/Plantillas/PlantillaCanva2';
-import PlantillaCanva3 from '../components/Plantillas/PlantillaCanva3';
-import SpotlightTV from '../components/Plantillas/SpotlightTV';
+
+import PlantillaCanva from '../components/Plantillas/MegaOferta';
+import PlantillaCanva2 from '../components/Plantillas/FlashSale';
+import PlantillaCanva3 from '../components/Plantillas/HotSale';
+import PlantillaCanva4 from '../components/Plantillas/BlackFriday';
+import PlantillaCanva5 from '../components/Plantillas/FeriaDescuentos';
+import PlantillaCanva6 from '../components/Plantillas/MegaSale';
+
 
 // central list of available templates; used in PlantillasPage and product form
 export const PLANTILLAS = [
-  {
-    id: 'megasale',
-    nombre: 'Mega Sale',
-    descripcion: 'Energético · Naranja · Impacto',
-    component: MegaSale,
-    dot: 'bg-orange-500',
-  },
-  {
-    id: 'luxeshow',
-    nombre: 'Super Sale',
-    descripcion: 'Clásico · Madera clara · Sereno',
-    component: LuxeShow,
-    dot: 'bg-amber-700',
-  },
-  {
-    id: 'casaviva',
-    nombre: 'Oferta Especial',
-    descripcion: 'Cinematográfico · Oscuro · Cálido',
-    component: CasaViva,
-    dot: 'bg-orange-300',
-  },
-  {
-    id: 'liquidacion',
-    nombre: 'Liquidación',
-    descripcion: 'Dinámico · Rojo · Fuego',
-    component: Liquidacion,
-    dot: 'bg-red-500',
-  },
-  {
-    id: 'hotsale',
-    nombre: 'Hot Sale',
-    descripcion: 'Dinámico · Rojo · Fuego',
-    component: HotSale,
-    dot: 'bg-red-500',
-  },
-  {
-    id: 'cybermonday',
-    nombre: 'Cyber Monday',
-    descripcion: 'Dinámico · Rojo · Fuego',
-    component: CyberMonday,
-    dot: 'bg-red-500',
-  },
-  {
-    id: 'calidez',
-    nombre: 'Calidez TV',
-    descripcion: 'Cálido · Crema · Hogareño',
-    component: CalidezTV,
-    dot: 'bg-amber-600',
-  },
-  {
-    id: 'impactotv',
-    nombre: 'Impacto TV',
-    descripcion: 'Impactante · Negro · Dinámico',
-    component: ImpactoTV,
-    dot: 'bg-gray-900',
-  },
-  {
-    id: 'impactotv2',
-    nombre: 'Impacto TV 2',
-    descripcion: 'Impactante · Negro · Moderno',
-    component: ImpactoTV2,
-    dot: 'bg-slate-700',
-  },
-  {
-    id: 'modern',
-    nombre: 'Modern TV',
-    descripcion: 'Limpio · Blanco · Minimalista',
-    component: ModernTV,
-    dot: 'bg-white',
-  },
-  {
-    id: 'spotlight',
-    nombre: 'Spotlight TV',
-    descripcion: 'Elegante · Oro · Premium',
-    component: SpotlightTV,
-    dot: 'bg-yellow-600',
-  },
+
   {
     id: 'canva',
-    nombre: 'Plantilla Canva',
+    nombre: 'Mega Oferta',
     descripcion: 'Personalizado · Diseño Canva · Premium',
     component: PlantillaCanva,
     dot: 'bg-purple-500',
   },
   {
     id: 'canva2',
-    nombre: 'Plantilla Canva 2',
+    nombre: 'Flash Sale',
     descripcion: 'Personalizado · Diseño Canva · Premium',
     component: PlantillaCanva2,
     dot: 'bg-purple-600',
   },
   {
     id: 'canva3',
-    nombre: 'Plantilla Canva 3',
+    nombre: 'Hot Sale',
     descripcion: 'Personalizado · Diseño Canva · Premium',
     component: PlantillaCanva3,
     dot: 'bg-purple-700',
   },
+  {
+    id: 'blackfriday',
+    nombre: 'Black Friday',
+    descripcion: 'Dinámico · con tonos oscuros, rojos y naranjas · Impactante',
+    component: PlantillaCanva4,
+    dot: 'bg-gray-800',
+  },
+  {
+    id: 'feriadedescuentos',
+    nombre: 'Feria de Descuentos',
+    descripcion: 'Dinámico · con tonos azules y blancos · Moderno',
+    component: PlantillaCanva5,
+    dot: 'bg-blue-600',
+  },
+  {
+    id: 'megasale',
+    nombre: 'Mega Sale',
+    descripcion: 'Dinámico · con tonos verdes y amarillos · Atractivo',
+    component: PlantillaCanva6,
+    dot: 'bg-green-500',
+  }
 ];
 
 // helper for form options

@@ -1,36 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useImageCache } from '../../hooks/useImageCache';
 
-import CalidezTV from '../Plantillas/CalidezTV';
-import CasaViva from '../Plantillas/Casaviva';
-import CyberMonday from '../Plantillas/CyberMonday';
-import HotSale from '../Plantillas/HotSale';
-import ImpactoTV from '../Plantillas/ImpactoTV';
-import ImpactoTV2 from '../Plantillas/ImpactoTV2';
-import Liquidacion from '../Plantillas/Liquidacion';
-import LuxeShow from '../Plantillas/LuxeShow';
-import MegaSale from '../Plantillas/MegaSale';
-import ModernTV from '../Plantillas/ModernTV';
-import PlantillaCanva from '../Plantillas/PlantillaCanva';
-import PlantillaCanva2 from '../Plantillas/PlantillaCanva2';
-import PlantillaCanva3 from '../Plantillas/PlantillaCanva3';
-import SpotlightTV from '../Plantillas/SpotlightTV';
+
+import PlantillaCanva from '../Plantillas/MegaOferta';
+import PlantillaCanva2 from '../Plantillas/FlashSale';
+import PlantillaCanva3 from '../Plantillas/HotSale';
+import PlantillaCanva4 from '../Plantillas/BlackFriday';
+import PlantillaCanva5 from '../Plantillas/FeriaDescuentos';
+
 
 const PLANTILLAS_MAP = {
-  megasale: MegaSale,
-  luxeshow: LuxeShow,
-  casaviva: CasaViva,
-  liquidacion: Liquidacion,
-  hotsale: HotSale,
-  cybermonday: CyberMonday,
-  calidez: CalidezTV,
-  impactotv: ImpactoTV,
-  impactotv2: ImpactoTV2,
-  modern: ModernTV,
-  spotlight: SpotlightTV,
   canva: PlantillaCanva,
   canva2: PlantillaCanva2,
   canva3: PlantillaCanva3,
+  canva4: PlantillaCanva4,
+  canva5: PlantillaCanva5,
 };
 
 export default function SlideShowPlayer({
