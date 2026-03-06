@@ -14,6 +14,7 @@ const Megaoferta = ({
   const BASE_W = 1200;
   const BASE_H = 600;
   const [scale, setScale] = useState(1);
+  const [imgRatio, setImgRatio] = useState(1); // naturalH / naturalW
   const effectiveScale = preview ? 1 : scale;
 
   useEffect(() => {
@@ -29,6 +30,17 @@ const Megaoferta = ({
   const unaLinea = len <= 14;
   const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
   const descUnaLinea = descripcion.length <= 50;
+
+  // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
+  // Centro deseado: x≈298, y≈305 (zona del reflector)
+  const IMG_FULL = 440;
+  const IMG_TALL = 460; // imagen alta → más chica
+  const isTall  = imgRatio > 1.3;
+  const imgSize = isTall ? IMG_TALL : IMG_FULL;
+  // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
+  // así que sumamos un offset extra para que quede centrada bajo el reflector
+  const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
+  const imgTop  = Math.round(305 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -135,6 +147,7 @@ const Megaoferta = ({
                 left: 63,
                 top: 22,
                 transform: 'rotate(-4deg)',
+                zIndex: 2,
                 fontFamily: "'Rubik', sans-serif",
                 fontWeight: 900,
                 fontSize: 33,
@@ -251,13 +264,18 @@ const Megaoferta = ({
             <img
               src={imagenProducto}
               alt={nombreProducto ?? ''}
+              onLoad={(e) => {
+                const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+                setImgRatio(w > 0 ? h / w : 1);
+              }}
               style={{
                 position: 'absolute',
-                left: 33,
-                top: 40,
-                width: 530,
-                height: 530,
+                left: imgLeft,
+                top: imgTop,
+                width: imgSize,
+                height: imgSize,
                 objectFit: 'contain',
+                zIndex: 1,
                 animation: 'floatProd 4s ease-in-out infinite, glowProd 4s ease-in-out infinite',
                 pointerEvents: 'none',
               }}
