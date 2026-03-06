@@ -28,6 +28,7 @@ const Megaoferta = ({
   // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
   const unaLinea = len <= 14;
   const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
+  const descUnaLinea = descripcion.length <= 50;
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -228,10 +229,11 @@ const Megaoferta = ({
                 top: 330,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
-                fontSize: 14,
+                fontSize: descUnaLinea ? 18 : 14,
                 fontWeight: 400,
                 color: 'rgb(255, 255, 255)',
                 lineHeight: 1.6,
+                whiteSpace: descUnaLinea ? 'nowrap' : 'normal',
                 textAlign: 'center',
                 pointerEvents: 'none',
               }}
@@ -251,7 +253,7 @@ const Megaoferta = ({
               alt={nombreProducto ?? ''}
               style={{
                 position: 'absolute',
-                left: 20,
+                left: 33,
                 top: 40,
                 width: 530,
                 height: 530,
