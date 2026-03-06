@@ -184,29 +184,13 @@ export default function SlideShowPlayer({
         </button>
       )}
 
-      {/* ── SLIDES PRE-RENDERIZADOS — todos montados, solo uno visible ── */}
+      {/* ── SLIDE ACTIVO — se remonta en cada avance para reiniciar animaciones ── */}
       <div className="flex-1 relative overflow-hidden">
-        {productos.map((producto, i) => {
-          const Plantilla = PLANTILLAS_MAP[producto.plantillaId] ?? PlantillaCanva;
-          const esActivo = i === indiceActual;
-
+        {(() => {
+          const producto = productos[indiceActual];
+          const Plantilla = PLANTILLAS_MAP[producto?.plantillaId] ?? PlantillaCanva;
           return (
-            <div
-              key={`slide-${producto.id ?? i}`}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                // Visibilidad pura por CSS — el DOM nunca se desmonta
-                opacity: esActivo ? 1 : 0,
-                // Solo el activo recibe eventos y captura GPU
-                visibility: esActivo ? 'visible' : 'hidden',
-                // Transición suave entre slides
-                transition: esActivo ? 'opacity 0.4s ease' : 'none',
-                // El slide inactivo no consume layer de compositing
-                willChange: esActivo ? 'opacity' : 'auto',
-              }}
-              aria-hidden={!esActivo}
-            >
+            <div key={`slide-${indiceActual}`} style={{ position: 'absolute', inset: 0 }}>
               <Plantilla
                 titulo={producto.titulo}
                 nombreProducto={producto.titulo}
@@ -219,7 +203,7 @@ export default function SlideShowPlayer({
               />
             </div>
           );
-        })}
+        })()}
 
         {/* HUD superpuesto */}
         <div className="absolute inset-0 pointer-events-none">
