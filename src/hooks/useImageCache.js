@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const DB_NAME = 'ImageCacheV2';
 const DB_VERSION = 1;
 const STORE_NAME = 'images';
+const CACHE_INDEX_KEY = 'imageCacheIndex'; // localStorage key para índice de URLs cacheadas
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -17,6 +18,30 @@ function openDB() {
       }
     };
   });
+}
+
+// Registro en localStorage de qué URLs están cacheadas en IDB
+function getCachedUrls() {
+  try {
+    const cached = localStorage.getItem(CACHE_INDEX_KEY);
+    return cached ? JSON.parse(cached) : {};
+  } catch {
+    return {};
+  }
+}
+
+function markAsCached(url) {
+  try {
+    const cached = getCachedUrls();
+    cached[url] = true;
+    localStorage.setItem(CACHE_INDEX_KEY, JSON.stringify(cached));
+  } catch {
+    // silencioso
+  }
+}
+
+function isCachedLocally(url) {
+  return getCachedUrls()[url] === true;
 }
 
 async function getFromDB(db, url) {
@@ -44,6 +69,8 @@ async function saveToDB(db, url, blob) {
   try {
     const tx = db.transaction(STORE_NAME, 'readwrite');
     tx.objectStore(STORE_NAME).put({ url, blob });
+    // Registrar en localStorage que está cacheada
+    markAsCached(url);
   } catch {
     // silencioso
   }
@@ -93,27 +120,39 @@ export const useImageCache = () => {
     // 1. Memoria
     if (memCache.current.has(url)) return memCache.current.get(url);
 
-    // 2. IndexedDB
-    const fromDB = await getFromDB(dbRef.current, url);
-    if (fromDB) {
-      memCache.current.set(url, fromDB);
-      return fromDB;
+    // 2. IndexedDB - primero checar en localStorage para optimizar
+    if (isCachedLocally(url)) {
+      const fromDB = await getFromDB(dbRef.current, url);
+      if (fromDB) {
+        memCache.current.set(url, fromDB);
+        return fromDB;
+      }
     }
 
-    // 3. Red
+    // 3. Red - con timeout agresivo
     try {
-      const res = await fetch(url, { cache: 'force-cache' });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 segundos timeout
+
+      const res = await fetch(url, {
+        cache: 'force-cache',
+        signal: controller.signal,
+        credentials: 'omit', // No enviar cookies, más rápido
+      });
+      clearTimeout(timeoutId);
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const blob = await res.blob();
 
-      // Guardar en IDB en background (no bloqueante)
+      // Guardar en IDB en background (no bloqueante) - esto también registra en localStorage
       saveToDB(dbRef.current, url, blob);
 
       const blobUrl = URL.createObjectURL(blob);
       memCache.current.set(url, blobUrl);
       return blobUrl;
-    } catch {
+    } catch (error) {
       // Si falla la red, devolver URL original para que el browser intente
+      console.warn(`Error cacheando ${url}:`, error.message);
       memCache.current.set(url, url);
       return url;
     }
@@ -124,28 +163,32 @@ export const useImageCache = () => {
    * Actualiza `progress` (0-100) y setea `ready` al terminar.
    *
    * @param {string[]} urls - lista de URLs a precargar
-   * @param {number} concurrency - descargas paralelas (default 3, no saturar la TV)
+   * @param {number} concurrency - descargas paralelas (default 6 para TV - mejor red local)
    */
   const preloadAll = useCallback(
-    async (urls, concurrency = 3) => {
+    async (urls, concurrency = 6) => {
       const validUrls = [...new Set(urls.filter(Boolean))];
       if (validUrls.length === 0) {
         setReady(true);
         return;
       }
 
+      console.log(`[Cache] Preloading ${validUrls.length} images with concurrency ${concurrency}`);
       setProgress(0);
       setReady(false);
       let done = 0;
 
-      // Procesar en lotes para no sobrecargar la red de la TV
+      // Procesar en lotes para optimizar la red de la TV
       for (let i = 0; i < validUrls.length; i += concurrency) {
         const batch = validUrls.slice(i, i + concurrency);
         await Promise.allSettled(batch.map(cacheOne));
         done += batch.length;
-        setProgress(Math.round((done / validUrls.length) * 100));
+        const newProgress = Math.round((done / validUrls.length) * 100);
+        setProgress(newProgress);
+        console.log(`[Cache] Progress: ${newProgress}% (${done}/${validUrls.length})`);
       }
 
+      console.log('[Cache] ✅ All images cached and ready to play');
       setReady(true);
     },
     [cacheOne]

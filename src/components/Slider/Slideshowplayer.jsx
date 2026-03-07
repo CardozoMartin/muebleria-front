@@ -65,7 +65,7 @@ function LoadingScreen({ progress, logoSrc }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 32,
+        gap: 40,
       }}
     >
       {logoSrc && <img src={logoSrc} alt="Logo" style={{ height: 80, objectFit: 'contain' }} />}
@@ -75,29 +75,30 @@ function LoadingScreen({ progress, logoSrc }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 16,
-          width: 360,
+          gap: 20,
+          width: 400,
         }}
       >
         <p
           style={{
             color: '#aaa',
             fontFamily: 'sans-serif',
-            fontSize: 15,
-            letterSpacing: 4,
+            fontSize: 16,
+            letterSpacing: 3,
             textTransform: 'uppercase',
             margin: 0,
+            fontWeight: 600,
           }}
         >
-          Preparando catálogo...
+          Preparando Catálogo
         </p>
 
-        {/* Barra de progreso */}
+        {/* Barra de progreso mejorada */}
         <div
           style={{
             width: '100%',
-            height: 6,
-            background: '#333',
+            height: 8,
+            background: 'rgba(255,255,255,0.1)',
             borderRadius: 3,
             overflow: 'hidden',
           }}
@@ -113,8 +114,11 @@ function LoadingScreen({ progress, logoSrc }) {
           />
         </div>
 
-        <p style={{ color: '#555', fontFamily: 'monospace', fontSize: 13, margin: 0 }}>
+        <p style={{ color: '#ff6600', fontFamily: 'sans-serif', fontSize: 28, margin: 0, fontWeight: 'bold' }}>
           {progress}%
+        </p>
+        <p style={{ color: '#666', fontFamily: 'sans-serif', fontSize: 12, margin: 0, marginTop: 8 }}>
+          {progress === 100 ? '✓ Listo para reproducir' : 'Cargando imágenes...'}
         </p>
       </div>
     </div>
@@ -126,7 +130,7 @@ function LoadingScreen({ progress, logoSrc }) {
 ───────────────────────────────────────────────────────────── */
 export default function SlideShowPlayer({
   productos = [],
-  duracionSegundos = 8,
+  duracionSegundos = 60, // ⚠️ 1 minuto por defecto (cambiar en Reproductor)
   tvMode = false,
   onClose,
 }) {
@@ -156,7 +160,8 @@ export default function SlideShowPlayer({
     ];
 
     const allUrls = [...urls, ...fondosCanva];
-    preloadAll(allUrls, 3); // 3 descargas en paralelo — no sofocar la TV
+    console.log(`[SlideShow] Starting to preload ${allUrls.length} images from ${productosMemo.length} products`);
+    preloadAll(allUrls); // Usa default de 6 descargas paralelas (optimizado para TV)
   }, [productosMemo, preloadAll]);
 
   // ── Paso 2: arrancar el timer SOLO cuando ready === true ────
