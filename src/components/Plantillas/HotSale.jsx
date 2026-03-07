@@ -246,7 +246,7 @@ const HotSale = ({
             style={{
               position: 'absolute',
               left: 330,
-              top: unaLinea ? 200 : 210,
+              top: unaLinea ? 230 : 210,
               transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
@@ -286,7 +286,7 @@ const HotSale = ({
               style={{
                 position: 'absolute',
                 left: 80,
-                top: 350,
+                top: 330,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: descUnaLinea ? 20 : 16,
