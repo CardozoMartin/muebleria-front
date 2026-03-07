@@ -69,14 +69,41 @@ export const useImageCache = () => {
   const cacheImage = useCallback(async (url) => {
     if (!url) return url;
 
-    // Si ya está en caché, devolverlo
+    // Si ya está en caché de memoria, devolverlo (más rápido)
     if (cacheRef.current.has(url)) {
       return cacheRef.current.get(url);
     }
 
+    // Buscar en IndexedDB antes de descargar de la red
+    if (dbRef.current) {
+      try {
+        const tx = dbRef.current.transaction('images', 'readonly');
+        const store = tx.objectStore('images');
+        const request = store.get(url);
+
+        const cached = await new Promise((resolve) => {
+          request.onsuccess = () => {
+            if (request.result?.blob) {
+              const blobUrl = URL.createObjectURL(request.result.blob);
+              cacheRef.current.set(url, blobUrl);
+              resolve(blobUrl);
+            } else {
+              resolve(null);
+            }
+          };
+          request.onerror = () => resolve(null);
+        });
+
+        if (cached) return cached;
+      } catch (error) {
+        console.warn('Error leyendo IndexedDB:', error);
+      }
+    }
+
+    // No está en caché, descargar de la red
     try {
-      // Descargar la imagen
       const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const blob = await response.blob();
 
       // Guardar en IndexedDB para persistencia entre sesiones
@@ -84,11 +111,7 @@ export const useImageCache = () => {
         try {
           const tx = dbRef.current.transaction('images', 'readwrite');
           const store = tx.objectStore('images');
-          await new Promise((resolve, reject) => {
-            const request = store.put({ url, blob });
-            request.onsuccess = resolve;
-            request.onerror = reject;
-          });
+          store.put({ url, blob }); // No esperar, hacerlo en background
         } catch (error) {
           console.warn('Error guardando en IndexedDB:', error);
         }

@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { useImageCache } from '../../hooks/useImageCache';
 
-import PlantillaCanva from '../Plantillas/MegaOferta';
-import PlantillaCanva2 from '../Plantillas/FlashSale';
-import PlantillaCanva3 from '../Plantillas/HotSale';
 import PlantillaCanva4 from '../Plantillas/BlackFriday';
 import PlantillaCanva5 from '../Plantillas/FeriaDescuentos';
+import PlantillaCanva2 from '../Plantillas/FlashSale';
+import PlantillaCanva3 from '../Plantillas/HotSale';
+import PlantillaCanva from '../Plantillas/MegaOferta';
 import PlantillaCanva6 from '../Plantillas/MegaSale';
 
 // Las claves deben coincidir exactamente con el campo plantillaId guardado en la BD
 const PLANTILLAS_MAP = {
-  canva:             PlantillaCanva,
-  canva2:            PlantillaCanva2,
-  canva3:            PlantillaCanva3,
-  blackfriday:       PlantillaCanva4,
+  canva: PlantillaCanva,
+  canva2: PlantillaCanva2,
+  canva3: PlantillaCanva3,
+  blackfriday: PlantillaCanva4,
   feriadedescuentos: PlantillaCanva5,
-  megasale:          PlantillaCanva6,
+  megasale: PlantillaCanva6,
 };
 
 export default function SlideShowPlayer({
@@ -48,29 +48,20 @@ export default function SlideShowPlayer({
 
     const imagenesProducto = productos.map((p) => p.imagenProducto).filter(Boolean);
 
-    // Las rutas de fondo se precargan pero no bloquean si fallan
+    // Las rutas de fondo con URLs ABSOLUTAS para que funcione en el navegador
+    // y puedan ser cacheadas correctamente en IndexedDB
     const fondosCanva = [
-      '../../assets/canva/blackfriday.png',
-      '../../assets/canva/feriadedescuentos.png',
-      '../../assets/canva/flashsale.png',
-      '../../assets/canva/hotsale.png',
-      '../../assets/canva/megasale.png',
-      '../../assets/canva/megaoferta.png'
+      '/assets/canva/blackfriday.png',
+      '/assets/canva/feriadedescuentos.png',
+      '/assets/canva/flashsale.png',
+      '/assets/canva/hotsale.png',
+      '/assets/canva/megasale.png',
+      '/assets/canva/megaoferta.png',
     ];
 
     const precargarTodo = async () => {
-      // Precargar fondos primero (son las más pesadas)
-      await Promise.allSettled(
-        fondosCanva.map(
-          (src) =>
-            new Promise((res) => {
-              const img = new Image();
-              img.onload = res;
-              img.onerror = res; // no bloquear si falla
-              img.src = src;
-            })
-        )
-      );
+      // Precargar fondos primero (son las más pesadas) y CACHEARLOS en IndexedDB
+      await preloadImages(fondosCanva).catch(() => {});
 
       // Luego imágenes de productos
       await preloadImages(imagenesProducto).catch(() => {});
@@ -197,7 +188,14 @@ export default function SlideShowPlayer({
           const producto = productos[indiceActual];
           const Plantilla = PLANTILLAS_MAP[producto?.plantillaId] ?? PlantillaCanva;
           return (
-            <div key={`slide-${indiceActual}`} style={{ position: 'absolute', inset: 0 }}>
+            <div
+              key={producto?.id} // Usar ID del producto en lugar de índice para mejor rendimiento
+              style={{
+                position: 'absolute',
+                inset: 0,
+                animation: 'fadeIn 0.3s ease-in',
+              }}
+            >
               <Plantilla
                 titulo={producto.titulo}
                 nombreProducto={producto.titulo}
