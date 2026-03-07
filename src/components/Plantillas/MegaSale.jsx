@@ -238,7 +238,7 @@ const MegaSale = ({
           )}
 
           {/* ══════════════════════════════════════════
-              NOMBRE DEL PRODUCTO — debajo del título MEGA OFERTA
+              NOMBRE DEL PRODUCTO — debajo del título MEGA OFERTAS
           ══════════════════════════════════════════ */}
           <div
             style={{
