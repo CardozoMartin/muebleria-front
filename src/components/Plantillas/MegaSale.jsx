@@ -30,10 +30,10 @@ const MegaSale = ({
   const fmt = (n) => (n ? `$${Number(n).toLocaleString("es-AR")}` : "");
   const len = nombreProducto.length;
   // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
-  const unaLinea = len <= 14;
+  const unaLinea = len <= 13;
   const nombreFontSize =
-    len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
-  const descUnaLinea = descripcion.length <= 50;
+    len <= 8 ? 72 : len <= 13 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
+  const descUnaLinea = descripcion.length <= 24;
 
   // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
   // Centro deseado: x≈298, y≈305 (zona del reflector)
@@ -250,8 +250,8 @@ const MegaSale = ({
           <div
             style={{
               position: "absolute",
-              left: 890,
-              top: unaLinea ? 110 : 120,
+              left: 860,
+              top: unaLinea ? 140: 110,
               transform: "translateX(-50%)",
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
@@ -283,7 +283,7 @@ const MegaSale = ({
               style={{
                 position: "absolute",
                 left: 650,
-                top: 285,
+                top: 260,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: descUnaLinea ? 18 : 14,
