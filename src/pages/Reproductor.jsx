@@ -4,7 +4,7 @@ import SlideShowPlayer from '../components/Slider/Slideshowplayer';
 import '../css/reproductor.css';
 import { usetGetAllProducts } from '../hooks/useProducts';
 
-const DURACION_DEFAULT = 60; // ⚠️ 1 minuto para TV - mejor para visualizar productos
+const DURACION_DEFAULT = 15; // ⚠️ 15 segundos por slide
 
 // ── Configuración visual por categoría ─────────────────────────────────────
 const CATEGORIA_CONFIG = {

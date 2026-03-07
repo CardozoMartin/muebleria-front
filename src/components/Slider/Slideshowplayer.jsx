@@ -140,7 +140,7 @@ function LoadingScreen({ progress, logoSrc }) {
 ───────────────────────────────────────────────────────────── */
 export default function SlideShowPlayer({
   productos = [],
-  duracionSegundos = 60, // ⚠️ 1 minuto por defecto (cambiar en Reproductor)
+  duracionSegundos = 15, // ⚠️ 15 segundos por slide
   tvMode = false,
   onClose,
 }) {
