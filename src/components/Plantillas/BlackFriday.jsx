@@ -276,7 +276,7 @@ const BlackFriday = ({
             style={{
               position: 'absolute',
               left: 860,
-              top: unaLinea ? 190 : 200,
+              top: unaLinea ? 240 : 200,
               transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
