@@ -13,9 +13,26 @@
  *    como <link rel="preload"> para no bloquear el primer render
  */
 
-import React, { useEffect, useState, useRef } from 'react';
-import { useImageCache } from '../../hooks/useImageCache';
+import { useEffect, useRef, useState } from 'react';
 import Logo from '../../assets/logo.png';
+import { useImageCache } from '../../hooks/useImageCache';
+
+// Importar plantillas
+import PlantillaCanva4 from '../Plantillas/BlackFriday';
+import PlantillaCanva5 from '../Plantillas/FeriaDescuentos';
+import PlantillaCanva2 from '../Plantillas/FlashSale';
+import PlantillaCanva3 from '../Plantillas/HotSale';
+import PlantillaCanva from '../Plantillas/MegaOferta';
+import PlantillaCanva6 from '../Plantillas/MegaSale';
+
+const PLANTILLAS_MAP = {
+  canva: PlantillaCanva,
+  canva2: PlantillaCanva2,
+  canva3: PlantillaCanva3,
+  blackfriday: PlantillaCanva4,
+  feriadedescuentos: PlantillaCanva5,
+  megasale: PlantillaCanva6,
+};
 
 /* ─────────────────────────────────────────────────────────────
    Extrae todas las URLs de imágenes de un producto
@@ -112,7 +129,6 @@ export default function SlideShowPlayer({
   duracionSegundos = 8,
   tvMode = false,
   onClose,
-  renderSlide, // (producto, resolveUrl) => ReactNode  ← vos renderizás la plantilla
 }) {
   const { resolveUrl, preloadAll, progress, ready } = useImageCache();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -122,7 +138,19 @@ export default function SlideShowPlayer({
   useEffect(() => {
     if (productos.length === 0) return;
     const urls = extractImageUrls(productos);
-    preloadAll(urls, 3); // 3 descargas en paralelo — no sofocar la TV
+
+    // Agregar los fondos de las plantillas
+    const fondosCanva = [
+      '/assets/canva/blackfriday.png',
+      '/assets/canva/feriadedescuentos.png',
+      '/assets/canva/flashsale.png',
+      '/assets/canva/hotsale.png',
+      '/assets/canva/megasale.png',
+      '/assets/canva/megaoferta.png',
+    ];
+
+    const allUrls = [...urls, ...fondosCanva];
+    preloadAll(allUrls, 3); // 3 descargas en paralelo — no sofocar la TV
   }, [productos, preloadAll]);
 
   // ── Paso 2: arrancar el timer SOLO cuando ready === true ────
@@ -157,35 +185,21 @@ export default function SlideShowPlayer({
 
   // ── Slideshow ────────────────────────────────────────────────
   const producto = productos[currentIndex];
+  const Plantilla = PLANTILLAS_MAP[producto?.plantillaId] ?? PlantillaCanva;
 
   return (
     <div
       style={{ position: 'fixed', inset: 0, zIndex: 9998, background: '#000' }}
       onClick={tvMode ? undefined : onClose}
     >
-      {/*
-        Pasamos resolveUrl al renderizador de plantillas para que cada <img>
-        use el blob URL en memoria en lugar de la URL original.
-
-        Ejemplo de uso en Reproductor.jsx:
-          <SlideShowPlayer
-            ...
-            renderSlide={(producto, resolveUrl) => (
-              <FeriaDescuentos
-                ...
-                imagenProducto={resolveUrl(producto.imagenUrl)}
-              />
-            )}
-          />
-      */}
-      {renderSlide ? (
-        renderSlide(producto, resolveUrl)
-      ) : (
-        // Fallback básico si no se pasa renderSlide
-        <div style={{ color: '#fff', fontFamily: 'sans-serif', padding: 40 }}>
-          <h2>{producto?.nombre ?? 'Producto'}</h2>
-        </div>
-      )}
+      <Plantilla
+        nombreProducto={producto?.titulo || 'Producto'}
+        descripcion={producto?.descripcion || ''}
+        imagenProducto={resolveUrl(producto?.imagenProducto)}
+        precioLista={producto?.precioLista || 0}
+        precioOferta={producto?.precioOferta || 0}
+        porcentajeDescuento={producto?.porcentajeDescuento || 0}
+      />
 
       {/* Indicador de slide (opcional, útil para debug) */}
       {!tvMode && (
