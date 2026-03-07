@@ -35,12 +35,12 @@ const HotSale = ({
   // Centro deseado: x≈298, y≈305 (zona del reflector)
   const IMG_FULL = 440;
   const IMG_TALL = 460; // imagen alta → más chica
-  const isTall  = imgRatio > 1.3;
+  const isTall = imgRatio > 1.3;
   const imgSize = isTall ? IMG_TALL : IMG_FULL;
   // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
   // así que sumamos un offset extra para que quede centrada bajo el reflector
-  const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
-  const imgTop  = Math.round(305 - imgSize / 2);
+  const imgLeft = Math.round(830 - imgSize / 2) + (isTall ? 25 : 0);
+  const imgTop = Math.round(305 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -144,8 +144,8 @@ const HotSale = ({
           <div
             style={{
               position: 'absolute',
-              left: 728,
-              top: 500,
+              left: 350,
+              top: 510,
               transform: 'translate(-50%, -50%)',
               textAlign: 'center',
               lineHeight: 1,
@@ -154,7 +154,7 @@ const HotSale = ({
             }}
           >
             {/* Precio oferta — grande y llamativo */}
-            
+
             <div
               style={{
                 fontFamily: "'Rubik', sans-serif",
@@ -177,22 +177,21 @@ const HotSale = ({
             <div
               style={{
                 position: 'absolute',
-                left: 63,
-                top: 22,
+                left: 310,
+                top: 60,
                 transform: 'rotate(-4deg)',
                 zIndex: 2,
                 fontFamily: "'Rubik', sans-serif",
                 fontWeight: 900,
-                fontSize: 33,
+                fontSize: 40,
                 color: '#ffffff',
                 letterSpacing: -1,
                 lineHeight: 1,
-                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
                 pointerEvents: 'none',
                 animation: 'slideDown 0.5s ease-out 0.1s both',
               }}
             >
-              {porcentajeDescuento}% OFF
+              {porcentajeDescuento}%
             </div>
           )}
 
@@ -203,11 +202,12 @@ const HotSale = ({
             <div
               style={{
                 position: 'absolute',
-                left: 620,
-                top: 420,
+                left: 70,
+                top: 470,
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: 8,
+                gap: 4,
                 pointerEvents: 'none',
                 animation: 'slideUp 0.5s ease-out 1.0s both',
               }}
@@ -215,19 +215,20 @@ const HotSale = ({
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
-                  color: 'rgb(255, 255, 255)',
+                  fontSize: 20,
+                  color: 'rgb(249, 240, 240)',
                   letterSpacing: 1.5,
                   textTransform: 'uppercase',
                 }}
               >
                 ANTES
               </div>
+
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
                   fontSize: 24,
-                  color: 'rgb(255, 255, 255)',
+                  color: 'rgb(249, 240, 240)',
                   textDecoration: 'line-through',
                   lineHeight: 1,
                   letterSpacing: 1,
@@ -244,8 +245,8 @@ const HotSale = ({
           <div
             style={{
               position: 'absolute',
-              left: 890,
-              top: unaLinea ? 200 : 190,
+              left: 330,
+              top: unaLinea ? 200 : 210,
               transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
@@ -256,17 +257,27 @@ const HotSale = ({
               width: 380,
               lineHeight: 1.05,
               pointerEvents: 'none',
-              background: 'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
+
+              /* TEXTO */
+              color: '#050505',
+
+              /* contorno fuerte */
+              WebkitTextStroke: '2.5px #ffffff',
+
+              /* efecto volumen + glow */
+              textShadow: `
+      0 3px 0 #000,
+      0 6px 0 #000,
+      0 10px 18px rgba(0,0,0,0.8),
+      0 0 14px rgba(255,40,40,0.8),
+      0 0 30px rgba(255,0,0,0.6)
+    `,
+
               animation: 'slideLeftTitle 0.55s ease-out 0.5s both',
             }}
           >
             {nombreProducto}
           </div>
-
           {/* ══════════════════════════════════════════
               DESCRIPCIÓN — zona central-derecha
           ══════════════════════════════════════════ */}
@@ -274,11 +285,11 @@ const HotSale = ({
             <div
               style={{
                 position: 'absolute',
-                left: 650,
-                top: 330,
+                left: 80,
+                top: 350,
                 width: 490,
                 fontFamily: "'Rubik', sans-serif",
-                fontSize: descUnaLinea ? 18 : 14,
+                fontSize: descUnaLinea ? 20 : 16,
                 fontWeight: 400,
                 color: 'rgb(255, 255, 255)',
                 lineHeight: 1.6,
@@ -286,6 +297,21 @@ const HotSale = ({
                 textAlign: 'center',
                 pointerEvents: 'none',
                 animation: 'fadeIn 0.6s ease-out 0.75s both',
+
+                background: `
+linear-gradient(
+  180deg,
+  rgba(60,0,0,0.85) 0%,
+  rgba(30,0,0,0.9) 100%
+)`,
+                padding: '14px 18px',
+                borderRadius: '14px',
+                border: '1px solid rgba(255,120,120,0.25)',
+                boxShadow: `
+  0 10px 25px rgba(0,0,0,0.5),
+  inset 0 0 20px rgba(255,0,0,0.15)
+`,
+                backdropFilter: 'blur(4px)',
               }}
             >
               {descripcion}
@@ -313,7 +339,8 @@ const HotSale = ({
                 height: imgSize,
                 objectFit: 'contain',
                 zIndex: 1,
-                animation: 'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
+                animation:
+                  'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
                 pointerEvents: 'none',
               }}
             />

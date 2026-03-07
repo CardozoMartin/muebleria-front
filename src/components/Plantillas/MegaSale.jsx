@@ -154,7 +154,7 @@ const MegaSale = ({
             }}
           >
             {/* Precio oferta — grande y llamativo */}
-            
+
             <div
               style={{
                 fontFamily: "'Rubik', sans-serif",
