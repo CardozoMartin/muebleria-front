@@ -226,7 +226,7 @@ const FlashSale = ({
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
+                  fontSize: 30,
                   color: 'rgb(0, 0, 0)',
                   letterSpacing: 1.5,
                 }}
