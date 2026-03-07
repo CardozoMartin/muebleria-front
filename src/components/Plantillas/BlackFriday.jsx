@@ -1,10 +1,10 @@
-import React, { useEffect, useState, memo } from "react";
-import plantilla from "../../assets/canva/blackfriday.png";
-import comedorDefault from "../../assets/comedor.png";
+import { memo, useEffect, useState } from 'react';
+import plantilla from '../../assets/canva/blackfriday.png';
+import comedorDefault from '../../assets/comedor.png';
 
 const BlackFriday = ({
-  nombreProducto = "Juego de Comedor",
-  descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
+  nombreProducto = 'Juego de Comedor',
+  descripcion = 'Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.',
   imagenProducto = comedorDefault,
   precioLista = 500000,
   precioOferta = 250000,
@@ -18,21 +18,17 @@ const BlackFriday = ({
   const effectiveScale = preview ? 1 : scale;
 
   useEffect(() => {
-    const calc = () =>
-      setScale(
-        Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H),
-      );
+    const calc = () => setScale(Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H));
     calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
   }, []);
 
-  const fmt = (n) => (n ? `$${Number(n).toLocaleString("es-AR")}` : "");
+  const fmt = (n) => (n ? `$${Number(n).toLocaleString('es-AR')}` : '');
   const len = nombreProducto.length;
   // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
   const unaLinea = len <= 14;
-  const nombreFontSize =
-    len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
+  const nombreFontSize = len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
   const descUnaLinea = descripcion.length <= 50;
 
   // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
@@ -106,24 +102,24 @@ const BlackFriday = ({
       {/* Pantalla completa → centra la escena */}
       <div
         style={{
-          width: preview ? BASE_W : "100vw",
-          height: preview ? BASE_H : "100vh",
-          background: "#000",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
+          width: preview ? BASE_W : '100vw',
+          height: preview ? BASE_H : '100vh',
+          background: '#000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
         }}
       >
         {/* Escena fija 1200 × 600 */}
         <div
           style={{
-            position: "relative",
+            position: 'relative',
             width: BASE_W,
             height: BASE_H,
             flexShrink: 0,
             transform: `scale(${effectiveScale})`,
-            transformOrigin: "center center",
+            transformOrigin: 'center center',
           }}
         >
           {/* FONDO */}
@@ -132,12 +128,12 @@ const BlackFriday = ({
             alt=""
             aria-hidden
             style={{
-              position: "absolute",
+              position: 'absolute',
               inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              display: 'block',
             }}
           />
 
@@ -147,14 +143,14 @@ const BlackFriday = ({
           ══════════════════════════════════════════ */}
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               left: 840,
               top: 540,
-              transform: "translate(-50%, -50%)",
-              textAlign: "center",
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center',
               lineHeight: 1,
-              pointerEvents: "none",
-              animation: "popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both",
+              pointerEvents: 'none',
+              animation: 'popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both',
             }}
           >
             {/* Precio oferta — grande y llamativo */}
@@ -164,10 +160,10 @@ const BlackFriday = ({
                 fontFamily: "'Rubik', sans-serif",
                 fontWeight: 900,
                 fontSize: porcentajeDescuento > 0 ? 46 : 52,
-                color: "#050303",
+                color: '#050303',
                 letterSpacing: -1,
                 lineHeight: 0.95,
-                animation: "pricePulse 2.5s ease-in-out 1.8s infinite",
+                animation: 'pricePulse 2.5s ease-in-out 1.8s infinite',
               }}
             >
               {fmt(precioOferta)}
@@ -180,21 +176,21 @@ const BlackFriday = ({
           {porcentajeDescuento > 0 && (
             <div
               style={{
-                position: "absolute",
+                position: 'absolute',
                 left: 560,
                 top: 435,
-                transform: "rotate(-4deg)",
+                transform: 'rotate(-4deg)',
                 zIndex: 2,
                 fontFamily: "'Rubik', sans-serif",
-                color: "#ffffff",
-                textShadow: "0 2px 10px rgba(0,0,0,0.5)",
-                pointerEvents: "none",
-                animation: "slideDown 0.5s ease-out 0.1s both",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                color: '#ffffff',
+                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+                pointerEvents: 'none',
+                animation: 'slideDown 0.5s ease-out 0.1s both',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 width: 110,
-                textAlign: "center",
+                textAlign: 'center',
               }}
             >
               <span
@@ -226,22 +222,22 @@ const BlackFriday = ({
           {precioLista > 0 && (
             <div
               style={{
-                position: "absolute",
+                position: 'absolute',
                 left: 720,
                 top: 420,
-                display: "flex",
-                alignItems: "center",
+                display: 'flex',
+                alignItems: 'center',
                 gap: 10,
-                padding: "8px 14px",
-                pointerEvents: "none",
-                animation: "slideUp 0.5s ease-out 1.0s both",
+                padding: '8px 14px',
+                pointerEvents: 'none',
+                animation: 'slideUp 0.5s ease-out 1.0s both',
 
                 // 👇 recuadro
-                background: "rgba(0,0,0,0.45)",
-                backdropFilter: "blur(6px)",
+                background: 'rgba(0,0,0,0.45)',
+                backdropFilter: 'blur(6px)',
                 borderRadius: 12,
-                border: "1px solid rgba(255,255,255,0.15)",
-                boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
+                border: '1px solid rgba(255,255,255,0.15)',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
               }}
             >
               <span
@@ -249,9 +245,9 @@ const BlackFriday = ({
                   fontFamily: "'Rubik', sans-serif",
                   fontSize: 13,
                   fontWeight: 600,
-                  color: "rgba(255,255,255,0.75)",
+                  color: 'rgba(255,255,255,0.75)',
                   letterSpacing: 2,
-                  textTransform: "uppercase",
+                  textTransform: 'uppercase',
                 }}
               >
                 Antes
@@ -262,8 +258,8 @@ const BlackFriday = ({
                   fontFamily: "'Rubik', sans-serif",
                   fontSize: 22,
                   fontWeight: 500,
-                  color: "#ffffff",
-                  textDecoration: "line-through",
+                  color: '#ffffff',
+                  textDecoration: 'line-through',
                   lineHeight: 1,
                   letterSpacing: 1,
                 }}
@@ -278,26 +274,26 @@ const BlackFriday = ({
           ══════════════════════════════════════════ */}
           <div
             style={{
-              position: "absolute",
+              position: 'absolute',
               left: 860,
               top: unaLinea ? 190 : 200,
-              transform: "translateX(-50%)",
+              transform: 'translateX(-50%)',
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
               fontSize: nombreFontSize,
               letterSpacing: -1,
-              whiteSpace: unaLinea ? "nowrap" : "normal",
-              textAlign: "center",
+              whiteSpace: unaLinea ? 'nowrap' : 'normal',
+              textAlign: 'center',
               width: 380,
               lineHeight: 1.05,
-              pointerEvents: "none",
+              pointerEvents: 'none',
               background:
-                "linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.7))",
-              animation: "slideLeftTitle 0.55s ease-out 0.5s both",
+                'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.7))',
+              animation: 'slideLeftTitle 0.55s ease-out 0.5s both',
             }}
           >
             {nombreProducto}
@@ -309,26 +305,26 @@ const BlackFriday = ({
           {descripcion && (
             <div
               style={{
-                position: "absolute",
+                position: 'absolute',
                 left: 620,
                 top: 320,
                 width: 490,
-                padding: "14px 18px",
+                padding: '14px 18px',
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: descUnaLinea ? 18 : 15,
                 fontWeight: 400,
-                color: "#ffffff",
+                color: '#ffffff',
                 lineHeight: 1.6,
-                textAlign: "center",
-                whiteSpace: descUnaLinea ? "nowrap" : "normal",
-                pointerEvents: "none",
-                animation: "fadeIn 0.6s ease-out 0.75s both",
+                textAlign: 'center',
+                whiteSpace: descUnaLinea ? 'nowrap' : 'normal',
+                pointerEvents: 'none',
+                animation: 'fadeIn 0.6s ease-out 0.75s both',
 
-                background: "rgba(0, 0, 0, 0.45)",
-                backdropFilter: "blur(6px)",
+                background: 'rgba(0, 0, 0, 0.45)',
+                backdropFilter: 'blur(6px)',
                 borderRadius: 14,
-                border: "1px solid rgba(255,255,255,0.15)",
-                boxShadow: "0 8px 30px rgba(0,0,0,0.35)",
+                border: '1px solid rgba(255,255,255,0.15)',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
               }}
             >
               {descripcion}
@@ -343,22 +339,22 @@ const BlackFriday = ({
           {imagenProducto && (
             <img
               src={imagenProducto}
-              alt={nombreProducto ?? ""}
+              alt={nombreProducto ?? ''}
               onLoad={(e) => {
                 const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
                 setImgRatio(w > 0 ? h / w : 1);
               }}
               style={{
-                position: "absolute",
+                position: 'absolute',
                 left: imgLeft,
                 top: imgTop,
                 width: imgSize,
                 height: imgSize,
-                objectFit: "contain",
+                objectFit: 'contain',
                 zIndex: 1,
                 animation:
-                  "imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite",
-                pointerEvents: "none",
+                  'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
+                pointerEvents: 'none',
               }}
             />
           )}

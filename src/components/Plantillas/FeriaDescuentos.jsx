@@ -9,7 +9,7 @@
  * - Sin @keyframes definidos inline en cada render — se inyectan UNA sola vez
  */
 
-import React, { useEffect, useState, useRef, memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import plantilla from '../../assets/canva/feriadedescuentos.png';
 import comedorDefault from '../../assets/comedor.png';
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import plantilla from '../../assets/canva/megasale.png';
 import comedorDefault from '../../assets/comedor.png';
 
@@ -35,12 +35,12 @@ const MegaSale = ({
   // Centro deseado: x≈298, y≈305 (zona del reflector)
   const IMG_FULL = 440;
   const IMG_TALL = 460; // imagen alta → más chica
-  const isTall  = imgRatio > 1.3;
+  const isTall = imgRatio > 1.3;
   const imgSize = isTall ? IMG_TALL : IMG_FULL;
   // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
   // así que sumamos un offset extra para que quede centrada bajo el reflector
   const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
-  const imgTop  = Math.round(305 - imgSize / 2);
+  const imgTop = Math.round(305 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -255,7 +255,8 @@ const MegaSale = ({
               width: 380,
               lineHeight: 1.05,
               pointerEvents: 'none',
-              background: 'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
+              background:
+                'linear-gradient(180deg, #fff5a0 0%, #f5c800 30%, #c8860a 65%, #f5c800 85%, #fff0a0 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',

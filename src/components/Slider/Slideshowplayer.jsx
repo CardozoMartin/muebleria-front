@@ -13,7 +13,7 @@
  *    como <link rel="preload"> para no bloquear el primer render
  */
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Logo from '../../assets/logo.png';
 import { useImageCache } from '../../hooks/useImageCache';
 
@@ -135,10 +135,10 @@ export default function SlideShowPlayer({
   const timerRef = useRef(null);
 
   // ⚠️ MEMOIZAR productos para evitar re-renders cuando allProducts cambia en Reproductor
-  const productosMemo = useMemo(() => productos, [
-    productos.length,
-    productos.map((p) => p.id).join(","),
-  ]);
+  const productosMemo = useMemo(
+    () => productos,
+    [productos.length, productos.map((p) => p.id).join(',')]
+  );
 
   // ── Paso 1: precargar todas las imágenes al montar ──────────
   useEffect(() => {

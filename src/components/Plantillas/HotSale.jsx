@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import plantilla from '../../assets/canva/hotsale.png';
 import comedorDefault from '../../assets/comedor.png';
 
