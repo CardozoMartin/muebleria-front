@@ -294,6 +294,11 @@ const MegaSale = ({
                 textAlign: "center",
                 pointerEvents: "none",
                 animation: "fadeIn 0.6s ease-out 0.75s both",
+               background: 'rgba(0, 0, 0, 0.45)',
+                backdropFilter: 'blur(6px)',
+                borderRadius: 14,
+                border: '1px solid rgba(255,255,255,0.15)',
+                boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
               }}
             >
               {descripcion}

@@ -225,6 +225,7 @@ const FeriaDescuentos = ({
               style={{
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: 34,
+                fontWeight : 700,
                 color: '#fff',
                 letterSpacing: 1.5,
                 textTransform: 'uppercase',
@@ -236,6 +237,7 @@ const FeriaDescuentos = ({
               style={{
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: 34,
+                fontWeight : 800,
                 color: '#fff',
                 textDecoration: 'line-through',
                 lineHeight: 1,
