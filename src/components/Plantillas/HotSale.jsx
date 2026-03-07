@@ -40,7 +40,7 @@ const HotSale = ({
   // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
   // así que sumamos un offset extra para que quede centrada bajo el reflector
   const imgLeft = Math.round(830 - imgSize / 2) + (isTall ? 25 : 0);
-  const imgTop = Math.round(305 - imgSize / 2);
+  const imgTop = Math.round(270 - imgSize / 2);
 
   /* ─── keyframes inyectados una sola vez ─── */
   const css = `
@@ -215,7 +215,7 @@ const HotSale = ({
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 20,
+                  fontSize: 25,
                   color: 'rgb(249, 240, 240)',
                   letterSpacing: 1.5,
                   textTransform: 'uppercase',
@@ -227,7 +227,7 @@ const HotSale = ({
               <div
                 style={{
                   fontFamily: "'Rubik', sans-serif",
-                  fontSize: 24,
+                  fontSize: 20,
                   color: 'rgb(249, 240, 240)',
                   textDecoration: 'line-through',
                   lineHeight: 1,
