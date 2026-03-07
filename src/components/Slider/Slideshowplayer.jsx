@@ -13,7 +13,7 @@
  *    como <link rel="preload"> para no bloquear el primer render
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import Logo from '../../assets/logo.png';
 import { useImageCache } from '../../hooks/useImageCache';
 
@@ -134,10 +134,16 @@ export default function SlideShowPlayer({
   const [currentIndex, setCurrentIndex] = useState(0);
   const timerRef = useRef(null);
 
+  // ⚠️ MEMOIZAR productos para evitar re-renders cuando allProducts cambia en Reproductor
+  const productosMemo = useMemo(() => productos, [
+    productos.length,
+    productos.map((p) => p.id).join(","),
+  ]);
+
   // ── Paso 1: precargar todas las imágenes al montar ──────────
   useEffect(() => {
-    if (productos.length === 0) return;
-    const urls = extractImageUrls(productos);
+    if (productosMemo.length === 0) return;
+    const urls = extractImageUrls(productosMemo);
 
     // Agregar los fondos de las plantillas
     const fondosCanva = [
@@ -151,22 +157,22 @@ export default function SlideShowPlayer({
 
     const allUrls = [...urls, ...fondosCanva];
     preloadAll(allUrls, 3); // 3 descargas en paralelo — no sofocar la TV
-  }, [productos, preloadAll]);
+  }, [productosMemo, preloadAll]);
 
   // ── Paso 2: arrancar el timer SOLO cuando ready === true ────
   useEffect(() => {
-    if (!ready || productos.length === 0) return;
+    if (!ready || productosMemo.length === 0) return;
 
     // Empezar desde el primer slide
     setCurrentIndex(0);
 
     const tick = () => {
-      setCurrentIndex((prev) => (prev + 1) % productos.length);
+      setCurrentIndex((prev) => (prev + 1) % productosMemo.length);
     };
 
     timerRef.current = setInterval(tick, duracionSegundos * 1000);
     return () => clearInterval(timerRef.current);
-  }, [ready, productos, duracionSegundos]);
+  }, [ready, productosMemo, duracionSegundos]);
 
   // ── Cerrar con ESC en modo TV ────────────────────────────────
   useEffect(() => {
@@ -184,7 +190,7 @@ export default function SlideShowPlayer({
   }
 
   // ── Slideshow ────────────────────────────────────────────────
-  const producto = productos[currentIndex];
+  const producto = productosMemo[currentIndex];
   const Plantilla = PLANTILLAS_MAP[producto?.plantillaId] ?? PlantillaCanva;
 
   return (
@@ -213,7 +219,7 @@ export default function SlideShowPlayer({
             gap: 8,
           }}
         >
-          {productos.map((_, i) => (
+          {productosMemo.map((_, i) => (
             <div
               key={i}
               style={{

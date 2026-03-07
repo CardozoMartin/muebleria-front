@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import plantilla from "../../assets/canva/megaoferta.png";
 import comedorDefault from "../../assets/comedor.png";
 
@@ -340,4 +340,4 @@ const Megaoferta = ({
   );
 };
 
-export default Megaoferta;
+export default memo(Megaoferta);

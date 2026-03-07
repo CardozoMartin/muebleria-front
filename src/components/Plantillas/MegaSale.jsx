@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import plantilla from '../../assets/canva/megasale.png';
 import comedorDefault from '../../assets/comedor.png';
 
@@ -49,9 +49,8 @@ const MegaSale = ({
       50%      { transform: translateY(-14px); }
     }
     @keyframes glowProd {
-      0%,100% { filter: drop-shadow(0 10px 28px rgba(0,0,0,0.55)); }
-      50%      { filter: drop-shadow(0 18px 38px rgba(0,0,0,0.35))
-                         drop-shadow(0  0px 24px rgba(180,220,255,0.18)); }
+      0%,100% { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); }
+      50%      { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); }
     }
     @keyframes pricePulse {
       0%,100% { opacity:1; }
@@ -313,7 +312,7 @@ const MegaSale = ({
                 height: imgSize,
                 objectFit: 'contain',
                 zIndex: 1,
-                animation: 'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite, glowProd 4s ease-in-out 0.7s infinite',
+                animation: 'imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite',
                 pointerEvents: 'none',
               }}
             />
@@ -324,4 +323,4 @@ const MegaSale = ({
   );
 };
 
-export default MegaSale;
+export default memo(MegaSale);

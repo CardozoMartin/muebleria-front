@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import plantilla from "../../assets/canva/blackfriday.png";
 import comedorDefault from "../../assets/comedor.png";
 
@@ -368,4 +368,4 @@ const BlackFriday = ({
   );
 };
 
-export default BlackFriday;
+export default memo(BlackFriday);

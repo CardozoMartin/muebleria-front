@@ -38,7 +38,8 @@ export const useGetAllProducts = () => {
   return useQuery({
     queryKey: ["all-products"],
     queryFn: getAllProducts,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 30, // ⚠️ 30 minutos - CRÍTICO PARA TV
+    gcTime: 1000 * 60 * 60,     // Mantener en caché 1 hora
     retry: 3,
   });
 };

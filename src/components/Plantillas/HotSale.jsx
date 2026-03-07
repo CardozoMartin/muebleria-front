@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import plantilla from '../../assets/canva/hotsale.png';
 import comedorDefault from '../../assets/comedor.png';
 
@@ -351,4 +351,4 @@ linear-gradient(
   );
 };
 
-export default HotSale;
+export default memo(HotSale);
