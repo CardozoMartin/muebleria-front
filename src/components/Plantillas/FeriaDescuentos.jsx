@@ -211,7 +211,7 @@ const FeriaDescuentos = ({
           <div
             style={{
               position: 'absolute',
-              left: 240,
+              left: 250,
               top: 410,
               display: 'flex',
               alignItems: 'center',
@@ -225,6 +225,7 @@ const FeriaDescuentos = ({
               style={{
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: 34,
+                fontWeight : 700,
                 color: '#fff',
                 letterSpacing: 1.5,
                 textTransform: 'uppercase',
@@ -236,6 +237,7 @@ const FeriaDescuentos = ({
               style={{
                 fontFamily: "'Rubik', sans-serif",
                 fontSize: 34,
+                fontWeight : 800,
                 color: '#fff',
                 textDecoration: 'line-through',
                 lineHeight: 1,
