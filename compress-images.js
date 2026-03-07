@@ -6,21 +6,28 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const assetsDir = path.join(__dirname, 'src', 'assets');
 
-async function compressImages() {
-  if (!fs.existsSync(assetsDir)) {
-    console.log('Assets directory not found');
+async function compressImagesInDir(dir, dirName = 'root') {
+  if (!fs.existsSync(dir)) {
+    console.log(`Directory not found: ${dir}`);
     return;
   }
 
-  const files = fs.readdirSync(assetsDir);
+  const files = fs.readdirSync(dir);
   const imageFiles = files.filter((file) => /\.(png|jpg|jpeg|webp)$/i.test(file));
 
+  if (imageFiles.length === 0) {
+    console.log(`No images found in ${dirName}`);
+    return;
+  }
+
+  console.log(`\n📁 Compressing images in ${dirName}...`);
+
   for (const file of imageFiles) {
-    const filePath = path.join(assetsDir, file);
+    const filePath = path.join(dir, file);
     const stats = fs.statSync(filePath);
     const sizeInMB = (stats.size / 1024 / 1024).toFixed(2);
 
-    console.log(`Compressing ${file} (${sizeInMB}MB)...`);
+    console.log(`  ⏳ Compressing ${file} (${sizeInMB}MB)...`);
 
     try {
       if (/\.png$/i.test(file)) {
@@ -42,11 +49,24 @@ async function compressImages() {
       const newSizeInMB = (newStats.size / 1024 / 1024).toFixed(2);
       const reduction = (((stats.size - newStats.size) / stats.size) * 100).toFixed(1);
 
-      console.log(`✓ ${file}: ${sizeInMB}MB → ${newSizeInMB}MB (${reduction}% reduction)`);
+      console.log(`  ✓ ${file}: ${sizeInMB}MB → ${newSizeInMB}MB (${reduction}% reduction)`);
     } catch (error) {
-      console.error(`✗ Error compressing ${file}:`, error.message);
+      console.error(`  ✗ Error compressing ${file}:`, error.message);
     }
   }
+}
+
+async function compressImages() {
+  console.log('🚀 Starting image compression...\n');
+
+  // Comprimir raíz de assets
+  await compressImagesInDir(assetsDir, 'src/assets');
+
+  // Comprimir carpeta canva específicamente
+  const canvaDir = path.join(assetsDir, 'canva');
+  await compressImagesInDir(canvaDir, 'src/assets/canva');
+
+  console.log('\n✅ Compression completed!');
 }
 
 compressImages().catch(console.error);

@@ -114,10 +114,20 @@ function LoadingScreen({ progress, logoSrc }) {
           />
         </div>
 
-        <p style={{ color: '#ff6600', fontFamily: 'sans-serif', fontSize: 28, margin: 0, fontWeight: 'bold' }}>
+        <p
+          style={{
+            color: '#ff6600',
+            fontFamily: 'sans-serif',
+            fontSize: 28,
+            margin: 0,
+            fontWeight: 'bold',
+          }}
+        >
           {progress}%
         </p>
-        <p style={{ color: '#666', fontFamily: 'sans-serif', fontSize: 12, margin: 0, marginTop: 8 }}>
+        <p
+          style={{ color: '#666', fontFamily: 'sans-serif', fontSize: 12, margin: 0, marginTop: 8 }}
+        >
           {progress === 100 ? '✓ Listo para reproducir' : 'Cargando imágenes...'}
         </p>
       </div>
@@ -160,7 +170,9 @@ export default function SlideShowPlayer({
     ];
 
     const allUrls = [...urls, ...fondosCanva];
-    console.log(`[SlideShow] Starting to preload ${allUrls.length} images from ${productosMemo.length} products`);
+    console.log(
+      `[SlideShow] Starting to preload ${allUrls.length} images from ${productosMemo.length} products`
+    );
     preloadAll(allUrls); // Usa default de 6 descargas paralelas (optimizado para TV)
   }, [productosMemo, preloadAll]);
 
