@@ -211,7 +211,7 @@ const FeriaDescuentos = ({
           <div
             style={{
               position: 'absolute',
-              left: 240,
+              left: 250,
               top: 410,
               display: 'flex',
               alignItems: 'center',
