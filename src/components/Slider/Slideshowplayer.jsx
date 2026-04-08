@@ -147,6 +147,12 @@ export default function SlideShowPlayer({
   const { resolveUrl, preloadAll, progress, ready } = useImageCache();
   const [currentIndex, setCurrentIndex] = useState(0);
   const timerRef = useRef(null);
+  const containerRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
   // ⚠️ MEMOIZAR productos para evitar re-renders cuando allProducts cambia en Reproductor
   const productosMemo = useMemo(
@@ -201,31 +207,51 @@ export default function SlideShowPlayer({
     return () => window.removeEventListener('keydown', handler);
   }, [tvMode, onClose]);
 
-  // ── Loading screen ───────────────────────────────────────────
-  if (!ready) {
-    return <LoadingScreen progress={progress} logoSrc={Logo} />;
-  }
+  // ── Fullscreen real del navegador en modo TV ──────────────────────────
+  useEffect(() => {
+    if (!tvMode) return;
 
-  // ── Slideshow ────────────────────────────────────────────────
+    const el = containerRef.current;
+    if (el?.requestFullscreen) {
+      el.requestFullscreen().catch(() => {});
+    }
+
+    const onFsChange = () => {
+      if (!document.fullscreenElement) onCloseRef.current?.();
+    };
+
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFsChange);
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    };
+  }, [tvMode]);
+
+  // ── Loading screen ───────────────────────────────────────────
   const producto = productosMemo[currentIndex];
   const Plantilla = PLANTILLAS_MAP[producto?.plantillaId] ?? PlantillaCanva;
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, zIndex: 9998, background: '#000' }}
+      ref={containerRef}
+      style={{ position: 'fixed', inset: 0, zIndex: 9998, background: '#000', width: '100vw', height: '100vh', overflow: 'hidden' }}
       onClick={tvMode ? undefined : onClose}
     >
-      <Plantilla
-        nombreProducto={producto?.titulo || 'Producto'}
-        descripcion={producto?.descripcion || ''}
-        imagenProducto={resolveUrl(producto?.imagenProducto)}
-        precioLista={producto?.precioLista || 0}
-        precioOferta={producto?.precioOferta || 0}
-        porcentajeDescuento={producto?.porcentajeDescuento || 0}
-      />
+      {!ready ? (
+        <LoadingScreen progress={progress} logoSrc={Logo} />
+      ) : (
+        <Plantilla
+          nombreProducto={producto?.titulo || 'Producto'}
+          descripcion={producto?.descripcion || ''}
+          imagenProducto={resolveUrl(producto?.imagenProducto)}
+          precioLista={producto?.precioLista || 0}
+          precioOferta={producto?.precioOferta || 0}
+          porcentajeDescuento={producto?.porcentajeDescuento || 0}
+        />
+      )}
 
       {/* Indicador de slide (opcional, útil para debug) */}
-      {!tvMode && (
+      {!tvMode && ready && (
         <div
           style={{
             position: 'absolute',
