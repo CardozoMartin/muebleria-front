@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/ProductPage';
@@ -13,7 +13,7 @@ export default function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route
           path="/login"
@@ -40,6 +40,6 @@ export default function App() {
           element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />}
         />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
