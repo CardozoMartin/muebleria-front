@@ -76,17 +76,12 @@ async function saveToDB(db, url, blob) {
   }
 }
 
+const MAX_BLOB_CACHE = 25; // Límite de imágenes guardadas en RAM (Blob URLs) a la vez
+
 /**
- * Hook de caché de imágenes con estrategia "preload all → then play"
- *
+ * Hook de caché de imágenes optimizado para TV/Chromecast
  * Uso:
- *   const { resolveUrl, preloadAll, progress, ready } = useImageCache();
- *
- *   // Antes de mostrar el slideshow:
- *   await preloadAll(listaDeUrls);
- *
- *   // Al renderizar cada imagen:
- *   <img src={resolveUrl(url)} />
+ *   const { resolveUrl, preloadAll, progress, ready, cacheOne } = useImageCache();
  */
 export const useImageCache = () => {
   // mem cache: url original → blob URL (ya en memoria, acceso O(1))
@@ -119,6 +114,14 @@ export const useImageCache = () => {
 
     // 1. Memoria
     if (memCache.current.has(url)) return memCache.current.get(url);
+
+    // Evicción (FIFO protect limit para evitar desbordar RAM en Chromecast)
+    if (memCache.current.size >= MAX_BLOB_CACHE) {
+      const firstKey = memCache.current.keys().next().value;
+      const oldUrl = memCache.current.get(firstKey);
+      if (oldUrl?.startsWith('blob:')) URL.revokeObjectURL(oldUrl);
+      memCache.current.delete(firstKey);
+    }
 
     // 2. IndexedDB - primero checar en localStorage para optimizar
     if (isCachedLocally(url)) {
@@ -159,37 +162,55 @@ export const useImageCache = () => {
   }, []);
 
   /**
-   * Precarga TODAS las imágenes antes de iniciar el slideshow.
-   * Actualiza `progress` (0-100) y setea `ready` al terminar.
-   *
-   * @param {string[]} urls - lista de URLs a precargar
-   * @param {number} concurrency - descargas paralelas (default 6 para TV - mejor red local)
+   * Precarga progresiva. Inicia tras cargar las primeras 3 imágenes para
+   * no bloquear el Chromecast, y prosigue en background.
    */
   const preloadAll = useCallback(
-    async (urls, concurrency = 6) => {
+    async (urls, concurrency = 2) => {
       const validUrls = [...new Set(urls.filter(Boolean))];
       if (validUrls.length === 0) {
         setReady(true);
         return;
       }
 
-      console.log(`[Cache] Preloading ${validUrls.length} images with concurrency ${concurrency}`);
+      console.log(`[Cache] Empieza pre-carga progresiva de ${validUrls.length} imágenes (concurrencia ${concurrency})`);
       setProgress(0);
       setReady(false);
-      let done = 0;
+      
+      const PRELOAD_START = Math.min(3, validUrls.length);
 
-      // Procesar en lotes para optimizar la red de la TV
-      for (let i = 0; i < validUrls.length; i += concurrency) {
-        const batch = validUrls.slice(i, i + concurrency);
-        await Promise.allSettled(batch.map(cacheOne));
-        done += batch.length;
-        const newProgress = Math.round((done / validUrls.length) * 100);
-        setProgress(newProgress);
-        console.log(`[Cache] Progress: ${newProgress}% (${done}/${validUrls.length})`);
+      // Cachear los primeros N para arrancar la app al instante
+      for (let i = 0; i < PRELOAD_START; i++) {
+        await cacheOne(validUrls[i]);
+        setProgress(Math.round(((i + 1) / validUrls.length) * 100));
       }
-
-      console.log('[Cache] ✅ All images cached and ready to play');
+      
+      // ✅ Todo listo para iniciar (Arranca reproductor con las primeras imágenes)
+      console.log('[Cache] ✨ Lote inicial completado -> Iniciando Slideshow!');
       setReady(true);
+
+      // Background loading - Rellenar IndexedDB (sin bloquear la UI principal)
+      let done = PRELOAD_START;
+      const backgroundLoad = async () => {
+         for (let i = PRELOAD_START; i < validUrls.length; i += concurrency) {
+           const batch = validUrls.slice(i, i + Math.min(concurrency, 3)); // Max 3 descargas simultáneas en Chromecast para IDB
+           
+           // No esperamos el resultado entero con Promise.allSettled bloqueando fuerte.
+           // Usamos el map directamente
+           await Promise.allSettled(batch.map(cacheOne));
+           
+           done += batch.length;
+           const newProgress = Math.round((done / validUrls.length) * 100);
+           // Actualizamos progress por si acaso algún componente lo usa en tiempo real
+           setProgress(newProgress);
+           
+           // Respirar para darle GPU al hilo visual (vital en TV)
+           await new Promise(res => setTimeout(res, 250));
+         }
+         console.log('[Cache] ✅ Caché de background IDB completado.');
+      };
+      
+      backgroundLoad();
     },
     [cacheOne]
   );

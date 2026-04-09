@@ -144,7 +144,7 @@ export default function SlideShowPlayer({
   tvMode = false,
   onClose,
 }) {
-  const { resolveUrl, preloadAll, progress, ready } = useImageCache();
+  const { resolveUrl, preloadAll, progress, ready, cacheOne } = useImageCache();
   const [currentIndex, setCurrentIndex] = useState(0);
   const timerRef = useRef(null);
   const containerRef = useRef(null);
@@ -226,6 +226,22 @@ export default function SlideShowPlayer({
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     };
   }, [tvMode]);
+
+  // ── Precarga JIT (Just In Time) para uso de RAM acotado ────────
+  useEffect(() => {
+    if (!ready || productosMemo.length === 0) return;
+
+    // Queremos tener siempre listos el índice actual y los dos siguientes.
+    const productsToWarm = [
+      productosMemo[currentIndex],
+      productosMemo[(currentIndex + 1) % productosMemo.length],
+      productosMemo[(currentIndex + 2) % productosMemo.length],
+    ].filter(Boolean);
+
+    // Extraemos sus URLs y las forzamos a ingresar al cache de memoria 
+    const urlsToWarm = extractImageUrls(productsToWarm);
+    urlsToWarm.forEach((url) => cacheOne(url));
+  }, [currentIndex, ready, productosMemo, cacheOne]);
 
   // ── Loading screen ───────────────────────────────────────────
   const producto = productosMemo[currentIndex];
