@@ -10,6 +10,8 @@ import {
   getProductosAll,
   getProducts,
   searchProducts,
+  bulkUpdateDiscount,
+  bulkUpdateTemplate,
 } from '../services/Productos/productos.services';
 
 //Hook para obtener productos con paginación
@@ -118,5 +120,41 @@ export const usetGetAllProducts = (options = {}) => {
     staleTime: 1000 * 60 * 5,
     retry: 3,
     ...options,
+  });
+};
+
+// hook para actualización masiva de descuento
+export const useBulkUpdateDiscount = () => {
+  const queryCliente = useQueryClient();
+  return useMutation({
+    mutationFn: (percentage) => bulkUpdateDiscount(percentage),
+    onSuccess: (data) => {
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success(data.message || 'Descuento aplicado a todos los productos');
+    },
+    onError: (err) => {
+      console.error('Error in useBulkUpdateDiscount:', err);
+      toast.error('Error al aplicar el descuento global');
+    },
+  });
+};
+
+// hook para actualización masiva de plantilla por categoría
+export const useBulkUpdateTemplate = () => {
+  const queryCliente = useQueryClient();
+  return useMutation({
+    mutationFn: ({ categoria, plantillaId }) => bulkUpdateTemplate(categoria, plantillaId),
+    onSuccess: (data) => {
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success(data.message || 'Plantilla aplicada a la categoría');
+    },
+    onError: (err) => {
+      console.error('Error in useBulkUpdateTemplate:', err);
+      toast.error('Error al aplicar la plantilla masivamente');
+    },
   });
 };

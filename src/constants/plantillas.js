@@ -1,10 +1,12 @@
+import { lazy } from 'react';
 
-import PlantillaCanva from '../components/Plantillas/MegaOferta';
-import PlantillaCanva2 from '../components/Plantillas/FlashSale';
-import PlantillaCanva3 from '../components/Plantillas/HotSale';
-import PlantillaCanva4 from '../components/Plantillas/BlackFriday';
-import PlantillaCanva5 from '../components/Plantillas/FeriaDescuentos';
-import PlantillaCanva6 from '../components/Plantillas/MegaSale';
+// Lazy load template components for Chromecast memory optimization
+const PlantillaCanva = lazy(() => import('../components/Plantillas/MegaOferta'));
+const PlantillaCanva2 = lazy(() => import('../components/Plantillas/FlashSale'));
+const PlantillaCanva3 = lazy(() => import('../components/Plantillas/HotSale'));
+const PlantillaCanva4 = lazy(() => import('../components/Plantillas/BlackFriday'));
+const PlantillaCanva5 = lazy(() => import('../components/Plantillas/FeriaDescuentos'));
+const PlantillaCanva6 = lazy(() => import('../components/Plantillas/MegaSale'));
 
 
 // central list of available templates; used in PlantillasPage and product form
