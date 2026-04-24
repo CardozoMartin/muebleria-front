@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
   cambiarEstadoProducto,
   createProduct,
@@ -9,13 +10,14 @@ import {
   getProductosAll,
   getProducts,
   searchProducts,
-} from "../services/Productos/productos.services";
-import { toast } from "sonner";
+  bulkUpdateDiscount,
+  bulkUpdateTemplate,
+} from '../services/Productos/productos.services';
 
 //Hook para obtener productos con paginación
 export const useGetProducts = (page = 1) => {
   return useQuery({
-    queryKey: ["products", page],
+    queryKey: ['products', page],
     queryFn: () => getProducts(page),
     staleTime: 1000 * 60 * 5,
     retry: 3,
@@ -25,7 +27,7 @@ export const useGetProducts = (page = 1) => {
 //Hook para buscar productos por nombre
 export const useSearchProducts = (query) => {
   return useQuery({
-    queryKey: ["search-products", query],
+    queryKey: ['search-products', query],
     queryFn: () => searchProducts(query),
     enabled: !!query, // solo ejecutar si hay un término de búsqueda
     staleTime: 1000 * 60 * 5,
@@ -36,9 +38,10 @@ export const useSearchProducts = (query) => {
 //Hook para obtener todos los productos (usa el helper que itera todas las páginas)
 export const useGetAllProducts = () => {
   return useQuery({
-    queryKey: ["all-products"],
+    queryKey: ['all-products'],
     queryFn: getAllProducts,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 30, // ⚠️ 30 minutos - CRÍTICO PARA TV
+    gcTime: 1000 * 60 * 60, // Mantener en caché 1 hora
     retry: 3,
   });
 };
@@ -48,13 +51,13 @@ export const usePostProduct = () => {
   return useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
-      queryCliente.invalidateQueries({ queryKey: ["products"] });
-      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
-      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
-      toast.success("Producto creado exitosamente");
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success('Producto creado exitosamente');
     },
     onError: () => {
-      toast.error("Error al crear el producto");
+      toast.error('Error al crear el producto');
     },
   });
 };
@@ -64,13 +67,13 @@ export const useChangeStateProduct = () => {
   return useMutation({
     mutationFn: cambiarEstadoProducto,
     onSuccess: () => {
-      queryCliente.invalidateQueries({ queryKey: ["products"] });
-      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
-      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
-      toast.success("Estado del producto actualizado");
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success('Estado del producto actualizado');
     },
     onError: () => {
-      toast.error("Error al actualizar el estado del producto");
+      toast.error('Error al actualizar el estado del producto');
     },
   });
 };
@@ -81,13 +84,13 @@ export const useDeleteProduct = () => {
   return useMutation({
     mutationFn: deleteProduct,
     onSuccess: () => {
-      queryCliente.invalidateQueries({ queryKey: ["products"] });
-      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
-      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
-      toast.success("Producto eliminado exitosamente");
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success('Producto eliminado exitosamente');
     },
     onError: () => {
-      toast.error("Error al eliminar el producto");
+      toast.error('Error al eliminar el producto');
     },
   });
 };
@@ -98,13 +101,13 @@ export const useEditProduct = () => {
   return useMutation({
     mutationFn: ({ id, data }) => editProduct(id, data),
     onSuccess: () => {
-      queryCliente.invalidateQueries({ queryKey: ["products"] });
-      queryCliente.invalidateQueries({ queryKey: ["all-products"] });
-      queryCliente.invalidateQueries({ queryKey: ["search-products"] });
-      toast.success("Producto editado exitosamente");
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success('Producto editado exitosamente');
     },
     onError: () => {
-      toast.error("Error al editar el producto");
+      toast.error('Error al editar el producto');
     },
   });
 };
@@ -112,10 +115,46 @@ export const useEditProduct = () => {
 //hook para obtener productos sin paginacion
 export const usetGetAllProducts = (options = {}) => {
   return useQuery({
-    queryKey: ["all-products"],
+    queryKey: ['all-products'],
     queryFn: getProductosAll,
     staleTime: 1000 * 60 * 5,
     retry: 3,
     ...options,
   });
-}
+};
+
+// hook para actualización masiva de descuento
+export const useBulkUpdateDiscount = () => {
+  const queryCliente = useQueryClient();
+  return useMutation({
+    mutationFn: (percentage) => bulkUpdateDiscount(percentage),
+    onSuccess: (data) => {
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success(data.message || 'Descuento aplicado a todos los productos');
+    },
+    onError: (err) => {
+      console.error('Error in useBulkUpdateDiscount:', err);
+      toast.error('Error al aplicar el descuento global');
+    },
+  });
+};
+
+// hook para actualización masiva de plantilla por categoría
+export const useBulkUpdateTemplate = () => {
+  const queryCliente = useQueryClient();
+  return useMutation({
+    mutationFn: ({ categoria, plantillaId }) => bulkUpdateTemplate(categoria, plantillaId),
+    onSuccess: (data) => {
+      queryCliente.invalidateQueries({ queryKey: ['products'] });
+      queryCliente.invalidateQueries({ queryKey: ['all-products'] });
+      queryCliente.invalidateQueries({ queryKey: ['search-products'] });
+      toast.success(data.message || 'Plantilla aplicada a la categoría');
+    },
+    onError: (err) => {
+      console.error('Error in useBulkUpdateTemplate:', err);
+      toast.error('Error al aplicar la plantilla masivamente');
+    },
+  });
+};

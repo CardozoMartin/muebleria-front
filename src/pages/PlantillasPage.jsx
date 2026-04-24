@@ -6,6 +6,23 @@ import PlantillaCanva4 from '../components/Plantillas/BlackFriday';
 import PlantillaCanva5 from '../components/Plantillas/FeriaDescuentos';
 import PlantillaCanva6 from '../components/Plantillas/MegaSale';
 
+// Importar fondos para las demos
+import bgMegaOferta from '../assets/canva/megaoferta.png';
+import bgFlashSale from '../assets/canva/flashsale.png';
+import bgHotSale from '../assets/canva/hotsale.png';
+import bgBlackFriday from '../assets/canva/blackfriday.png';
+import bgFeria from '../assets/canva/feriadedescuentos.png';
+import bgMegaSale from '../assets/canva/megasale.png';
+
+const MOCK_DATA = {
+  nombreProducto: 'Juego de Comedor',
+  descripcion: 'Mesa de madera maciza para 6 personas con sillas tapizadas en pana antimanchas. Diseño moderno y minimalista.',
+  precioLista: 185000,
+  precioOferta: 148000,
+  porcentajeDescuento: 20,
+  imagenProducto: 'https://images.unsplash.com/photo-1592078615290-033ee584e277?q=80&w=1000&auto=format&fit=crop',
+};
+
 
 const PLANTILLAS = [
   {
@@ -14,6 +31,7 @@ const PLANTILLAS = [
     descripcion: 'Dinámico · con tonos rojos, amarillos y azules · Moderno ',
     component: PlantillaCanva,
     dot: 'bg-purple-600',
+    background: bgMegaOferta,
   },
   {
     id: 'flashsale',
@@ -21,6 +39,7 @@ const PLANTILLAS = [
     descripcion: 'Llamativo · con tonos amarillos y rojos · Dinámico',
     component: PlantillaCanva2,
     dot: 'bg-red-600',
+    background: bgFlashSale,
   },
   {
     id: 'hotsale',
@@ -28,6 +47,7 @@ const PLANTILLAS = [
     descripcion: 'Dinámico · con tonos rojos · Llamativo ',
     component: PlantillaCanva3,
     dot: 'bg-yellow-300',
+    background: bgHotSale,
   },
   {
     id: 'blackfriday',
@@ -35,6 +55,7 @@ const PLANTILLAS = [
     descripcion: 'Impactante · con contrastes entre blanco, negro y amarillo · Dinámico',
     component: PlantillaCanva4,
     dot: 'bg-gray-800',
+    background: bgBlackFriday,
   },
   {
     id: 'feriadedescuentos',
@@ -42,6 +63,7 @@ const PLANTILLAS = [
     descripcion: 'Alegre · con colores fuertes y vibrantes · Moderno',
     component: PlantillaCanva5,
     dot: 'bg-blue-600',
+    background: bgFeria,
   },
   {
     id: 'megasale',
@@ -49,6 +71,7 @@ const PLANTILLAS = [
     descripcion: 'Dinámico · con tonos verdes y amarillos · Atractivo',
     component: PlantillaCanva6,
     dot: 'bg-green-500',
+    background: bgMegaSale,
   }
 ];
 
@@ -104,7 +127,12 @@ function MiniCard({ plantilla, onClick }) {
             pointerEvents: 'none',
           }}
         >
-          <Comp key={plantilla.id} preview />
+          <Comp
+            key={plantilla.id}
+            preview
+            {...MOCK_DATA}
+            backgroundUrl={plantilla.background}
+          />
         </div>
 
         {/* Hover hint */}
@@ -153,7 +181,11 @@ function FullscreenModal({ plantilla, onClose }) {
       className="fixed inset-0 z-50 bg-black"
       style={{ width: '100vw', height: '100vh' }}
     >
-      <Comp key={plantilla.id} />
+      <Comp
+        key={plantilla.id}
+        {...MOCK_DATA}
+        backgroundUrl={plantilla.background}
+      />
       <button
         onClick={onClose}
         className="absolute top-5 right-5 z-[60] px-4 py-2 bg-black/60 hover:bg-black/90 text-white text-sm font-semibold rounded-lg backdrop-blur flex items-center gap-2 transition-all"
