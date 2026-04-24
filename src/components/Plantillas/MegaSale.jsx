@@ -1,135 +1,83 @@
-import { memo, useEffect, useState } from "react";
-import plantilla from "../../assets/canva/megasale.png";
-import comedorDefault from "../../assets/comedor.png";
+import { memo, useEffect, useState, useRef } from "react";
+import { useTemplateScale, fmtCurrency } from "../../hooks/useTemplateScale";
 
+/**
+ * Plantilla MegaSale: Optimizada para rendimiento en Chromecast.
+ * Utiliza escalado por SceneScale y fondos cacheados.
+ */
 const MegaSale = ({
   nombreProducto = "Juego de Comedor",
   descripcion = "Mesa extensible con 6 sillas tapizadas en tela premium. Estructura de roble macizo, acabado laqueado mate.",
-  imagenProducto = comedorDefault,
-  precioLista = 500000,
-  precioOferta = 250000,
-  porcentajeDescuento = 50,
+  imagenProducto = "",
+  backgroundUrl = "", // Recibido desde cache (Blob URL)
+  precioLista = 0,
+  precioOferta = 0,
+  porcentajeDescuento = 0,
   preview = false,
 }) => {
   const BASE_W = 1200;
   const BASE_H = 600;
-  const [scale, setScale] = useState(1);
-  const [imgRatio, setImgRatio] = useState(1); // naturalH / naturalW
+
+  // Escala responsiva basada en ResizeObserver
+  const scale = useTemplateScale(BASE_W, BASE_H, !preview);
   const effectiveScale = preview ? 1 : scale;
 
-  useEffect(() => {
-    const calc = () =>
-      setScale(
-        Math.min(window.innerWidth / BASE_W, window.innerHeight / BASE_H),
-      );
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
-  }, []);
+  const [imgRatio, setImgRatio] = useState(1);
+  const imgRef = useRef(null);
 
-  const fmt = (n) => (n ? `$${Number(n).toLocaleString("es-AR")}` : "");
+  useEffect(() => {
+    const el = imgRef.current;
+    if (el?.complete && el.naturalWidth > 0) {
+      setImgRatio(el.naturalHeight / el.naturalWidth);
+    }
+  }, [imagenProducto]);
+
   const len = nombreProducto.length;
-  // ≤8 chars → una línea grande | ≤14 → una línea mediana | >14 → dos líneas
   const unaLinea = len <= 14;
   const nombreFontSize =
     len <= 8 ? 72 : len <= 14 ? 54 : len <= 20 ? 54 : len <= 26 ? 46 : 36;
+
   const descUnaLinea = descripcion.length <= 50;
 
-  // Imagen: si es muy alta (portrait) la achicamos y recentramos para que no tape el fondo
-  // Centro deseado: x≈298, y≈305 (zona del reflector)
   const IMG_FULL = 440;
-  const IMG_TALL = 460; // imagen alta → más chica
+  const IMG_TALL = 380;
   const isTall = imgRatio > 1.3;
   const imgSize = isTall ? IMG_TALL : IMG_FULL;
-  // Al achicar una imagen portrait el contenido visible ocupa menos ancho dentro del box "contain",
-  // así que sumamos un offset extra para que quede centrada bajo el reflector
   const imgLeft = Math.round(340 - imgSize / 2) + (isTall ? 25 : 0);
   const imgTop = Math.round(305 - imgSize / 2);
 
-  /* ─── keyframes inyectados una sola vez ─── */
-  const css = `
-    @keyframes floatProd {
-      0%,100% { transform: translateY(0px);  }
-      50%      { transform: translateY(-14px); }
-    }
-    @keyframes glowProd {
-      0%,100% { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); }
-      50%      { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); }
-    }
-    @keyframes pricePulse {
-      0%,100% { opacity:1; }
-      50%      { opacity:0.82; }
-    }
-    @keyframes slideDown {
-      from { opacity:0; transform: translateY(-22px); }
-      to   { opacity:1; transform: translateY(0);     }
-    }
-    @keyframes slideRight {
-      from { opacity:0; transform: translateX(-28px) translateX(0); }
-      to   { opacity:1; transform: translateX(0);                   }
-    }
-    @keyframes slideLeft {
-      from { opacity:0; transform: translateX(28px); }
-      to   { opacity:1; transform: translateX(0);    }
-    }
-    @keyframes slideLeftTitle {
-      from { opacity:0; transform: translateX(calc(-50% + 28px)); }
-      to   { opacity:1; transform: translateX(-50%);              }
-    }
-    @keyframes slideUp {
-      from { opacity:0; transform: translateY(22px); }
-      to   { opacity:1; transform: translateY(0);    }
-    }
-    @keyframes popIn {
-      from { opacity:0; transform: translate(-50%,-50%) scale(0.75); }
-      to   { opacity:1; transform: translate(-50%,-50%) scale(1);    }
-    }
-    @keyframes fadeIn {
-      from { opacity:0; }
-      to   { opacity:1; }
-    }
-    @keyframes imgEnter {
-      from { opacity:0; transform: translateY(18px); }
-      to   { opacity:1; transform: translateY(0);    }
-    }
-  `;
-
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@700;900&display=swap"
-        rel="stylesheet"
-      />
-      <style>{css}</style>
-
-      {/* Pantalla completa → centra la escena */}
+    <div
+      style={{
+        width: preview ? BASE_W : "100vw",
+        height: preview ? BASE_H : "100vh",
+        background: "#000",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        contain: "strict",
+      }}
+    >
       <div
         style={{
-          width: preview ? BASE_W : "100vw",
-          height: preview ? BASE_H : "100vh",
-          background: "#000",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
+          position: "relative",
+          width: BASE_W,
+          height: BASE_H,
+          flexShrink: 0,
+          transform: `scale(${effectiveScale})`,
+          transformOrigin: "center center",
+          willChange: "transform",
         }}
       >
-        {/* Escena fija 1200 × 600 */}
-        <div
-          style={{
-            position: "relative",
-            width: BASE_W,
-            height: BASE_H,
-            flexShrink: 0,
-            transform: `scale(${effectiveScale})`,
-            transformOrigin: "center center",
-          }}
-        >
-          {/* FONDO */}
+        {/* FONDO CACHEADO */}
+        {backgroundUrl && (
           <img
-            src={plantilla}
+            src={backgroundUrl}
             alt=""
             aria-hidden
+            fetchPriority="high"
+            decoding="async"
             style={{
               position: "absolute",
               inset: 0,
@@ -139,202 +87,238 @@ const MegaSale = ({
               display: "block",
             }}
           />
+        )}
 
-          {/* ══════════════════════════════════════════
-              ESTRELLA — precio oferta adentro
-              Centro de la estrella en la plantilla ≈ x:155, y:128
-          ══════════════════════════════════════════ */}
+        {/* PRECIO OFERTA */}
+        <div
+          className="ms-popIn"
+          style={{
+            position: "absolute",
+            left: 920,
+            top: 455,
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            lineHeight: 1,
+            pointerEvents: "none",
+          }}
+        >
           <div
+            className="ms-pricePulse"
             style={{
-              position: "absolute",
-              left: 919,
-              top: 455,
-              transform: "translate(-50%, -50%)",
-              textAlign: "center",
-              lineHeight: 1,
-              pointerEvents: "none",
-              animation: "popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both",
-            }}
-          >
-            {/* Precio oferta — grande y llamativo */}
-
-            <div
-              style={{
-                fontFamily: "'Rubik', sans-serif",
-                fontWeight: 850,
-                fontSize: porcentajeDescuento > 0 ? 46 : 52,
-                color: "#050303",
-                letterSpacing: -1,
-                lineHeight: 0.95,
-                animation: "pricePulse 2.5s ease-in-out 1.8s infinite",
-              }}
-            >
-              {fmt(precioOferta)}
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════
-              % DESCUENTO — sobre la etiqueta roja de la imagen
-          ══════════════════════════════════════════ */}
-          {porcentajeDescuento > 0 && (
-            <div
-              style={{
-                position: "absolute",
-                left: 670,
-                top: 420,
-                transform: "rotate(-4deg)",
-                zIndex: 2,
-                fontFamily: "'Rubik', sans-serif",
-                fontWeight: 900,
-                fontSize: 33,
-                color: "#ffffff",
-                letterSpacing: -1,
-                lineHeight: 1,
-                textShadow: "0 2px 10px rgba(0,0,0,0.5)",
-                pointerEvents: "none",
-                animation: "slideDown 0.5s ease-out 0.1s both",
-              }}
-            >
-              {porcentajeDescuento}% OFF
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════
-              PRECIO DE LISTA tachado — debajo de la estrella
-          ══════════════════════════════════════════ */}
-          {precioLista > 0 && (
-            <div
-              style={{
-                position: "absolute",
-                left: 810,
-                top: 370,
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                pointerEvents: "none",
-                animation: "slideUp 0.5s ease-out 1.0s both",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Rubik', sans-serif",
-                  fontSize: 25,
-                  color: "rgb(255, 255, 255)",
-                  letterSpacing: 1.5,
-                  textTransform: "uppercase",
-                  textShadow: "0 2px 10px rgba(0,0,0,0.5)",
-                }}
-              >
-                ANTES
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Rubik', sans-serif",
-                  fontWeight: 700,
-                  textShadow: "0 2px 10px rgba(0,0,0,0.5)",
-                  fontSize: 30,
-                  color: "rgb(255, 255, 255)",
-                  textDecoration: "line-through",
-                  lineHeight: 1,
-                  letterSpacing: 1,
-                }}
-              >
-                {fmt(precioLista)}
-              </div>
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════
-              NOMBRE DEL PRODUCTO — debajo del título MEGA OFERTAS
-          ══════════════════════════════════════════ */}
-          <div
-            style={{
-              position: "absolute",
-              left: 890,
-              top: unaLinea ? 110 : 120,
-              transform: "translateX(-50%)",
               fontFamily: "'Rubik', sans-serif",
               fontWeight: 900,
-              fontSize: nombreFontSize,
+              fontSize: porcentajeDescuento > 0 ? 46 : 52,
+              color: "#050303",
               letterSpacing: -1,
-              whiteSpace: unaLinea ? "nowrap" : "normal",
-              textAlign: "center",
-              width: 380,
-              lineHeight: 1.05,
-              pointerEvents: "none",
-              background:
-                "linear-gradient(180deg, #ffc76a 0%, #ff9f1a 35%, #ff7a00 60%, #ff9f1a 85%, #ffe2b3 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              WebkitTextStroke: "2px black",
-              filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.7))",
-              animation: "slideLeftTitle 0.55s ease-out 0.5s both",
+              lineHeight: 0.95,
             }}
           >
-            {nombreProducto}
+            {fmtCurrency(precioOferta)}
           </div>
+        </div>
 
-          {/* ══════════════════════════════════════════
-              DESCRIPCIÓN — zona central-derecha
-          ══════════════════════════════════════════ */}
-          {descripcion && (
+        {/* % DESCUENTO */}
+        {porcentajeDescuento > 0 && (
+          <div
+            className="ms-slideDown"
+            style={{
+              position: "absolute",
+              left: 670,
+              top: 398,
+              transform: "rotate(-4deg)",
+              zIndex: 2,
+              fontFamily: "'Rubik', sans-serif",
+              color: "#ffffff",
+              textShadow: "0 2px 8px rgba(0,0,0,0.6)",
+              pointerEvents: "none",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: 130,
+              textAlign: "center",
+            }}
+          >
+            <span style={{ fontWeight: 900, fontSize: 55, letterSpacing: -2, lineHeight: 1 }}>
+              {porcentajeDescuento}%
+            </span>
+            <span style={{ fontWeight: 800, fontSize: 30, letterSpacing: 4, lineHeight: 1, marginTop: 2 }}>
+              OFF
+            </span>
+          </div>
+        )}
+
+        {/* PRECIO LISTA TACHADO */}
+        {precioLista > 0 && (
+          <div
+            className="ms-slideUp"
+            style={{
+              position: "absolute",
+              left: 810,
+              top: 370,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              pointerEvents: "none",
+            }}
+          >
             <div
               style={{
-                position: "absolute",
-                left: 650,
-                top: 285,
-                width: 490,
                 fontFamily: "'Rubik', sans-serif",
-                fontSize: descUnaLinea ? 18 : 14,
-                fontWeight: 700,
-                color: "rgb(0, 0, 0)",
-                lineHeight: 1.6,
-                whiteSpace: descUnaLinea ? "nowrap" : "normal",
-                textAlign: "center",
-                pointerEvents: "none",
-                animation: "fadeIn 0.6s ease-out 0.75s both",
-               background: 'rgba(0, 0, 0, 0.45)',
-                backdropFilter: 'blur(6px)',
-                borderRadius: 14,
-                border: '1px solid rgba(255,255,255,0.15)',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.35)',
+                fontSize: 25,
+                color: "#fff",
+                letterSpacing: 1.5,
+                textShadow: "0 2px 8px rgba(0,0,0,0.6)",
               }}
             >
-              {descripcion}
+              ANTES
             </div>
-          )}
-
-          {/* ══════════════════════════════════════════
-              IMAGEN DEL PRODUCTO — centrada en zona izquierda
-              bajo el reflector (el haz de luz apunta a x≈295, y≈300)
-              Animación: flota suavemente
-          ══════════════════════════════════════════ */}
-          {imagenProducto && (
-            <img
-              src={imagenProducto}
-              alt={nombreProducto ?? ""}
-              onLoad={(e) => {
-                const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
-                setImgRatio(w > 0 ? h / w : 1);
-              }}
+            <div
               style={{
-                position: "absolute",
-                left: imgLeft,
-                top: imgTop,
-                width: imgSize,
-                height: imgSize,
-                objectFit: "contain",
-                zIndex: 1,
-                animation:
-                  "imgEnter 0.7s ease-out 0s both, floatProd 4s ease-in-out 0.7s infinite",
-                pointerEvents: "none",
+                fontFamily: "'Rubik', sans-serif",
+                fontWeight: 700,
+                fontSize: 30,
+                color: "#fff",
+                textDecoration: "line-through",
+                lineHeight: 1,
+                letterSpacing: 1,
+                textShadow: "0 2px 8px rgba(0,0,0,0.6)",
               }}
-            />
-          )}
+            >
+              {fmtCurrency(precioLista)}
+            </div>
+          </div>
+        )}
+
+        {/* TITULO PRODUCTO */}
+        <div
+          className="ms-slideLeftTitle"
+          style={{
+            position: "absolute",
+            left: 890,
+            top: unaLinea ? 155 : 140,
+            transform: "translateX(-50%)",
+            fontFamily: "'Rubik', sans-serif",
+            fontWeight: 900,
+            fontSize: nombreFontSize,
+            letterSpacing: -1,
+            whiteSpace: unaLinea ? "nowrap" : "normal",
+            textAlign: "center",
+            width: 380,
+            lineHeight: 1.05,
+            pointerEvents: "none",
+            background:
+              "linear-gradient(180deg, #ffc76a 0%, #ff9f1a 35%, #ff7a00 60%, #ff9f1a 85%, #ffe2b3 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))",
+          }}
+        >
+          {nombreProducto}
         </div>
+
+        {/* DESCRIPCIÓN */}
+        {descripcion && (
+          <div
+            className="ms-fadeIn"
+            style={{
+              position: "absolute",
+              left: 650,
+              top: 255,
+              width: 490,
+              padding: "12px 16px",
+              fontFamily: "'Rubik', sans-serif",
+              fontSize: descUnaLinea ? 18 : 14,
+              fontWeight: 700,
+              color: "#fff",
+              lineHeight: 1.6,
+              whiteSpace: descUnaLinea ? "nowrap" : "normal",
+              textAlign: "center",
+              pointerEvents: "none",
+              background: "rgba(0,0,0,0.72)",
+              borderRadius: 14,
+              border: "1px solid rgba(255,255,255,0.12)",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+            }}
+          >
+            {descripcion}
+          </div>
+        )}
+
+        {/* IMAGEN DEL PRODUCTO */}
+        {imagenProducto && (
+          <img
+            ref={imgRef}
+            src={imagenProducto}
+            alt={nombreProducto ?? ""}
+            decoding="async"
+            onLoad={(e) => {
+              const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
+              setImgRatio(w > 0 ? h / w : 1);
+            }}
+            style={{
+              position: "absolute",
+              left: imgLeft,
+              top: imgTop,
+              width: imgSize,
+              height: imgSize,
+              objectFit: "contain",
+              zIndex: 1,
+              willChange: "transform",
+              pointerEvents: "none",
+            }}
+            className="ms-imgAnim"
+          />
+        )}
       </div>
-    </>
+
+      <style>{`
+        @keyframes ms-floatProd {
+          0%,100% { transform: translateY(0px); }
+          50%      { transform: translateY(-14px); }
+        }
+        @keyframes ms-pricePulse {
+          0%,100% { opacity: 1; }
+          50%      { opacity: 0.82; }
+        }
+        @keyframes ms-slideDown {
+          from { opacity: 0; transform: rotate(-4deg) translateY(-18px); }
+          to   { opacity: 1; transform: rotate(-4deg) translateY(0); }
+        }
+        @keyframes ms-slideLeftTitle {
+          from { opacity: 0; transform: translateX(calc(-50% + 24px)); }
+          to   { opacity: 1; transform: translateX(-50%); }
+        }
+        @keyframes ms-slideUp {
+          from { opacity: 0; transform: translateY(18px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes ms-popIn {
+          from { opacity: 0; transform: translate(-50%,-50%) scale(0.78); }
+          to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+        }
+        @keyframes ms-fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes ms-imgEnter {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .ms-popIn        { animation: ms-popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.2s both; }
+        .ms-pricePulse   { animation: ms-pricePulse 2.5s ease-in-out 1.8s infinite; }
+        .ms-slideDown    { animation: ms-slideDown 0.5s ease-out 0.1s both; }
+        .ms-slideUp      { animation: ms-slideUp 0.5s ease-out 1.0s both; }
+        .ms-slideLeftTitle { animation: ms-slideLeftTitle 0.55s ease-out 0.5s both; }
+        .ms-fadeIn       { animation: ms-fadeIn 0.6s ease-out 0.75s both; }
+        .ms-imgAnim      {
+          animation:
+            ms-imgEnter 0.7s ease-out 0s both,
+            ms-floatProd 4s ease-in-out 0.7s infinite;
+        }
+      `}</style>
+    </div>
   );
 };
 

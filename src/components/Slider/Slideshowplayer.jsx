@@ -13,26 +13,35 @@
  *    como <link rel="preload"> para no bloquear el primer render
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import Logo from '../../assets/logo.png';
 import { useImageCache } from '../../hooks/useImageCache';
+import { PLANTILLAS } from '../../constants/plantillas';
+import { Loader2, X } from 'lucide-react';
 
-// Importar plantillas
-import PlantillaCanva4 from '../Plantillas/BlackFriday';
-import PlantillaCanva5 from '../Plantillas/FeriaDescuentos';
-import PlantillaCanva2 from '../Plantillas/FlashSale';
-import PlantillaCanva3 from '../Plantillas/HotSale';
-import PlantillaCanva from '../Plantillas/MegaOferta';
-import PlantillaCanva6 from '../Plantillas/MegaSale';
+// Importar fondos para que Vite los procese correctamente
+import bgMegaOferta from '../../assets/canva/megaoferta.png';
+import bgFlashSale from '../../assets/canva/flashsale.png';
+import bgHotSale from '../../assets/canva/hotsale.png';
+import bgBlackFriday from '../../assets/canva/blackfriday.png';
+import bgFeria from '../../assets/canva/feriadedescuentos.png';
+import bgMegaSale from '../../assets/canva/megasale.png';
 
-const PLANTILLAS_MAP = {
-  canva: PlantillaCanva,
-  canva2: PlantillaCanva2,
-  canva3: PlantillaCanva3,
-  blackfriday: PlantillaCanva4,
-  feriadedescuentos: PlantillaCanva5,
-  megasale: PlantillaCanva6,
+// Mapeo de backgrounds importados
+const BACKGROUNDS_MAP = {
+  canva: bgMegaOferta,
+  canva2: bgFlashSale,
+  canva3: bgHotSale,
+  blackfriday: bgBlackFriday,
+  feriadedescuentos: bgFeria,
+  megasale: bgMegaSale,
 };
+
+// Dynamically create the map from the central plantillas constant
+const PLANTILLAS_MAP = PLANTILLAS.reduce((acc, p) => {
+  acc[p.id] = p.component;
+  return acc;
+}, {});
 
 /* ─────────────────────────────────────────────────────────────
    Extrae todas las URLs de imágenes de un producto
@@ -240,12 +249,23 @@ export default function SlideShowPlayer({
 
     // Extraemos sus URLs y las forzamos a ingresar al cache de memoria 
     const urlsToWarm = extractImageUrls(productsToWarm);
-    urlsToWarm.forEach((url) => cacheOne(url));
+    
+    // También precargar los fondos de las plantillas que se van a usar
+    productsToWarm.forEach(p => {
+      const bg = BACKGROUNDS_MAP[p.plantillaId] || BACKGROUNDS_MAP['canva'];
+      if (bg) urlsToWarm.push(bg);
+    });
+
+    [...new Set(urlsToWarm)].forEach((url) => cacheOne(url));
   }, [currentIndex, ready, productosMemo, cacheOne]);
 
   // ── Loading screen ───────────────────────────────────────────
   const producto = productosMemo[currentIndex];
-  const Plantilla = PLANTILLAS_MAP[producto?.plantillaId] ?? PlantillaCanva;
+  const Plantilla = PLANTILLAS_MAP[producto?.plantillaId] ?? PLANTILLAS_MAP['canva'];
+
+  // Resolver background desde cache usando el mapa de importaciones
+  const bgPath = BACKGROUNDS_MAP[producto?.plantillaId] || BACKGROUNDS_MAP['canva'];
+  const resolvedBackground = resolveUrl(bgPath);
 
   return (
     <div
@@ -256,14 +276,18 @@ export default function SlideShowPlayer({
       {!ready ? (
         <LoadingScreen progress={progress} logoSrc={Logo} />
       ) : (
-        <Plantilla
-          nombreProducto={producto?.titulo || 'Producto'}
-          descripcion={producto?.descripcion || ''}
-          imagenProducto={resolveUrl(producto?.imagenProducto)}
-          precioLista={producto?.precioLista || 0}
-          precioOferta={producto?.precioOferta || 0}
-          porcentajeDescuento={producto?.porcentajeDescuento || 0}
-        />
+        <Suspense fallback={<div className="w-full h-full bg-black flex items-center justify-center"><Loader2 className="animate-spin text-white" /></div>}>
+          <Plantilla
+            key={currentIndex}
+            nombreProducto={producto?.titulo || 'Producto'}
+            descripcion={producto?.descripcion || ''}
+            imagenProducto={resolveUrl(producto?.imagenProducto)}
+            backgroundUrl={resolvedBackground}
+            precioLista={producto?.precioLista || 0}
+            precioOferta={producto?.precioOferta || 0}
+            porcentajeDescuento={producto?.porcentajeDescuento || 0}
+          />
+        </Suspense>
       )}
 
       {/* Indicador de slide (opcional, útil para debug) */}

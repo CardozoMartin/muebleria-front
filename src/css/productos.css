@@ -1487,3 +1487,447 @@ input:checked + .toggle-slider:before {
     height: 72px;
   }
 }
+
+/* ╔══════════════════════════════════════════════════════════════════════╗ */
+/* EDITABLE GRID & GLOBAL ACTIONS */
+/* ╚══════════════════════════════════════════════════════════════════════╝ */
+
+.table-header-actions {
+  padding: 16px 20px;
+  background-color: #fafafa;
+  border-bottom: 1px solid var(--gris-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.global-discount-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 4px 4px 4px 12px;
+  border: 1.5px solid var(--gris-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: border-color 0.2s;
+}
+
+.global-discount-container:focus-within {
+  border-color: #2563eb;
+}
+
+.global-discount-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.global-discount-input {
+  border: none;
+  background: transparent;
+  width: 140px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1c1c1c;
+  outline: none;
+}
+
+.global-discount-input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+.global-apply-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.global-apply-btn:hover {
+  background: #1d4ed8;
+}
+
+.global-apply-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Grid Cell Styles */
+.product-info-grid {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-image-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+
+.product-image-placeholder-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #ddd;
+}
+
+.product-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.grid-input, .grid-select {
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #1c1c1c;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.grid-input:hover, .grid-select:hover {
+  background: rgba(0,0,0,0.03);
+  border-color: #ddd;
+}
+
+.grid-input:focus, .grid-select:focus {
+  background: white;
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.title-input {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.category-select {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-cell-grid {
+  padding: 8px 12px !important;
+}
+
+.price-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #fdfdfd;
+  border: 1px solid #eee;
+  padding: 2px 6px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.price-input-wrapper.offer {
+  background: #f0fdf4;
+  border-color: #dcfce7;
+}
+
+.price-input-wrapper.discount {
+  background: #eff6ff;
+  border-color: #dbeafe;
+}
+
+.currency, .percent {
+  font-size: 12px;
+  font-weight: 700;
+  color: #999;
+}
+
+.offer .currency { color: #16a34a; }
+.discount .percent { color: #2563eb; font-size: 11px; }
+
+.number-input {
+  width: 80px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.discount-input {
+  width: 45px;
+  text-align: center;
+}
+
+.template-select {
+  font-size: 12px;
+  background: #f9f9f9;
+  border-color: #eee;
+}
+
+.status-badge-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: #f3f4f6;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.status-badge-mini.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge-mini.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Actions in grid */
+.actions-cell-grid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.actions-cell-grid .btn-action {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+}
+
+.btn-action.save {
+  background: #22c55e;
+  color: white;
+  border-color: #22c55e;
+}
+
+.btn-action.save:hover {
+  background: #16a34a;
+}
+
+.btn-action.reset {
+  background: #f3f4f6;
+  color: #666;
+  border-color: #ddd;
+}
+
+.btn-action.reset:hover {
+  background: #e5e7eb;
+  color: #1c1c1c;
+}
+
+/* Row states */
+.row-edited {
+  background-color: #fffbeb !important;
+}
+
+.row-edited:hover {
+  background-color: #fef3c7 !important;
+}
+
+/* ╔══════════════════════════════════════════════════════════════════════╗ */
+/* ADVANCED GRID & BULK TEMPLATE STYLES */
+/* ╚══════════════════════════════════════════════════════════════════════╝ */
+
+.global-template-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 4px;
+  border: 1.5px solid var(--gris-border);
+  border-radius: 8px;
+  margin-left: 12px;
+}
+
+.bulk-select-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+}
+
+.bulk-select {
+  border: none;
+  background: #f9f9f9;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+}
+
+.bulk-select:hover {
+  background: #f0f0f0;
+}
+
+.bulk-apply-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bulk-apply-btn:hover:not(:disabled) {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.bulk-apply-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Static vs Editing States in Row */
+.product-name-static {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  display: block;
+}
+
+.product-category-static {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-static {
+  font-weight: 700;
+  font-size: 13px;
+  color: #333;
+}
+
+.template-name-static {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Grid Inputs Active State */
+.grid-input.active, .grid-select.active {
+  background: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.05);
+}
+
+.price-input-wrapper.static {
+  background: transparent;
+  border-color: transparent;
+  padding-left: 0;
+}
+
+/* Image Editing in Grid */
+.product-image-container {
+  position: relative;
+  cursor: default;
+}
+
+.product-image-container.editable {
+  cursor: pointer;
+}
+
+.image-edit-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.product-image-container.editable:hover .image-edit-overlay {
+  opacity: 1;
+}
+
+/* Row Editing Highlight */
+.row-editing {
+  background-color: #f0f7ff !important;
+}
+
+.btn-action.edit-row {
+  color: #2563eb;
+}
+
+.btn-action.edit-row:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+}
+
+/* Layout adjustments for Table Header Actions */
+.table-header-actions {
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+
+.desc-modal-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.desc-modal-trigger:hover {
+  border-color: #bbb;
+  background: #ececec;
+  color: #444;
+}
+.desc-modal-trigger.has-desc {
+  border-color: #c7d7ff;
+  background: #eef2ff;
+  color: #4f46e5;
+}
+.desc-modal-trigger.has-desc:hover {
+  background: #e0e7ff;
+}

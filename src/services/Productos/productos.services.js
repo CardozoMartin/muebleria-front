@@ -113,3 +113,25 @@ export const searchProductsByCategory = async (category) => {
     throw error;
   }   
 }
+
+// Funcion para actualización masiva de descuento
+export const bulkUpdateDiscount = async (porcentajeDescuento) => {
+  try {
+    const response = await api.put('/productos/bulk-discount', { porcentajeDescuento });
+    return response.data;
+  } catch (error) {
+    console.error('Error in bulkUpdateDiscount service:', error);
+    throw error;
+  }
+}
+
+// Funcion para actualización masiva de plantilla por categoría
+export const bulkUpdateTemplate = async (categoria, plantillaId) => {
+  try {
+    const response = await api.put('/productos/bulk-template', { categoria, plantillaId });
+    return response.data;
+  } catch (error) {
+    console.error('Error in bulkUpdateTemplate service:', error);
+    throw error;
+  }
+}
