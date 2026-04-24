@@ -109,7 +109,7 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
               className="global-discount-input"
             />
           </div>
-          <button 
+          <button
             onClick={handleApplyGlobalDiscount}
             disabled={isApplyingBulk}
             className="global-apply-btn"
@@ -127,7 +127,7 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
         <div className="global-template-container">
           <div className="bulk-select-group">
             <LayoutPanelLeft style={{ width: '16px', height: '16px', color: '#666' }} />
-            <select 
+            <select
               value={bulkCategory}
               onChange={(e) => setBulkCategory(e.target.value)}
               className="bulk-select"
@@ -139,18 +139,20 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
               <option value="Jardin">Jardin</option>
               <option value="Varios">Varios</option>
             </select>
-            <select 
+            <select
               value={bulkTemplateId}
               onChange={(e) => setBulkTemplateId(e.target.value)}
               className="bulk-select"
             >
               <option value="">Plantilla...</option>
-              {PLANTILLAS.map(p => (
-                <option key={p.id} value={p.id}>{p.nombre}</option>
+              {PLANTILLAS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nombre}
+                </option>
               ))}
             </select>
           </div>
-          <button 
+          <button
             onClick={handleApplyBulkTemplate}
             disabled={isApplyingBulkTemplate || !bulkCategory || !bulkTemplateId}
             className="bulk-apply-btn"
@@ -176,6 +178,7 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
               <th>P. Oferta</th>
               <th>P.Descuento</th>
               <th>Plantilla</th>
+              <th>Descripcion</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
@@ -197,9 +200,19 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
             {isError && (
               <tr>
                 <td colSpan="8" className="empty-state">
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: '#ef4444' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '8px',
+                      color: '#ef4444',
+                    }}
+                  >
                     <AlertCircle style={{ width: '24px', height: '24px' }} />
-                    <span style={{ fontSize: '12px', fontWeight: '500' }}>Error al cargar productos</span>
+                    <span style={{ fontSize: '12px', fontWeight: '500' }}>
+                      Error al cargar productos
+                    </span>
                   </div>
                 </td>
               </tr>
@@ -209,9 +222,19 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
             {!isLoading && !isError && products.length === 0 && (
               <tr>
                 <td colSpan="8" className="empty-state">
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: '#cccccc' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '8px',
+                      color: '#cccccc',
+                    }}
+                  >
                     <PackageOpen style={{ width: '24px', height: '24px' }} />
-                    <span style={{ fontSize: '12px', fontWeight: '500' }}>No hay productos disponibles</span>
+                    <span style={{ fontSize: '12px', fontWeight: '500' }}>
+                      No hay productos disponibles
+                    </span>
                   </div>
                 </td>
               </tr>
@@ -222,11 +245,11 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
               !isError &&
               products.length > 0 &&
               products.map((product, index) => (
-                <RowProducts 
-                  key={product._id} 
-                  product={product} 
-                  index={searchQuery ? index : (currentPage - 1) * 10 + index} 
-                  setShowForm={setShowForm} 
+                <RowProducts
+                  key={product._id}
+                  product={product}
+                  index={searchQuery ? index : (currentPage - 1) * 10 + index}
+                  setShowForm={setShowForm}
                   setShowVideo={setShowVideo}
                   setSelectedProduct={setSelectedProduct}
                 />
@@ -234,25 +257,26 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
           </tbody>
         </table>
       </div>
-      
+
       <div className="pagination-container">
         <div className="pagination-info">
-          Mostrando {((currentPage - 1) * 10) + 1} - {Math.min(currentPage * 10, totalProducts)} de {totalProducts} productos
+          Mostrando {(currentPage - 1) * 10 + 1} - {Math.min(currentPage * 10, totalProducts)} de{' '}
+          {totalProducts} productos
         </div>
-      
+
         <div className="pagination-controls">
-          <button 
-            type="button" 
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
             className="pagination-button"
           >
             <ChevronLeft style={{ width: '16px', height: '16px' }} />
             <span>anterior</span>
           </button>
-        
+
           <div className="pagination-numbers">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 type="button"
@@ -263,10 +287,10 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
               </button>
             ))}
           </div>
-        
-          <button 
-            type="button" 
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
             className="pagination-button"
           >
@@ -275,14 +299,14 @@ const TableProducts = ({ setShowForm, searchQuery = '', categoryFilter = '' }) =
           </button>
         </div>
       </div>
-      
+
       {showVideo && selectedProduct && (
-        <ModalVideo 
-          product={selectedProduct} 
+        <ModalVideo
+          product={selectedProduct}
           setShowVideo={(visible) => {
             setShowVideo(visible);
             if (!visible) setSelectedProduct(null);
-          }} 
+          }}
         />
       )}
     </div>

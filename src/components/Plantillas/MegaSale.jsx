@@ -94,7 +94,7 @@ const MegaSale = ({
           className="ms-popIn"
           style={{
             position: "absolute",
-            left: 919,
+            left: 920,
             top: 455,
             transform: "translate(-50%, -50%)",
             textAlign: "center",
@@ -124,20 +124,26 @@ const MegaSale = ({
             style={{
               position: "absolute",
               left: 670,
-              top: 420,
+              top: 398,
               transform: "rotate(-4deg)",
               zIndex: 2,
               fontFamily: "'Rubik', sans-serif",
-              fontWeight: 900,
-              fontSize: 33,
               color: "#ffffff",
-              letterSpacing: -1,
-              lineHeight: 1,
               textShadow: "0 2px 8px rgba(0,0,0,0.6)",
               pointerEvents: "none",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: 130,
+              textAlign: "center",
             }}
           >
-            {porcentajeDescuento}% OFF
+            <span style={{ fontWeight: 900, fontSize: 55, letterSpacing: -2, lineHeight: 1 }}>
+              {porcentajeDescuento}%
+            </span>
+            <span style={{ fontWeight: 800, fontSize: 30, letterSpacing: 4, lineHeight: 1, marginTop: 2 }}>
+              OFF
+            </span>
           </div>
         )}
 
@@ -189,7 +195,7 @@ const MegaSale = ({
           style={{
             position: "absolute",
             left: 890,
-            top: unaLinea ? 110 : 120,
+            top: unaLinea ? 155 : 140,
             transform: "translateX(-50%)",
             fontFamily: "'Rubik', sans-serif",
             fontWeight: 900,
@@ -218,7 +224,7 @@ const MegaSale = ({
             style={{
               position: "absolute",
               left: 650,
-              top: 285,
+              top: 255,
               width: 490,
               padding: "12px 16px",
               fontFamily: "'Rubik', sans-serif",

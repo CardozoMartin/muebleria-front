@@ -169,15 +169,15 @@ const HotSale = ({
             fontFamily: "'Rubik', sans-serif",
             fontWeight: 900,
             fontSize: nombreFontSize,
-            letterSpacing: -1,
             whiteSpace: unaLinea ? "nowrap" : "normal",
             textAlign: "center",
             width: 380,
             lineHeight: 1.05,
             pointerEvents: "none",
-            color: "#050505",
-            filter: "drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)",
-            textShadow: "0 8px 14px rgba(0,0,0,0.8), 0 0 14px rgba(255,40,40,0.4)",
+            color: "#ffffff",
+            textShadow: "0 4px 12px rgba(0,0,0,0.8), 0 0 15px rgba(239, 68, 68, 0.4)",
+            textTransform: "uppercase",
+            letterSpacing: "-0.012em",
           }}
         >
           {nombreProducto}
