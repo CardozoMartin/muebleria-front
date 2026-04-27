@@ -162,9 +162,7 @@ export default function DashboardLayout() {
             Bienvenido a <span className="dashboard-header-accent">Muebles de Pino ML</span>
           </div>
           <a
-            href="/#/inicio"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/inicio"
             className="border border-red-700 text-red-700 hover:bg-red-50 hover:border-red-500 hover:text-red-500 text-[10px] font-bold uppercase tracking-widest px-[4rem] py-4 rounded-none transition-all duration-150 select-none"
           >
             ir a Pantalla principal
